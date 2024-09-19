@@ -1,0 +1,39 @@
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.form-heading{
+    @apply text-[30px] font-semibold text-gray-600 my-4
+}
+
+.form-label{
+    @apply text-[18px] text-gray-500 mt-4
+}
+
+.form-input{
+    @apply border border-gray-400 p-2 w-full
+}
+
+.form-button {
+    @apply my-4 bg-sky-800 text-white p-[6px] px-4 hover:bg-white border hover:border-sky-800 hover:text-sky-800
+}
+
+.error-msg{
+    @apply text-red-600 text-[14px] 
+}
+
+.success-msg{
+    @apply text-green-700 text-[14px]
+}
+
+.quill-content img {
+    max-width: 100%;
+    height: auto; /* Keeps the aspect ratio */
+  }
+  
+  .quill-content iframe,
+  .quill-content video {
+    max-width: 100%;
+    height: auto;
+  }

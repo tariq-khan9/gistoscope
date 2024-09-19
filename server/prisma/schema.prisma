@@ -1,0 +1,53 @@
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+// User model
+model User {
+  id    Int   @id @default(autoincrement()) 
+  username String
+  password String
+  name  String
+  image String?
+  gists Gist[]   
+  versions Version[] 
+  edits Edit[]  
+}
+
+model Gist {
+   id    Int   @id @default(autoincrement())  
+  title    String
+  parentId Int?
+  userId   Int
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade) 
+  versions Version[] 
+}
+
+
+model Version {
+  id    Int   @id @default(autoincrement())  
+  point    String
+  userId   Int
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade) 
+  gistId   Int
+  gist     Gist     @relation(fields: [gistId], references: [id], onDelete: Cascade) 
+  edits    Edit[]   
+}
+
+
+model Edit {
+  id    Int   @id @default(autoincrement())  
+  body      String
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) 
+  versionId Int
+  version   Version  @relation(fields: [versionId], references: [id], onDelete: Cascade) 
+}

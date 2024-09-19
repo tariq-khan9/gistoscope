@@ -1,0 +1,37 @@
+export interface UserType {
+  id: number
+  username: string
+  password: string
+  name: string
+  image: string
+  gists: GistType[]
+  versions: VersionType[]
+  edits: EditType[]
+}
+export interface GistType {
+    id: number,
+    title: string,
+    parentId: number,
+    userId: number,
+    versions: VersionType[]
+
+}
+
+export interface VersionType {
+  id: number
+  point: string
+  userId: number
+  user: UserType
+  gistId: number
+  gist: GistType
+  edits: EditType[]
+}
+
+export interface EditType {
+  id: number,
+  body: string,
+  userId: number,
+  user: UserType
+  versionId: number
+  version: VersionType
+}
