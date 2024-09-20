@@ -3,6 +3,8 @@
 @tailwind components;
 @tailwind utilities;
 
+
+
 .form-heading{
     @apply text-[30px] font-semibold text-gray-600 my-4
 }
@@ -27,13 +29,6 @@
     @apply text-green-700 text-[14px]
 }
 
-.quill-content img {
-    max-width: 100%;
-    height: auto; /* Keeps the aspect ratio */
-  }
-  
-  .quill-content iframe,
-  .quill-content video {
-    max-width: 100%;
-    height: auto;
-  }
+.arrow {
+   @apply text-slate-400 hover:text-slate-500 text-[22px] cursor-pointer
+}

@@ -1,9 +1,8 @@
 import React, {useState} from 'react'
 import CreateUser from './user/CreateUser'
 import CreateGist from './gist/CreateGist'
-import TextEditor from './Draft'
 import SingleGist from './gist/SingleGist'
-import IndexGist from './gist2/Index'
+import IndexGist from '../gist/IndexGist'
 
 const sideNavigations = [
     'User',
@@ -27,8 +26,8 @@ const Index = () => {
         </div>
         <div className='w-[80%]'>
             {showComponent==2 && <CreateUser/>}
-            {showComponent==3 && <IndexGist/>}
             {showComponent==4 && <CreateGist/>}
+            
             {showComponent==5 && <SingleGist/>}
 
              

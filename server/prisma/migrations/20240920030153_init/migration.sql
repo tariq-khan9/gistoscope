@@ -5,6 +5,8 @@ CREATE TABLE "User" (
     "password" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "image" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -15,6 +17,8 @@ CREATE TABLE "Gist" (
     "title" TEXT NOT NULL,
     "parentId" INTEGER,
     "userId" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Gist_pkey" PRIMARY KEY ("id")
 );
@@ -25,6 +29,8 @@ CREATE TABLE "Version" (
     "point" TEXT NOT NULL,
     "userId" INTEGER NOT NULL,
     "gistId" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Version_pkey" PRIMARY KEY ("id")
 );
@@ -35,6 +41,8 @@ CREATE TABLE "Edit" (
     "body" TEXT NOT NULL,
     "userId" INTEGER NOT NULL,
     "versionId" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Edit_pkey" PRIMARY KEY ("id")
 );

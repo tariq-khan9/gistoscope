@@ -1,16 +1,21 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
-import User from './components/User';
 import Index from './components/dashboard/Index';
+import Home from './components/Home';
+import Navbar from './components/Navbar';
+
 
 
 const App: React.FC = () => {
   return (
     <Router>
+      <div className='mb-[60px]'>
+         <Navbar/>
+      </div>
       <Routes>
-        <Route path="/" element={<User/>} />
-        <Route path="/dashboard" element={<Index/>} />
+        <Route path="/" element={<Home/>} />
+        {/* <Route path="/dashboard" element={<Index/>} /> */}
       </Routes>
     </Router>
   );

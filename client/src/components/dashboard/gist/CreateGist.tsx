@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { gql, useMutation } from '@apollo/client';
-import RichEditor from '../RichEditor';
+import RichEditor from './../RichEditor';
 
 const CREATE_GIST = gql`
   mutation AddGist($gist: AddGistInput){
@@ -98,7 +98,7 @@ const CreateGist: React.FC = () => {
 
   useEffect(() => {
     if (successMessage) {
-      reset()
+    // reset()
       const timer = setTimeout(() => {
         setSuccessMessage(null); 
       }, 4000); 

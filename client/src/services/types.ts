@@ -11,11 +11,15 @@ export interface UserType {
 export interface GistType {
     id: number,
     title: string,
-    parentId: number,
+    parentId: number | null,
     userId: number,
-    versions: VersionType[]
+    createdAt: string,
+    versions: VersionType[],
+    gists: GistType[]
 
 }
+
+
 
 export interface VersionType {
   id: number

@@ -7,6 +7,13 @@ export const Query = {
     gists() {
         return prisma.gist.findMany();
     },
+    rootGists() {
+        return prisma.gist.findMany({
+            where: {
+                parentId: null
+            }
+        });
+    },
     versions() {
         return prisma.version.findMany();
     },

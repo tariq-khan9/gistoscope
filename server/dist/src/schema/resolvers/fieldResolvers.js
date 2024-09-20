@@ -14,6 +14,13 @@ export const fieldResolvers = {
                 where: { gistId: parent.id },
             });
         },
+        async gists(parent) {
+            return await prisma.gist.findMany({
+                where: {
+                    parentId: parent.id
+                }
+            });
+        }
     },
     Version: {
         async edits(parent) {

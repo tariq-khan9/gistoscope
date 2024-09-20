@@ -21,6 +21,7 @@ type Query{
     user(id: Int!): User
 
     gists: [Gist]
+    rootGists: [Gist]
     gist(id: Int!): Gist
 
     versions: [Version]

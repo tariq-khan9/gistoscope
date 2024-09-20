@@ -1,31 +1,30 @@
-'use client'
+
 import React from 'react'
-import { GistType } from './../../../services/types';
 import { gql, useQuery } from '@apollo/client';
 import Gist from './Gist'
+import { groupGistsByParent } from '../../services/utils/groupGistsByParent';
+
+
 
 const GET_GISTS = gql`
-  query GetGists {
+   query GetGists {
     gists {
       id
       title
+      parentId
+      createdAt
       versions {
+        id
         point
-        user {
-          name
-        }
         edits {
+          id
           body
-          user {
-            name
-          }
-         
         }
       }
-      
     }
   }
 `;
+
 
 const IndexGist = () => {
 
@@ -34,13 +33,11 @@ const IndexGist = () => {
   if (loading) return <h1>Loading...</h1>;
   if (error) return <h1>Something went wrong</h1>;
 
-  console.log("this is data", data)
-
-  const gists: GistType[] = data?.gists || [];
+ const groupedGistData = groupGistsByParent(data.gists) 
 
   return (
-    <div className=' m-8 mx-20 p-8'>
-        {gists.length && <Gist gists={gists}/>}
+    <div className='flex flex-col space-y-12 m-4 overflow-y-auto p-8 px-28'>
+       {groupedGistData.length>0 && <Gist gists={groupedGistData}/>}  
     </div>
   )
 }

@@ -12,7 +12,7 @@ type RichEditorProps = {
 
 export default function RichEditor({content, setContent}: RichEditorProps) {
 
-
+  const [editable, setEditable] = useState(false)
   const modules = {
     toolbar: [
       [{ header: [1, 2, false] }],
@@ -42,9 +42,11 @@ export default function RichEditor({content, setContent}: RichEditorProps) {
   ];
 
   return (
-    <div className="flex bg-white mt-8">
+    <div className="flex bg-white mt-1 w-full">
       <div className="w-full min-h-48 h-full">
+        <button onClick={()=>setEditable(!editable)}>Edit</button>
         <ReactQuill
+         
           theme="snow"
           value={content}
           onChange={setContent}
