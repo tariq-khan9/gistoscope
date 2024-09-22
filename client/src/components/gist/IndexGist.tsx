@@ -1,34 +1,18 @@
 
 import React from 'react'
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
+import { GET_ALL_GISTS } from '../../services/graphql/queriesMutations';
 import Gist from './Gist'
 import { groupGistsByParent } from '../../services/utils/groupGistsByParent';
 
 
 
-const GET_GISTS = gql`
-   query GetGists {
-    gists {
-      id
-      title
-      parentId
-      createdAt
-      versions {
-        id
-        point
-        edits {
-          id
-          body
-        }
-      }
-    }
-  }
-`;
+
 
 
 const IndexGist = () => {
 
-  const {data, loading, error} =  useQuery(GET_GISTS)
+  const {data, loading, error} =  useQuery(GET_ALL_GISTS)
 
   if (loading) return <h1>Loading...</h1>;
   if (error) return <h1>Something went wrong</h1>;

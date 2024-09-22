@@ -42,11 +42,20 @@ export const Mutation = {
       data: {
          title: args.gist.title,
          parentId: args.gist.parentId,
-         userId: args.gist.userId
+         userId: args.gist.userId,
+         createdAt: args.gist.createdAt
 
       },
     });
     return gist;
+  },
+
+  
+  async deleteGist(_:any , args: any) {
+    const gist = await prisma.gist.delete({
+      where: { id: args.id },
+    });
+    return { message: "The Gist has been deleted", gist };
   },
 
 //--------////////-------- Version mutations --------///////////------//////////
@@ -69,7 +78,7 @@ async addVersion(_:any , args: any) {
       data: {
         body: args.edit.body,
         userId: args.edit.userId,
-        versionId: args.edit.versionId
+        versions: args.edit.versionId
       },
     });
     return edit;
@@ -83,10 +92,10 @@ async addVersion(_:any , args: any) {
   },
 
   async deleteVersion(_:any , args: any) {
-    const edits = await prisma.version.delete({
+    const version = await prisma.version.delete({
       where: { id: args.id },
     });
-    return { message: "The edit has been deleted", edits };
+    return { message: "The edit has been deleted", version };
   },
 
 };

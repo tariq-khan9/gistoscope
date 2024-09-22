@@ -36,26 +36,60 @@ model Gist {
 }
 
 
+// model Version {
+//   id    Int   @id @default(autoincrement())  
+//   point    String
+//   userId   Int
+//   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade) 
+//   gistId   Int
+//   gist     Gist     @relation(fields: [gistId], references: [id], onDelete: Cascade) 
+//   createdAt DateTime  @default(now())
+//   updatedAt DateTime  @updatedAt
+//   edits    Edit[]   
+// }
+
+
+// model Edit {
+//   id    Int   @id @default(autoincrement())  
+//   body      String
+//   userId    Int
+//   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) 
+//   versionId Int
+//   version   Version  @relation(fields: [versionId], references: [id], onDelete: Cascade) 
+//   createdAt DateTime  @default(now())
+//   updatedAt DateTime  @updatedAt
+// }
+
+
 model Version {
-  id    Int   @id @default(autoincrement())  
-  point    String
-  userId   Int
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade) 
-  gistId   Int
-  gist     Gist     @relation(fields: [gistId], references: [id], onDelete: Cascade) 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  edits    Edit[]   
-}
-
-
-model Edit {
-  id    Int   @id @default(autoincrement())  
-  body      String
+  id        Int      @id @default(autoincrement())  
+  point     String
   userId    Int
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) 
+  gistId    Int
+  gist      Gist     @relation(fields: [gistId], references: [id], onDelete: Cascade) 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  edits     Edit[]   @relation("VersionEdits")
+  versionEdits VersionEdit[] // Many-to-many relation to Edit
+}
+
+model Edit {
+  id        Int      @id @default(autoincrement())  
+  body      String
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  versions  Version[] @relation("VersionEdits")
+  versionEdits VersionEdit[] // Many-to-many relation to Version
+}
+
+model VersionEdit {
   versionId Int
-  version   Version  @relation(fields: [versionId], references: [id], onDelete: Cascade) 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  editId    Int
+  version   Version @relation(fields: [versionId], references: [id], onDelete: Cascade) // Only delete the join entry, not Edit
+  edit      Edit    @relation(fields: [editId], references: [id])
+
+  @@id([versionId, editId]) // Composite primary key for the join table
 }

@@ -31,7 +31,7 @@ export const fieldResolvers = {
   Version: {
     async edits(parent: any) {
       return await prisma.edit.findMany({
-        where: { versionId: parent.id },
+        where: { versions: parent.id },
       });
     },
     async gist(parent: any) {

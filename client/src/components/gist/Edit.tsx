@@ -29,7 +29,7 @@ const Edit: React.FC<EditProps> = ({ edits }) => {
 
   return (
     <div>
-       <div className='w-full bg-white flex flex-col justify-between px-10 py-4 rounded-lg'>
+       <div className='w-full flex flex-col justify-between px-10 py-4 rounded-lg'>
 
            <div className='user-arrow-btn  flex flex-row w-full  justify-between'>
                 <div className='flex flex-row space-x-4 items-center justify-center'>

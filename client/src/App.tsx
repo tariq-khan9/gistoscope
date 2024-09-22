@@ -4,6 +4,7 @@ import './App.css';
 import Index from './components/dashboard/Index';
 import Home from './components/Home';
 import Navbar from './components/Navbar';
+import CreateGist from './components/dashboard/gist/CreateGist';
 
 
 
@@ -15,7 +16,8 @@ const App: React.FC = () => {
       </div>
       <Routes>
         <Route path="/" element={<Home/>} />
-        {/* <Route path="/dashboard" element={<Index/>} /> */}
+        <Route path="/dashboard" element={<Index/>} />
+        <Route path="/reply/:id" element={<CreateGist/>} />
       </Routes>
     </Router>
   );

@@ -1,33 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { gql, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
+import { CREATE_GIST, CREATE_VERSION, CREATE_EDIT } from '../../../services/graphql/queriesMutations';
 import RichEditor from './../RichEditor';
 
-const CREATE_GIST = gql`
-  mutation AddGist($gist: AddGistInput){
-    addGist(gist: $gist) {
-      id
-    }
-  }
-`;
 
-const CREATE_VERSION = gql`
-   mutation AddVersion($version: AddVersionInput){
-    addVersion(version: $version) {
-      id
-    } 
-  }
-`;
 
-const CREATE_EDIT = gql`
-   mutation addEdit($edit: AddEditInput){
-  addEdit(edit: $edit) {
-    body
-    id
-  }
-  }
-`;
 
 
 
@@ -39,6 +19,8 @@ type FormValues = {
 
 const CreateGist: React.FC = () => {
 
+  const {id: replyParentId} = useParams();
+
   const { register, handleSubmit,reset, formState: { errors } } = useForm<FormValues>();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [content, setContent] = useState<string>()
@@ -47,6 +29,7 @@ const CreateGist: React.FC = () => {
   const [createVersion] = useMutation(CREATE_VERSION);
   const [createEdit] = useMutation(CREATE_EDIT);
 
+
   const onSubmit: SubmitHandler<FormValues> = async (formData) => {
     try {
       // Step 1: Create a Gist and get its ID
@@ -54,7 +37,9 @@ const CreateGist: React.FC = () => {
         variables: {
           gist: {
             title: formData.title,
-            userId: 2
+            userId: 1,
+            createdAt: new Date().toISOString(),
+             parentId: replyParentId? parseInt(replyParentId) : null
           }
         }
       });
@@ -62,34 +47,41 @@ const CreateGist: React.FC = () => {
       const gistId: number = gistResponse.data.addGist.id;
 
       // Step 2: Use the Gist ID to create a Version and get its ID
-      const versionResponse = await createVersion({
-        variables: {
-          version: {
-            gistId: gistId,
-            point: formData.point,
-            userId: 2
+    
+        const  versionResponse = await createVersion({
+          variables: {
+            version: {
+              gistId: gistId,
+              point: formData.point,
+               userId: 1,
+              createdAt: new Date().toISOString()
+            }
           }
-        }
-      });
+        });
 
-      const versionId = versionResponse.data.addVersion.id;
+        const versionId = versionResponse.data.addVersion.id;
 
       // Step 3: Use the Version ID to create an Edit
-      const editResponse = await createEdit({
-        variables: {
-          edit: {
-            versionId: versionId,
-            body: content,
-            userId: 2 
-
+     
+        const editResponse = await createEdit({
+          variables: {
+            edit: {
+              versionId: versionId,
+              body: content,
+              userId: 1,
+              createdAt: new Date().toISOString()
+  
+            }
           }
-        }
-      });
+        });
 
-      // Successfully created Gist, Version, and Edit
-      if (editResponse.data) {
-        setSuccessMessage('Gist created successfully!');
-      }
+
+        if (editResponse.data) {
+          setSuccessMessage('Gist created successfully!');
+        }
+
+     
+     
     } catch (e) {
       console.error('Error creating Gist, Version, or Edit', e);
     }
@@ -113,7 +105,7 @@ const CreateGist: React.FC = () => {
     <div className='flex w-full justify-center items-center px-20'>
         <div className="flex flex-col justify-center items-center w-full">
            <h2 className="form-heading">Create Gist</h2>
-             <button onClick={()=>console.log(content)}>show</button>
+             <button onClick={()=>console.log(FormData, content)}>show</button>
           <form className='w-full' onSubmit={handleSubmit(onSubmit)}>
             <div className='w-full flex flex-col'>
               <label className='form-label'>Title</label>

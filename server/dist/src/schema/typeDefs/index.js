@@ -35,13 +35,14 @@ type Mutation{
     deleteUser(id: Int!): User
 
     addGist(gist: AddGistInput): Gist
+    deleteGist(id: Int!): Gist
 
     addVersion(version: AddVersionInput): Version
+    deleteVersion(id: Int!): Version
 
     addEdit(edit: AddEditInput): Edit
     deleteEdit(id: Int!): Edit
 
-    deleteVersion(id: Int!): Version
 }
 
 
