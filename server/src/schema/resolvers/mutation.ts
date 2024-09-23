@@ -43,7 +43,7 @@ export const Mutation = {
          title: args.gist.title,
          parentId: args.gist.parentId,
          userId: args.gist.userId,
-         createdAt: args.gist.createdAt
+         views: 0
 
       },
     });
@@ -78,7 +78,7 @@ async addVersion(_:any , args: any) {
       data: {
         body: args.edit.body,
         userId: args.edit.userId,
-        versions: args.edit.versionId
+        versionId: args.edit.versionId
       },
     });
     return edit;

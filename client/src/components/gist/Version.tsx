@@ -5,7 +5,7 @@ import { useMutation } from '@apollo/client';
 import { CREATE_VERSION, GET_ALL_GISTS } from '../../services/graphql/queriesMutations';
 import Edit from './Edit';
 import { IoIosArrowDropright, IoIosArrowDropleft } from "react-icons/io";
-import BoxWithShadows from '../BoxWithShadow';
+import BoxWithShadows from '../others/BoxWithShadow';
 import TextareaWithLimit from '../others/TextareaWithLimit';
 
 
@@ -106,7 +106,7 @@ const Version: React.FC<VerionProps> = ({ versions }) => {
             )}
         </div>
 
-        <BoxWithShadows boxBorder='border-slate-300' colorShades={['bg-white', 'bg-slate-100', 'bg-slate-50']}>
+        <BoxWithShadows visible={versions[currentIndex].edits.length>1} boxBorder='border-slate-300' colorShades={['bg-white', 'bg-slate-100', 'bg-slate-50']}>
           {versions[currentIndex].edits && <Edit edits={versions[currentIndex].edits}/>}
       </BoxWithShadows>
     </div>

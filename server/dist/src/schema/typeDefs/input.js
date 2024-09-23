@@ -6,7 +6,7 @@ input AddUserInput{
   password: String!,
   name: String!,
   image: String,
-  createdAt: DateTime!,
+  createdAt: DateTime,
   updatedAt: DateTime
 
 }
@@ -18,7 +18,7 @@ input UpdateUserInput{
   password: String,
   name: String,
   image: String,
-  createdAt: DateTime!,
+  createdAt: DateTime,
   updatedAt: DateTime
   
 }
@@ -29,7 +29,7 @@ input AddGistInput{
     title: String!,
     parentId: Int,
     userId: Int!,
-    createdAt: DateTime!,
+    createdAt: DateTime,
     updatedAt: DateTime
   
   
@@ -41,7 +41,7 @@ input AddVersionInput{
     point: String!,
     userId: Int!,
     gistId: Int!,
-    createdAt: DateTime!,
+    createdAt: DateTime,
     updatedAt: DateTime
  
 }
@@ -51,7 +51,7 @@ input AddEditInput{
     body: String!,
     userId: Int!,
     versionId: Int!,
-    createdAt: DateTime!,
+    createdAt: DateTime,
     updatedAt: DateTime
 
 }

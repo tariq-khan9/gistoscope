@@ -9,7 +9,7 @@ type User{
   password: String!,
   name: String!,
   image: String,
-  createdAt: DateTime!,
+  createdAt: DateTime,
   updatedAt: DateTime,
   gists: [Gist],
   versions: [Version],
@@ -24,7 +24,8 @@ type Gist{
     parentId: Int,
     userId: Int!,
     user: User!,
-    createdAt: DateTime!,
+    views: Int,
+    createdAt: DateTime,
     updatedAt: DateTime,
     versions: [Version],
     gists: [Gist]
@@ -39,7 +40,7 @@ type Version{
     userId: Int!,
     user: User!,
     gistId: Int!,
-    createdAt: DateTime!,
+    createdAt: DateTime,
     updatedAt: DateTime,
     gist: Gist!
     edits: [Edit]
@@ -52,7 +53,7 @@ type Edit{
     id: Int!,
     body: String!,
     userId: Int!,
-    createdAt: DateTime!,
+    createdAt: DateTime,
     updatedAt: DateTime,
     user: User!,
     versionId: Int!

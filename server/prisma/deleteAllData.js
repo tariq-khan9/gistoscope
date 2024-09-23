@@ -2,33 +2,36 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-async function resetAndSeedDatabase() {
+async function resetDatabase() {
   try {
-    // Truncate all tables and reset identity (auto-increment IDs)
-    await prisma.$executeRawUnsafe(`
-      TRUNCATE TABLE "VersionEdit", "Edit", "Version", "Gist", "User" RESTART IDENTITY CASCADE;
-    `);
+    // Delete all records from the database
+    await prisma.edit.deleteMany();
+    await prisma.version.deleteMany();
+    await prisma.gist.deleteMany();
+    await prisma.user.deleteMany();
 
-    console.log('All records deleted and identities reset.');
+    // Reset sequence of IDs for PostgreSQL
+    await prisma.$executeRaw`ALTER SEQUENCE "User_id_seq" RESTART WITH 1`;
+    await prisma.$executeRaw`ALTER SEQUENCE "Gist_id_seq" RESTART WITH 1`;
+    await prisma.$executeRaw`ALTER SEQUENCE "Version_id_seq" RESTART WITH 1`;
+    await prisma.$executeRaw`ALTER SEQUENCE "Edit_id_seq" RESTART WITH 1`;
 
     // Create a single user
-    const newUser = await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
-        username: 'newuser',
+        username: 'tariq',
         password: 'password123',
-        name: 'John Doe',
-        image: null
+        name: 'tariq khan',
+        image: null,  // Optional
       },
     });
 
-    console.log('Single user created:', newUser);
-
+    console.log('Database reset and single user created:', user);
   } catch (error) {
-    console.error('Error resetting database and creating user:', error);
+    console.error('Error resetting database:', error);
   } finally {
-    // Close the Prisma connection
     await prisma.$disconnect();
   }
 }
 
-resetAndSeedDatabase();
+resetDatabase();

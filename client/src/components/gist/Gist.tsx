@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { GistType } from '../../services/types';
 import { IoIosArrowDropleft, IoIosArrowDropright} from "react-icons/io";
 import Version from './Version';
-import BoxWithShadows from '../BoxWithShadow';
+import BoxWithShadows from '../others/BoxWithShadow';
 
 
 
@@ -37,7 +37,7 @@ const Gist: React.FC<GistProps> = ({ gists }) => {
    
   return (
     <div className='flex flex-col space-y-4'>
-       <BoxWithShadows boxBorder='border-amber-500' colorShades={['bg-amber-300', 'bg-amber-200', 'bg-amber-100']}>
+       <BoxWithShadows visible={gists.length>1} boxBorder='border-amber-500' colorShades={['bg-amber-300', 'bg-amber-200', 'bg-amber-100']}>
            <div className='w-full p-4 flex flex-row justify-between px-10 rounded-lg'>
                 {gists?.length > 0 && (
                   <div className='r'>
@@ -68,7 +68,7 @@ const Gist: React.FC<GistProps> = ({ gists }) => {
       </BoxWithShadows>
 
 
-      <BoxWithShadows boxBorder='border-amber-300' colorShades={['bg-amber-200', 'bg-amber-100', 'bg-amber-50']}>
+      <BoxWithShadows visible={gists[currentIndex].versions.length>1} boxBorder='border-amber-300' colorShades={['bg-amber-200', 'bg-amber-100', 'bg-amber-50']}>
           {gists[currentIndex].versions && <Version versions={gists[currentIndex].versions}/>}
       </BoxWithShadows>
           <div className='flex flex-col'>
