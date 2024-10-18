@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { setShowModal } from '../../redux/gistEditSlice';
 import { VersionType } from '../../services/types';
 import { useMutation } from '@apollo/client';
 import { CREATE_VERSION,CREATE_EDIT, GET_ALL_GISTS } from '../../services/graphql/queriesMutations';

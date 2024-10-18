@@ -102,6 +102,7 @@ const Gist: React.FC<GistProps> = ({ gists }) => {
       </div>
       {showModal!='hidden' && (
         <EditModal 
+          showModal={showModal}
         />
       )}
 

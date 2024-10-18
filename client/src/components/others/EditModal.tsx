@@ -1,8 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import { useDispatch} from 'react-redux';
-import { useAppSelector } from '../../redux/useAppSelector';
-import { setShowModal } from '../../redux/gistEditSlice';
 import { useParams } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useMutation } from '@apollo/client';
@@ -20,23 +17,21 @@ type FormValues = {
   body: string;
 };
 
+type Props = {
+  showModal: string;
+}
 
 
 
+const EditModal: React.FC<Props> = ({showModal}) => {
 
-const EditModal: React.FC = () => {
-  const dispatch = useDispatch()
-  const showModal = useAppSelector((state) => state.gistEdit.showModal);
-  const version_data = useAppSelector((state) => state.gistEdit.versionData);;
-  const edit_data = useAppSelector((state) => state.gistEdit.editData);;
-  const gist_id = useAppSelector((state) => state.gistEdit.gistId);
   
 
   const {id: replyParentId} = useParams();
 
   const { register, handleSubmit,reset, formState: { errors } } = useForm<FormValues>();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [content, setContent] = useState<string | undefined>(edit_data)
+  const [content, setContent] = useState<string | undefined>()
 
   const [createGist] = useMutation(CREATE_GIST);
   const [createVersion] = useMutation(CREATE_VERSION);
@@ -55,7 +50,7 @@ const EditModal: React.FC = () => {
               title: formData.title,
               userId: 1,
               createdAt: new Date().toISOString(),
-              parentId: gist_id
+              parentId: 1
             }
           }
         });
@@ -110,7 +105,7 @@ const EditModal: React.FC = () => {
          const  versionResponse = await createVersion({
            variables: {
              version: {
-               gistId: gist_id,
+               gistId: 1,
                point: formData.point,
                userId: 1,
                createdAt: new Date().toISOString()
@@ -178,7 +173,7 @@ const EditModal: React.FC = () => {
               <label className='form-label'>Point</label>
               <textarea
                 className="form-input"
-                value={version_data}
+          
                 rows={3}
                 {...register('point', { required: 'Point is required' })}
               />
@@ -199,7 +194,7 @@ const EditModal: React.FC = () => {
 
             <div className='flex w-full flex-row'>
             <button className="form-button" type="submit">Create Gist</button>
-            <button onClick={()=>dispatch(setShowModal('hidden'))}>cancel</button>
+            <button >cancel</button>
             </div>
 
          
