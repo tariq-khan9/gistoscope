@@ -47,7 +47,7 @@ const CreateGist: React.FC = () => {
       const gistId: number = gistResponse.data.addGist.id;
 
       // Step 2: Use the Gist ID to create a Version and get its ID
-    
+      if(gistId){
         const  versionResponse = await createVersion({
           variables: {
             version: {
@@ -58,29 +58,29 @@ const CreateGist: React.FC = () => {
             }
           }
         });
-
-        const versionId = versionResponse.data.addVersion.id;
-
-      // Step 3: Use the Version ID to create an Edit
-     
-        const editResponse = await createEdit({
-          variables: {
-            edit: {
-              versionId: versionId,
-              body: content,
-              userId: 1,
-              createdAt: new Date().toISOString()
-  
+        
+        const versionId = versionResponse.data.addVersion.id
+        if(versionId){
+          const editResponse = await createEdit({
+            variables: {
+              edit: {
+                versionId: versionId,
+                body: content,
+                userId: 1,
+                createdAt: new Date().toISOString()
+    
+              }
             }
+          });
+
+          if (editResponse.data) {
+            setSuccessMessage('Gist created successfully!');
           }
-        });
-
-
-        if (editResponse.data) {
-          setSuccessMessage('Gist created successfully!');
         }
-
-     
+      }
+      else{
+        console.log("Gist not created, something went wrong.")
+      }
      
     } catch (e) {
       console.error('Error creating Gist, Version, or Edit', e);

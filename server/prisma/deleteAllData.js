@@ -26,7 +26,47 @@ async function resetDatabase() {
       },
     });
 
-    console.log('Database reset and single user created:', user);
+    // Create a gist associated with the user
+    const gist = await prisma.gist.create({
+      data: {
+        title: 'Sample Gist',
+        userId: user.id,
+      },
+    });
+
+    // Create a version associated with the gist
+    const version = await prisma.version.create({
+      data: {
+        point: 'Initial version point',
+        gistId: gist.id,
+        userId: user.id,
+      },
+    });
+
+    // Create two edits for the version
+    const edit1 = await prisma.edit.create({
+      data: {
+        body: 'First edit for the version',
+        versionId: version.id,
+        userId: user.id
+      },
+    });
+
+    const edit2 = await prisma.edit.create({
+      data: {
+       body: 'Second edit for the version',
+        versionId: version.id,
+        userId: user.id
+      },
+    });
+
+    console.log('Database reset and single user, gist, version, and edits created:', {
+      user,
+      gist,
+      version,
+      edits: [edit1, edit2],
+    });
+
   } catch (error) {
     console.error('Error resetting database:', error);
   } finally {

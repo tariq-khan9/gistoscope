@@ -1,6 +1,8 @@
 import React from 'react';
 import { ApolloClient, InMemoryCache, ApolloProvider} from '@apollo/client';
 import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux';
+import store from './redux/store';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
@@ -16,7 +18,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
   <ApolloProvider client={client}>
-    <App />
+    <Provider store={store}>
+        <App />
+    </Provider>
   </ApolloProvider>,
   </React.StrictMode>
 );

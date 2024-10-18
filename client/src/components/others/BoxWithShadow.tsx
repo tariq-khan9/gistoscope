@@ -9,7 +9,7 @@ interface BoxWithShadowsProps {
 
 const BoxWithShadows: React.FC<BoxWithShadowsProps> = ({ children,visible, colorShades, boxBorder }) => {
   return (
-    <div className='relative w-full h-full'>
+    <div className='relative w-full h-full my-2'>
       {/* Back box (lighter) */}
       <div className={`${visible? 'absolute bottom-2 left-2 w-full h-full' : 'hidden'}  ${colorShades[2]} border ${boxBorder} rounded-lg shadow-lg`}></div>
       
