@@ -23,7 +23,7 @@ const CreateGist: React.FC = () => {
 
   const { register, handleSubmit,reset, formState: { errors } } = useForm<FormValues>();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [content, setContent] = useState<string>()
+  const [content, setContent] = useState<string>('')
 
   const [createGist] = useMutation(CREATE_GIST);
   const [createVersion] = useMutation(CREATE_VERSION);

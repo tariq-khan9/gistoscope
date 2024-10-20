@@ -11,10 +11,18 @@ export const GET_ALL_GISTS = gql`
         id
         point
         gistId
+        user {
+          name
+        }
+        createdAt
         edits {
           id
           body
           versionId
+          user {
+            name
+          }
+          createdAt
         }
       }
     }

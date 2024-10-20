@@ -5,8 +5,8 @@ import "react-quill/dist/quill.snow.css";
 import parse from "html-react-parser";
 
 type RichEditorProps = {
-    content: string | undefined;
-    setContent: React.Dispatch<React.SetStateAction<string | undefined>>;
+    content: string;
+    setContent: React.Dispatch<React.SetStateAction<string>>;
   };
 
 
@@ -42,9 +42,8 @@ export default function RichEditor({content, setContent}: RichEditorProps) {
   ];
 
   return (
-    <div className="flex bg-white mt-1 w-full">
+    <div className="flex bg-white mt-1 w-full rounded-md">
       <div className="w-full min-h-48 h-full">
-        <button onClick={()=>setEditable(!editable)}>Edit</button>
         <ReactQuill
          
           theme="snow"

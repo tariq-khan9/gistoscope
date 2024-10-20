@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { VersionType } from '../../services/types';
-import { useMutation } from '@apollo/client';
+import dayjs from 'dayjs';
 import { CREATE_VERSION,CREATE_EDIT, GET_ALL_GISTS } from '../../services/graphql/queriesMutations';
 import Edit from './Edit';
 import { IoIosArrowDropright, IoIosArrowDropleft } from "react-icons/io";
@@ -12,13 +12,18 @@ import TextareaWithLimit from '../others/TextareaWithLimit';
 
 type VerionProps = {
   versions: VersionType[]; 
+  gist_title: string;
+  showModal: string;
+  setShowModal: (value: string)=> void;
 };
 
-const Version: React.FC<VerionProps> = ({ versions }) => {
+
+
+const Version: React.FC<VerionProps> = ({ versions,gist_title, showModal, setShowModal }) => {
   
   const [currentIndex, setCurrentIndex] = useState(0); 
   const [error, setError] = useState(false)
-  const [newVersionData, setNewVersionData] = useState<string>(versions[currentIndex]?.point)
+  const [newVersionData, setNewVersionData] = useState<VersionType>(versions[currentIndex])
 
   //const [createNewVersion] =  useMutation(CREATE_VERSION)
 
@@ -36,8 +41,7 @@ const Version: React.FC<VerionProps> = ({ versions }) => {
 
   const handleCreateVersion = ()=>{
 
-  
-
+    
 
   }
 
@@ -152,14 +156,14 @@ const Version: React.FC<VerionProps> = ({ versions }) => {
                 <div className='flex flex-row space-x-4 items-center'>
                   <div className='w-10 h-10 bg-gray-100 rounded-full'></div>
                   <div className='flex flex-col'>
-                      <h1 className='text-[16px] text-slate-700 uppercase'>user</h1>
-                      <h2 className='text-[12px] text-slate-600'>12-03-2024</h2>
+                      <h1 className='text-[16px] text-slate-700 uppercase'>{versions[currentIndex].user.name}</h1>
+                      <h2 className='text-[12px] text-slate-600'>{dayjs(versions[currentIndex].createdAt).format('DD-MM-YYYY')}</h2>
                   </div>
                   
                 </div>
              
                 <div className='flex flex-row text-[14px]'>
-                     <button onClick={handleCreateVersion} className={`border border-gray-600 hover:bg-sky-800 hover:text-white rounded-full w-24 h-6 text-[12px] mr-2`} >Edit Version</button>
+                     <button onClick={()=>setShowModal('version')} className={`border border-gray-600 hover:bg-sky-800 hover:text-white rounded-full w-24 h-6 text-[12px] mr-2`} >Edit Version</button>
 
                     <button className='arrow' disabled={currentIndex === 0}  onClick={handlePrev}><IoIosArrowDropleft className='arrow'  /></button>
 
@@ -176,7 +180,7 @@ const Version: React.FC<VerionProps> = ({ versions }) => {
                   <TextareaWithLimit maxChars={300} text={newVersionData} setText={setNewVersionData}/> */}
                   
                   
-                  <h1 className='text-slate-800 text-[16px]'>{newVersionData}</h1>
+                  <h1 className='text-slate-800 text-[16px]'>{newVersionData.point}</h1>
                 
                 
               </div>
@@ -187,9 +191,11 @@ const Version: React.FC<VerionProps> = ({ versions }) => {
           {versions[currentIndex].edits && 
           <Edit 
             edits={versions[currentIndex].edits}
-            versionIndex={currentIndex}
             gistId={versions[currentIndex].gistId}
+            gist_title={gist_title}
             versionData={newVersionData}
+            showModal={showModal}
+            setShowModal={setShowModal}
           />}
       </BoxWithShadows>
     </div>

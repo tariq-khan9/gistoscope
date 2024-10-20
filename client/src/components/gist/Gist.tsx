@@ -20,6 +20,7 @@ const Gist: React.FC<GistProps> = ({ gists }) => {
   const [showChild, setShowChild] = useState(false)
 
   const handlePostClick = () => {
+    setShowModal('reply')
    // navigate(`/reply/${gists[currentIndex].id}`);
 
   };
@@ -79,7 +80,12 @@ const Gist: React.FC<GistProps> = ({ gists }) => {
 
       <BoxWithShadows visible={gists[currentIndex].versions.length>1} boxBorder='border-amber-300' colorShades={['bg-amber-200', 'bg-amber-100', 'bg-amber-50']}>
            
-          {gists[currentIndex].versions && <Version  versions={gists[currentIndex].versions}/>}  
+          {gists[currentIndex].versions && <Version  
+                                              versions={gists[currentIndex].versions}
+                                              gist_title={gists[currentIndex].title}
+                                              showModal={showModal}
+                                              setShowModal={setShowModal}
+                                            />}  
          
       </BoxWithShadows>
 
@@ -100,11 +106,13 @@ const Gist: React.FC<GistProps> = ({ gists }) => {
           
           )}
       </div>
-      {showModal!='hidden' && (
+      {/* {showModal!='hidden' && (
         <EditModal 
           showModal={showModal}
+          setShowModal={setShowModal}
+          data={{gist_id: 2}}
         />
-      )}
+      )} */}
 
     </div>
     

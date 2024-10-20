@@ -26,6 +26,7 @@ export interface VersionType {
   point: string
   userId: number
   user: UserType
+  createdAt: string
   gistId: number
   gist: GistType
   edits: EditType[]
@@ -38,4 +39,5 @@ export interface EditType {
   user: UserType
   versionId: number
   version: VersionType
+  createdAt: string
 }

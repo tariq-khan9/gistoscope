@@ -10,19 +10,23 @@
 }
 
 .form-label{
-    @apply text-[18px] text-gray-500 mt-4
+    @apply text-[14px] text-gray-800 mt-4
 }
 
 .form-input{
-    @apply border border-gray-400 p-2 w-full
+    @apply text-[12px] border-[0.5] border-gray-400 p-2 w-full rounded-md
 }
 
 .form-button {
-    @apply my-4 bg-sky-800 text-white p-[6px] px-4 hover:bg-white border hover:border-sky-800 hover:text-sky-800
+    @apply my-4 text-[13px] bg-sky-800 text-white p-[5px] px-6 hover:bg-transparent rounded-full border hover:border-sky-800 hover:text-sky-800
+}
+
+.form-button-cancel {
+    @apply my-4 text-[13px] bg-red-600 text-white p-[5px] px-8 rounded-full hover:bg-transparent border hover:border-red-600 hover:text-red-600
 }
 
 .error-msg{
-    @apply text-red-600 text-[14px] 
+    @apply text-red-600 text-[12px]
 }
 
 .success-msg{
