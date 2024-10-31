@@ -23,7 +23,6 @@ const Version: React.FC<VerionProps> = ({ versions }) => {
   const [newVersionData, setNewVersionData] = useState<string>(
     versions[currentIndex]?.point
   );
-  const [showModal, setShowModal] = useState<boolean>(false);
 
   const [createNewVersion] = useMutation(CREATE_VERSION, {
     refetchQueries: [{ query: GET_ALL_GISTS }],
@@ -149,22 +148,6 @@ const Version: React.FC<VerionProps> = ({ versions }) => {
           />
         )}
       </BoxWithShadows>
-
-      <div className="flex flex-row justify-end">
-        <button
-          onClick={() => setShowModal(true)}
-          className=" bg-amber-600  text-white p-1 px-6 text-[12px] rounded-full hover:bg-white hover:text-amber-600"
-        >
-          Reply
-        </button>
-      </div>
-
-      {showModal && (
-        <ReplyModal
-          gist_id={versions[currentIndex].gistId}
-          setShowModal={setShowModal}
-        />
-      )}
     </div>
   );
 };

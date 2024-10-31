@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { IoSend } from "react-icons/io5";
+import { FaRegSave, FaEdit, FaFlag, FaRegFlag } from "react-icons/fa";
+
+import { BiLike, BiDislike } from "react-icons/bi";
 import { useMutation } from "@apollo/client";
 import {
   CREATE_VERSION,
@@ -9,6 +13,7 @@ import {
 import { EditType, VersionType } from "../../services/types";
 import { IoIosArrowDropleft, IoIosArrowDropright } from "react-icons/io";
 import RichEditor from "../dashboard/RichEditor";
+import ReplyModal from "../others/ReplyModal";
 
 type EditProps = {
   edits: EditType[];
@@ -43,6 +48,7 @@ const Edit: React.FC<EditProps> = ({
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [content, setContent] = useState<string>("");
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % edits?.length);
@@ -208,35 +214,52 @@ const Edit: React.FC<EditProps> = ({
             </div>
           </div>
 
-          <div className="flex flex-row text-[14px] justify-center items-center  space-x-[6px]">
-            <button
-              onClick={() => handleCreateVersion()}
-              className={`border border-gray-600 hover:bg-sky-800 hover:text-white rounded-full w-24 h-6 text-[12px] mr-2`}
-            >
-              {!createVersion ? "Edit body" : "Save body"}
-            </button>
+          <div className="flex flex-row text-[14px] justify-center items-center  space-x-6">
+            <div className="flex flex-row justify-center align-middle items-center space-x-5 text-[20px]">
+              <div className="flex flex-row space-x-1 justify-center ">
+                <BiLike />
+                <span className="text-[14px] text-gray-500">56</span>
+              </div>
 
-            <button
-              className="arrow"
-              disabled={currentIndex === 0}
-              onClick={handlePrev}
-            >
-              <IoIosArrowDropleft className="arrow" />
-            </button>
+              <div className="flex flex-row space-x-1 justify-center ">
+                <BiDislike />
+                <span className="text-[14px] text-gray-500">26</span>
+              </div>
 
-            <div className="flex flex-row  font-semibold justify-center text-slate-500 ">
-              {currentIndex + 1}
-              <h1 className="mx-1">/</h1>
-              {edits?.length}
+              <FaFlag size={16} className="text-red-400" />
+              <FaRegFlag size={16} />
+
+              <button
+                onClick={() => handleCreateVersion()}
+                className="text-gray-500 hover:text-gray-400"
+              >
+                {!createVersion ? <FaEdit size={20} /> : <FaRegSave />}
+              </button>
             </div>
 
-            <button
-              className="arrow"
-              disabled={currentIndex + 1 === edits?.length}
-              onClick={handleNext}
-            >
-              <IoIosArrowDropright className="arrow" />
-            </button>
+            <div className="nav-buttons flex flex-row text-[14px] justify-center items-center  space-x-[4px]">
+              <button
+                className="arrow"
+                disabled={currentIndex === 0}
+                onClick={handlePrev}
+              >
+                <IoIosArrowDropleft className="arrow" />
+              </button>
+
+              <div className="flex flex-row  font-semibold justify-center text-slate-500 ">
+                {currentIndex + 1}
+                <h1 className="mx-1">/</h1>
+                {edits?.length}
+              </div>
+
+              <button
+                className="arrow"
+                disabled={currentIndex + 1 === edits?.length}
+                onClick={handleNext}
+              >
+                <IoIosArrowDropright className="arrow" />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -250,6 +273,30 @@ const Edit: React.FC<EditProps> = ({
           </div>
         )}
       </div>
+
+      <div className="comments and reply px-10 py-4">
+        <div className="flex flex-row justify-end space-x-4">
+          <div className="relative w-full">
+            <textarea
+              className="border border-slate-600 w-full rounded-md text-[13px] pr-10" // Add padding to the right for the icon
+              rows={2}
+            />
+            <IoSend className="absolute right-4 top-[20px] transform -translate-y-1/2 text-slate-700 hover:text-amber-600 text-[20px] cursor-pointer" />
+          </div>
+          <div>
+            <button
+              onClick={() => setShowModal(true)}
+              className="  text-slate-600 h-10  px-6 text-[13px] rounded-md border border-slate-600 hover:border-amber-600  hover:bg-white hover:text-amber-600"
+            >
+              Reply
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {showModal && (
+        <ReplyModal gist_id={versionData.gistId} setShowModal={setShowModal} />
+      )}
     </div>
   );
 };
