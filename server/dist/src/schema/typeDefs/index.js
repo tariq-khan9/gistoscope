@@ -1,12 +1,15 @@
-import { User, Gist, Version, Edit } from "./types.js";
-import { AddEditInput, UpdateUserInput, AddUserInput, AddGistInput, AddVersionInput } from "./input.js";
+import { User, Gist, Version, Edit, UserEditAction } from "./types.js";
+import { AddEditInput, UpdateEditInput, AddUserEditActionInput, UpdateUserInput, AddUserInput, AddGistInput, AddVersionInput, } from "./input.js";
 export const typeDefs = `#graphql
 ${User}
 ${Gist}
 ${Version}
 ${Edit}
+${UserEditAction}
 
 ${AddEditInput}
+${UpdateEditInput}
+${AddUserEditActionInput}
 ${UpdateUserInput}
 ${AddUserInput}
 
@@ -41,10 +44,10 @@ type Mutation{
     deleteVersion(id: Int!): Version
 
     addEdit(edit: AddEditInput): Edit
+    updateEdit(id: Int!, edit: UpdateEditInput): Edit
     deleteEdit(id: Int!): Edit
 
+    addUserEditAction(action: AddUserEditActionInput): UserEditAction
+
 }
-
-
-
 `;

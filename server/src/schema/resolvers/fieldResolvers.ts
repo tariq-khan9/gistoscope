@@ -1,9 +1,8 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 export const fieldResolvers = {
-
   User: {
     async gists(parent: any) {
       return await prisma.gist.findMany({
@@ -19,13 +18,18 @@ export const fieldResolvers = {
       });
     },
 
-    async gists(parent: any){
+    async gists(parent: any) {
       return await prisma.gist.findMany({
-        where:{
-          parentId: parent.id
-        }
-      })
-    }
+        where: {
+          parentId: parent.id,
+        },
+      });
+    },
+    async user(parent: any) {
+      return await prisma.user.findUnique({
+        where: { id: parent.userId },
+      });
+    },
   },
 
   Version: {
@@ -53,6 +57,4 @@ export const fieldResolvers = {
       });
     },
   },
-
-
 };

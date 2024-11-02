@@ -12,20 +12,24 @@ datasource db {
 
 // User model
 model User {
-  id    Int   @id @default(autoincrement()) 
-  username String
-  password String
-  name  String
-  image String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  gists Gist[]   
-  versions Version[] 
-  edits Edit[]  
+  id         Int      @id @default(autoincrement())
+  username   String
+  password   String
+  name       String
+  image      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  gists      Gist[]
+  versions   Version[]
+  edits      Edit[]
+  actions    UserEditAction[]
+  comments   Comment[]
+  favorites  Favorite[] 
 }
 
 model Gist {
-   id    Int   @id @default(autoincrement())  
+  id    Int   @id @default(autoincrement())  
   title    String
   parentId Int?
   userId   Int
@@ -51,14 +55,73 @@ model Version {
 
 
 model Edit {
-  id    Int   @id @default(autoincrement())  
-  body      String
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) 
-  versionId Int
-  version   Version  @relation(fields: [versionId], references: [id], onDelete: Cascade) 
+  id             Int              @id @default(autoincrement())
+  body           String
+  userId         Int
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  versionId      Int
+  version        Version          @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  flag           Boolean          @default(false)
+  newnessCount   Int              @default(0)
+  importantCount Int              @default(0)
+  qualityCount   Int              @default(0)
+  
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+
+  actions        UserEditAction[]
+  comments       Comment[]      
+  favoritedBy    Favorite[]      
+}
+
+model UserEditAction {
+  id           Int     @id @default(autoincrement())
+  userId       Int
+  editId       Int
+  field        ActionField  
+  actionType   ActionType 
+  createdAt    DateTime @default(now())
+
+  user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  edit         Edit    @relation(fields: [editId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, editId, field, actionType]) // Ensures a user can only perform one action per field in each Edit record
+}
+
+
+model Favorite {
+  id     Int   @id @default(autoincrement())
+  userId Int
+  editId Int
+
+  user   User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  edit   Edit  @relation(fields: [editId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, editId]) // Ensures a user can only favorite an edit once
+}
+
+model Comment {
+  id           Int              @id @default(autoincrement())
+  comment      String
+  userId       Int
+  editId       Int
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  edit         Edit             @relation(fields: [editId], references: [id], onDelete: Cascade)
+}
+
+
+enum ActionField {
+  importantCount
+  qualityCount
+  newnessCount
+}
+
+enum ActionType {
+  increment
+  decrement
 }
 
 

@@ -1,5 +1,4 @@
-
-import {DateTimeTypeDefinition} from 'graphql-scalars'
+import { DateTimeTypeDefinition } from "graphql-scalars";
 
 export const User = `#graphql
 ${DateTimeTypeDefinition}
@@ -15,7 +14,7 @@ type User{
   versions: [Version],
   edits: [Edit]
 }
-`
+`;
 export const Gist = `#graphql
 ${DateTimeTypeDefinition}
 type Gist{
@@ -30,7 +29,7 @@ type Gist{
     versions: [Version],
     gists: [Gist]
 }
-`
+`;
 
 export const Version = `#graphql
 ${DateTimeTypeDefinition}
@@ -45,7 +44,7 @@ type Version{
     gist: Gist!
     edits: [Edit]
 }
-`
+`;
 
 export const Edit = `#graphql
 ${DateTimeTypeDefinition}
@@ -53,14 +52,42 @@ type Edit{
     id: Int!,
     body: String!,
     userId: Int!,
+    user: User!,
+    versionId: Int!,
+    version: Version!,
+    flag: Boolean,
+    newnessCount:   Int,
+    importantCount: Int,
+    qualityCount:   Int,   
+    createdAt: DateTime,
+    updatedAt: DateTime
+}
+`;
+
+export const UserEditAction = `#graphql
+${DateTimeTypeDefinition}
+type UserEditAction{
+    id: Int!,
+    userId: Int!,
+    user: User!,
+    editId: Int!,
+    edit: Edit!,
+    field: String!,
+    actionType: String,
+    createdAt: DateTime,
+}
+`;
+
+export const Comment = `#graphql
+${DateTimeTypeDefinition}
+type Comment{
+    id: Int!,
+    comment: String!,
+    userId: Int!,
+    user: User!,
+    editId: Int!,
     createdAt: DateTime,
     updatedAt: DateTime,
-    user: User!,
-    versionId: Int!
-    version: Version!
+    edit: Edit!
 }
-`
-
-
-
-
+`;

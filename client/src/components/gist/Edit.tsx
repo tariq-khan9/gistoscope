@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { IoSend } from "react-icons/io5";
-import { FaRegSave, FaEdit, FaFlag, FaRegFlag } from "react-icons/fa";
-
-import { BiLike, BiDislike } from "react-icons/bi";
+import { FaRegSave, FaEdit } from "react-icons/fa";
 import { useMutation } from "@apollo/client";
 import {
   CREATE_VERSION,
@@ -14,6 +12,9 @@ import { EditType, VersionType } from "../../services/types";
 import { IoIosArrowDropleft, IoIosArrowDropright } from "react-icons/io";
 import RichEditor from "../dashboard/RichEditor";
 import ReplyModal from "../others/ReplyModal";
+import CountComponent from "../others/CountComponent";
+import FlagComponent from "../others/FlagComponent";
+import FavComponent from "../others/FavComponent";
 
 type EditProps = {
   edits: EditType[];
@@ -47,11 +48,13 @@ const Edit: React.FC<EditProps> = ({
   });
 
   const [currentIndex, setCurrentIndex] = useState(0);
+
   const [content, setContent] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % edits?.length);
+    console.log(edits[currentIndex]);
   };
 
   const handlePrev = () => {
@@ -215,19 +218,30 @@ const Edit: React.FC<EditProps> = ({
           </div>
 
           <div className="flex flex-row text-[14px] justify-center items-center  space-x-6">
-            <div className="flex flex-row justify-center align-middle items-center space-x-5 text-[20px]">
-              <div className="flex flex-row space-x-1 justify-center ">
-                <BiLike />
-                <span className="text-[14px] text-gray-500">56</span>
-              </div>
-
-              <div className="flex flex-row space-x-1 justify-center ">
-                <BiDislike />
-                <span className="text-[14px] text-gray-500">26</span>
-              </div>
-
-              <FaFlag size={16} className="text-red-400" />
-              <FaRegFlag size={16} />
+            <div className="flex flex-row text-sky-900 justify-center align-middle items-center space-x-5 text-[20px]">
+              <CountComponent
+                label="N"
+                count={edits[currentIndex].newnessCount}
+                editId={edits[currentIndex].id}
+                userId={edits[currentIndex].user.id}
+              />
+              <CountComponent
+                label="I"
+                count={edits[currentIndex].importantCount}
+                editId={edits[currentIndex].id}
+                userId={edits[currentIndex].user.id}
+              />
+              <CountComponent
+                label="Q"
+                count={edits[currentIndex].qualityCount}
+                editId={edits[currentIndex].id}
+                userId={edits[currentIndex].user.id}
+              />
+              <FlagComponent
+                flag={edits[currentIndex].flag}
+                editId={edits[currentIndex].id}
+              />
+              <FavComponent />
 
               <button
                 onClick={() => handleCreateVersion()}

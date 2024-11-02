@@ -1,4 +1,4 @@
-import { DateTimeTypeDefinition } from 'graphql-scalars';
+import { DateTimeTypeDefinition } from "graphql-scalars";
 export const AddUserInput = `#graphql
 ${DateTimeTypeDefinition}
 input AddUserInput{
@@ -56,4 +56,33 @@ input AddEditInput{
 
 }
 
+`;
+export const UpdateEditInput = `#graphql
+input UpdateEditInput{
+    newnessCount:   Int,
+    importantCount: Int,
+    qualityCount:   Int,  
+    flag: Boolean,
+    updatedAt: DateTime
+}
+
+`;
+export const AddUserEditActionInput = `#graphql
+input AddUserEditActionInput{
+    userId: Int!,
+    editId: Int!,
+    field: String!,
+    actionType: String,
+    createdAt: DateTime,
+}
+`;
+export const AddCommentInput = `#graphql
+input AddCommentInput{
+    comment: String!,
+    userId: Int!,
+    editId: Int!,
+    createdAt: DateTime,
+    updatedAt: DateTime
+
+}
 `;

@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 export const Mutation = {
     async addUser(_, args) {
@@ -7,7 +7,7 @@ export const Mutation = {
                 username: args.user.username,
                 password: args.user.password,
                 name: args.user.name,
-                image: args.user.image
+                image: args.user.image,
             },
         });
         return user;
@@ -19,7 +19,7 @@ export const Mutation = {
                 username: args.user.username,
                 password: args.user.password,
                 name: args.user.name,
-                image: args.user.image
+                image: args.user.image,
             },
         });
         return user;
@@ -37,7 +37,7 @@ export const Mutation = {
                 title: args.gist.title,
                 parentId: args.gist.parentId,
                 userId: args.gist.userId,
-                views: 0
+                views: 0,
             },
         });
         return gist;
@@ -54,10 +54,16 @@ export const Mutation = {
             data: {
                 point: args.version.point,
                 userId: args.version.userId,
-                gistId: args.version.gistId
+                gistId: args.version.gistId,
             },
         });
         return version;
+    },
+    async deleteVersion(_, args) {
+        const version = await prisma.version.delete({
+            where: { id: args.id },
+        });
+        return { message: "The edit has been deleted", version };
     },
     //--------////////-------- Edit mutations --------///////////------//////////
     async addEdit(_, args) {
@@ -65,7 +71,19 @@ export const Mutation = {
             data: {
                 body: args.edit.body,
                 userId: args.edit.userId,
-                versionId: args.edit.versionId
+                versionId: args.edit.versionId,
+            },
+        });
+        return edit;
+    },
+    async updateEdit(_, args) {
+        const edit = await prisma.edit.update({
+            where: { id: args.id },
+            data: {
+                newnessCount: args.edit.newnessCount,
+                importantCount: args.edit.importantCount,
+                qualityCount: args.edit.qualityCount,
+                flag: args.edit.flag,
             },
         });
         return edit;
@@ -76,10 +94,15 @@ export const Mutation = {
         });
         return { message: "The edit has been deleted", edits };
     },
-    async deleteVersion(_, args) {
-        const version = await prisma.version.delete({
-            where: { id: args.id },
+    async addUserEditAction(_, args) {
+        const action = await prisma.userEditAction.create({
+            data: {
+                userId: args.action.userId,
+                editId: args.action.editId,
+                field: args.action.field,
+                actionType: args.action.actionType,
+            },
         });
-        return { message: "The edit has been deleted", version };
+        return action;
     },
 };

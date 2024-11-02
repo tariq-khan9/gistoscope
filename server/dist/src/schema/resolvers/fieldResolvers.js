@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 export const fieldResolvers = {
     User: {
@@ -17,10 +17,15 @@ export const fieldResolvers = {
         async gists(parent) {
             return await prisma.gist.findMany({
                 where: {
-                    parentId: parent.id
-                }
+                    parentId: parent.id,
+                },
             });
-        }
+        },
+        async user(parent) {
+            return await prisma.user.findUnique({
+                where: { id: parent.userId },
+            });
+        },
     },
     Version: {
         async edits(parent) {

@@ -1,6 +1,5 @@
-import React from 'react';
-import { useQuery, gql } from '@apollo/client';
-import parse from "html-react-parser";
+import React from "react";
+import { useQuery, gql } from "@apollo/client";
 
 // Correcting the query structure
 const GET_GIST = gql`
@@ -29,10 +28,9 @@ const SingleGist = () => {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
- 
-  
+
   return (
-    <div className='p-12 flex flex-col space-y-5'>
+    <div className="p-12 flex flex-col space-y-5">
       <h1>{data?.gist.title}</h1>
       {data?.gist.versions.map((version: any) => (
         <div key={version.id}>

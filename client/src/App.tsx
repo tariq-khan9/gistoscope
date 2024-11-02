@@ -5,8 +5,7 @@ import Index from "./components/dashboard/Index";
 import Home from "./components/Home";
 import Navbar from "./components/Navbar";
 import CreateGist from "./components/dashboard/gist/CreateGist";
-
-import Flow from "./components/subject/Subject";
+import SubjectTree from "./components/subject/SubjectTree";
 
 const App: React.FC = () => {
   return (
@@ -17,7 +16,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/dashboard" element={<Index />} />
-        <Route path="/sub" element={<Flow />} />
+        <Route path="/sub" element={<SubjectTree />} />
         <Route path="/reply/:id" element={<CreateGist />} />
       </Routes>
     </Router>
