@@ -24,6 +24,7 @@ type Gist{
     userId: Int!,
     user: User!,
     views: Int,
+    subjectId: Int!,
     createdAt: DateTime,
     updatedAt: DateTime,
     versions: [Version],
@@ -59,6 +60,7 @@ type Edit{
     newnessCount:   Int,
     importantCount: Int,
     qualityCount:   Int,   
+    comments: [Comment],
     createdAt: DateTime,
     updatedAt: DateTime
 }
@@ -83,11 +85,23 @@ ${DateTimeTypeDefinition}
 type Comment{
     id: Int!,
     comment: String!,
+    parentId: Int,
     userId: Int!,
     user: User!,
     editId: Int!,
     createdAt: DateTime,
     updatedAt: DateTime,
     edit: Edit!
+}
+`;
+
+export const Favorite = `#graphql
+type Favorite{
+    id: Int!,
+    userId: Int!,
+    user: User!,
+    editId: Int!,
+    edit: Edit!
+  
 }
 `;

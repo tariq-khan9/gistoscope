@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 export const Query = {
     users() {
@@ -10,8 +10,8 @@ export const Query = {
     rootGists() {
         return prisma.gist.findMany({
             where: {
-                parentId: null
-            }
+                parentId: null,
+            },
         });
     },
     versions() {
@@ -38,6 +38,19 @@ export const Query = {
     async edit(_, args) {
         return await prisma.edit.findUnique({
             where: { id: args.id },
+        });
+    },
+    async favorite(_, args) {
+        return await prisma.favorite.findFirst({
+            where: {
+                userId: args.userId,
+                editId: args.editId,
+            },
+        });
+    },
+    async comments(_, args) {
+        return await prisma.comment.findMany({
+            where: { editId: args.editId },
         });
     },
 };

@@ -50,5 +50,17 @@ export const fieldResolvers = {
                 where: { id: parent.userId },
             });
         },
+        async comments(parent) {
+            return await prisma.comment.findMany({
+                where: { editId: parent.id },
+            });
+        },
+    },
+    Comment: {
+        async user(parent) {
+            return await prisma.user.findUnique({
+                where: { id: parent.userId },
+            });
+        },
     },
 };

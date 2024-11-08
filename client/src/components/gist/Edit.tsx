@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { IoSend } from "react-icons/io5";
+
 import { FaRegSave, FaEdit } from "react-icons/fa";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   CREATE_VERSION,
   CREATE_EDIT,
   DELETE_VERSION,
   GET_ALL_GISTS,
+  GET_COMMENT,
 } from "../../services/graphql/queriesMutations";
 import { EditType, VersionType } from "../../services/types";
 import { IoIosArrowDropleft, IoIosArrowDropright } from "react-icons/io";
@@ -15,6 +16,9 @@ import ReplyModal from "../others/ReplyModal";
 import CountComponent from "../others/CountComponent";
 import FlagComponent from "../others/FlagComponent";
 import FavComponent from "../others/FavComponent";
+import SingleComment from "../comments/SingleComment";
+import SendComment from "../comments/SendComment";
+import CommentWrapper from "../comments/CommentWrapper";
 
 type EditProps = {
   edits: EditType[];
@@ -26,14 +30,16 @@ type EditProps = {
   versionsLength: number;
 };
 
+const dateFormatter = new Intl.DateTimeFormat(undefined, {
+  dateStyle: "medium",
+});
+
 const Edit: React.FC<EditProps> = ({
   edits,
   versionData,
   newVersionData,
   createVersion,
   setCreateVersion,
-  setVersionIndex,
-  versionsLength,
 }) => {
   const [createNewVersion] = useMutation(CREATE_VERSION, {
     refetchQueries: [{ query: GET_ALL_GISTS }],
@@ -49,6 +55,16 @@ const Edit: React.FC<EditProps> = ({
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  const {
+    data,
+    loading,
+    refetch: refetchComments,
+  } = useQuery(GET_COMMENT, {
+    variables: {
+      editId: edits[currentIndex].id,
+    },
+  });
+
   const [content, setContent] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -59,6 +75,10 @@ const Edit: React.FC<EditProps> = ({
 
   const handlePrev = () => {
     setCurrentIndex((prevIndex) => (prevIndex - 1) % edits?.length);
+  };
+
+  const handleRefetchComments = () => {
+    refetchComments();
   };
 
   const handleCreateVersion = async () => {
@@ -197,7 +217,10 @@ const Edit: React.FC<EditProps> = ({
 
   useEffect(() => {
     setContent(edits[currentIndex]?.body);
+    refetchComments({ editId: edits[currentIndex].id });
   }, [currentIndex]);
+
+  if (loading) return <h1>loading...</h1>;
 
   return (
     <div>
@@ -206,14 +229,15 @@ const Edit: React.FC<EditProps> = ({
           <div className="flex flex-row space-x-4 items-center justify-center">
             <div className="w-10 h-10 bg-slate-200 rounded-full"></div>
             <div className="flex flex-col">
-              <h1
-                onClick={() => console.log(content, edits[currentIndex].body)}
-                className="text-[16px] text-slate-500 uppercase"
-              >
+              <h1 className="text-[16px] text-slate-500 uppercase">
                 {" "}
-                user
+                {edits[currentIndex].user.name}
               </h1>
-              <h2 className="text-[12px] text-slate-600">12-03-2024</h2>
+              <h2 className="text-[12px] text-slate-600">
+                {dateFormatter.format(
+                  Date.parse(edits[currentIndex].createdAt)
+                )}
+              </h2>
             </div>
           </div>
 
@@ -241,7 +265,10 @@ const Edit: React.FC<EditProps> = ({
                 flag={edits[currentIndex].flag}
                 editId={edits[currentIndex].id}
               />
-              <FavComponent />
+              <FavComponent
+                userId={edits[currentIndex].user.id}
+                editId={edits[currentIndex].id}
+              />
 
               <button
                 onClick={() => handleCreateVersion()}
@@ -289,23 +316,21 @@ const Edit: React.FC<EditProps> = ({
       </div>
 
       <div className="comments and reply px-10 py-4">
-        <div className="flex flex-row justify-end space-x-4">
-          <div className="relative w-full">
-            <textarea
-              className="border border-slate-600 w-full rounded-md text-[13px] pr-10" // Add padding to the right for the icon
-              rows={2}
-            />
-            <IoSend className="absolute right-4 top-[20px] transform -translate-y-1/2 text-slate-700 hover:text-amber-600 text-[20px] cursor-pointer" />
-          </div>
-          <div>
-            <button
-              onClick={() => setShowModal(true)}
-              className="  text-slate-600 h-10  px-6 text-[13px] rounded-md border border-slate-600 hover:border-amber-600  hover:bg-white hover:text-amber-600"
-            >
-              Reply
-            </button>
-          </div>
-        </div>
+        <SendComment
+          setShowModal={setShowModal} // show button for reply modal
+          editId={edits[currentIndex].id}
+          userId={edits[currentIndex].user.id}
+          handleRefetchComments={handleRefetchComments}
+        />
+      </div>
+
+      <div className="show all comments  px-10 py-4 max-h-[500px] overflow-y-auto">
+        <CommentWrapper
+          comments={data.comments}
+          userId={edits[currentIndex].user.id}
+          editId={edits[currentIndex].id}
+          handleRefetchComments={handleRefetchComments}
+        />
       </div>
 
       {showModal && (

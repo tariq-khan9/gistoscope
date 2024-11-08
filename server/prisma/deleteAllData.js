@@ -5,12 +5,14 @@ const prisma = new PrismaClient();
 async function resetDatabase() {
   try {
     // Delete all records from the database in reverse order of dependencies
+    await prisma.commentLike.deleteMany();
     await prisma.userEditAction.deleteMany();
     await prisma.favorite.deleteMany();
     await prisma.comment.deleteMany();
     await prisma.edit.deleteMany();
     await prisma.version.deleteMany();
     await prisma.gist.deleteMany();
+    await prisma.subject.deleteMany();
     await prisma.user.deleteMany();
 
     // Reset sequence of IDs for PostgreSQL
@@ -21,6 +23,8 @@ async function resetDatabase() {
     await prisma.$executeRaw`ALTER SEQUENCE "Comment_id_seq" RESTART WITH 1`;
     await prisma.$executeRaw`ALTER SEQUENCE "Favorite_id_seq" RESTART WITH 1`;
     await prisma.$executeRaw`ALTER SEQUENCE "UserEditAction_id_seq" RESTART WITH 1`;
+    await prisma.$executeRaw`ALTER SEQUENCE "Subject_id_seq" RESTART WITH 1`;
+    await prisma.$executeRaw`ALTER SEQUENCE "CommentLike_id_seq" RESTART WITH 1`;
 
     // Create a user
     const user = await prisma.user.create({
@@ -32,15 +36,24 @@ async function resetDatabase() {
       },
     });
 
-    // Create a gist associated with the user
-    const gist = await prisma.gist.create({
+    // Create a subject associated with the user
+    const subject = await prisma.subject.create({
       data: {
-        title: "Sample Gist",
+        title: "Sample Subject",
         userId: user.id,
       },
     });
 
-    // Create a version associated with the gist
+    // Create a gist associated with the subject and user
+    const gist = await prisma.gist.create({
+      data: {
+        title: "Sample Gist",
+        userId: user.id,
+        subjectId: subject.id,
+      },
+    });
+
+    // Create a version associated with the gist and user
     const version = await prisma.version.create({
       data: {
         point: "Initial version point",
@@ -118,16 +131,26 @@ async function resetDatabase() {
       },
     });
 
+    // Add likes on comments
+    const commentLike = await prisma.commentLike.create({
+      data: {
+        userId: user.id,
+        commentId: comment1.id,
+      },
+    });
+
     console.log(
-      "Database reset and seeded with user, gist, version, edits, actions, comments, and favorites:",
+      "Database reset and seeded with user, subject, gist, version, edits, actions, comments, favorites, and comment likes:",
       {
         user,
+        subject,
         gist,
         version,
         edits: [edit1, edit2],
         actions: [action1, action2],
         favorites: [favorite],
         comments: [comment1, comment2],
+        commentLikes: [commentLike],
       }
     );
   } catch (error) {

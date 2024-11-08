@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { Comment } from "../typeDefs/types";
 
 const prisma = new PrismaClient();
 
@@ -51,6 +52,20 @@ export const fieldResolvers = {
   },
 
   Edit: {
+    async user(parent: any) {
+      return await prisma.user.findUnique({
+        where: { id: parent.userId },
+      });
+    },
+
+    async comments(parent: any) {
+      return await prisma.comment.findMany({
+        where: { editId: parent.id },
+      });
+    },
+  },
+
+  Comment: {
     async user(parent: any) {
       return await prisma.user.findUnique({
         where: { id: parent.userId },

@@ -27,6 +27,16 @@ export const GET_ALL_GISTS = gql`
           importantCount
           qualityCount
           flag
+          comments {
+            id
+            comment
+            parentId
+            user {
+              id
+              name
+            }
+            createdAt
+          }
           createdAt
         }
       }
@@ -94,6 +104,50 @@ export const CREATE_ACTION = gql`
       editId
       field
       actionType
+    }
+  }
+`;
+
+export const CREATE_FAVORITE = gql`
+  mutation addFavorite($fav: AddFavoriteInput) {
+    addFavorite(fav: $fav) {
+      userId
+      editId
+    }
+  }
+`;
+
+export const GET_FAVORITE = gql`
+  query Favorite($userId: Int!, $editId: Int!) {
+    favorite(userId: $userId, editId: $editId) {
+      id
+    }
+  }
+`;
+
+export const CREATE_COMMENT = gql`
+  mutation addComment($newComment: AddCommentInput) {
+    addComment(comment: $newComment) {
+      comment
+      parentId
+      userId
+      editId
+    }
+  }
+`;
+
+export const GET_COMMENT = gql`
+  query comments($editId: Int!) {
+    comments(editId: $editId) {
+      id
+      comment
+      parentId
+      user {
+        id
+        name
+      }
+      editId
+      createdAt
     }
   }
 `;

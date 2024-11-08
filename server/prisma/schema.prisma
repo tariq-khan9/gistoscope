@@ -9,6 +9,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Subject {
+  id         Int      @id @default(autoincrement())
+  title      String
+  parentId   Int?     // Allows for nesting (self-referencing relation)
+  userId     Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent     Subject? @relation("SubjectToSubject", fields: [parentId], references: [id], onDelete: SetNull)
+  children   Subject[] @relation("SubjectToSubject") // Allows a subject to have multiple child subjects
+  gists      Gist[]   // Relation to gists in the subject
+
+
+}
+
+
 
 // User model
 model User {
@@ -26,6 +43,10 @@ model User {
   actions    UserEditAction[]
   comments   Comment[]
   favorites  Favorite[] 
+
+  subjects Subject[]
+
+  commentLikes CommentLike[]
 }
 
 model Gist {
@@ -34,10 +55,12 @@ model Gist {
   parentId Int?
   userId   Int
   views    Int?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade) 
   versions Version[] 
+  subjectId  Int      // Required relation to a subject
+  subject    Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 
@@ -103,6 +126,7 @@ model Favorite {
 model Comment {
   id           Int              @id @default(autoincrement())
   comment      String
+  parentId     Int?
   userId       Int
   editId       Int
   createdAt    DateTime         @default(now())
@@ -110,6 +134,21 @@ model Comment {
 
   user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   edit         Edit             @relation(fields: [editId], references: [id], onDelete: Cascade)
+ 
+
+  likes CommentLike[]
+}
+
+model CommentLike {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  commentId  Int
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment    Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, commentId]) // Ensures a user can only like a comment once
 }
 
 

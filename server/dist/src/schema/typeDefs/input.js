@@ -29,6 +29,7 @@ input AddGistInput{
     title: String!,
     parentId: Int,
     userId: Int!,
+    subjectId: Int!,
     createdAt: DateTime,
     updatedAt: DateTime
   
@@ -79,10 +80,17 @@ input AddUserEditActionInput{
 export const AddCommentInput = `#graphql
 input AddCommentInput{
     comment: String!,
+    parentId: Int,
     userId: Int!,
     editId: Int!,
     createdAt: DateTime,
     updatedAt: DateTime
 
+}
+`;
+export const AddFavoriteInput = `#graphql
+input AddFavoriteInput{
+    userId: Int!,
+    editId: Int!,
 }
 `;

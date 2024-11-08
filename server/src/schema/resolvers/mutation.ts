@@ -41,6 +41,7 @@ export const Mutation = {
     const gist = await prisma.gist.create({
       data: {
         title: args.gist.title,
+        subjectId: args.gist.subjectId,
         parentId: args.gist.parentId,
         userId: args.gist.userId,
         views: 0,
@@ -108,6 +109,7 @@ export const Mutation = {
     return { message: "The edit has been deleted", edits };
   },
 
+  //////////------------- other mutations ----------------------////////////////
   async addUserEditAction(_: any, args: any) {
     const action = await prisma.userEditAction.create({
       data: {
@@ -118,5 +120,27 @@ export const Mutation = {
       },
     });
     return action;
+  },
+
+  async addFavorite(_: any, args: any) {
+    const fav = await prisma.favorite.create({
+      data: {
+        userId: args.fav.userId!,
+        editId: args.fav.editId!,
+      },
+    });
+    return fav;
+  },
+
+  async addComment(_: any, args: any) {
+    const newComment = await prisma.comment.create({
+      data: {
+        comment: args.comment.comment,
+        parentId: args.comment.parentId,
+        userId: args.comment.userId!,
+        editId: args.comment.editId!,
+      },
+    });
+    return newComment;
   },
 };

@@ -17,6 +17,10 @@ type VerionProps = {
   versions: VersionType[];
 };
 
+const dateFormatter = new Intl.DateTimeFormat(undefined, {
+  dateStyle: "medium",
+});
+
 const Version: React.FC<VerionProps> = ({ versions }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [createVersion, setCreateVersion] = useState(false);
@@ -85,7 +89,9 @@ const Version: React.FC<VerionProps> = ({ versions }) => {
                 {versions[currentIndex]?.user?.name}
               </h1>
               <h2 className="text-[12px] text-slate-600">
-                {dayjs(versions[currentIndex].createdAt).format("DD-MM-YYYY")}
+                {dateFormatter.format(
+                  Date.parse(versions[currentIndex].createdAt)
+                )}
               </h2>
             </div>
           </div>

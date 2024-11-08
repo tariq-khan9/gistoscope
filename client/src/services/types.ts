@@ -40,6 +40,19 @@ export interface EditType {
   importantCount: number;
   qualityCount: number;
   flag: boolean;
+  comments: CommentType[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CommentType {
+  id: number;
+  comment: string;
+  userId: number;
+  user: UserType;
+  editId: number;
+  parentId: number;
+  replies: CommentType[];
   createdAt: string;
   updatedAt: string;
 }
