@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
 import {
   GET_FAVORITE,
@@ -8,10 +8,11 @@ import { useMutation, useQuery } from "@apollo/client";
 
 interface Props {
   editId: number;
-  userId: number;
 }
 
-const FavComponent = ({ userId, editId }: Props) => {
+const FavComponent = ({ editId }: Props) => {
+  const { user } = useAuth();
+  const userId = user?.id;
   const { data, loading, error } = useQuery(GET_FAVORITE, {
     variables: { userId, editId },
   });
@@ -22,6 +23,7 @@ const FavComponent = ({ userId, editId }: Props) => {
   const favoriteId = data?.favorite?.id;
 
   const handleClick = async () => {
+    if (!user) return;
     try {
       const res = await createFavorite({
         variables: {

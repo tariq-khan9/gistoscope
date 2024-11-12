@@ -1,4 +1,4 @@
-import React from "react";
+import { useAuth } from "../context/AuthContext";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { useMutation } from "@apollo/client";
 import {
@@ -6,29 +6,31 @@ import {
   CREATE_ACTION,
   GET_ALL_GISTS,
 } from "../../services/graphql/queriesMutations";
-import { EditType } from "../../services/types";
 
 interface CountProps {
   label: string;
   count: number;
   editId: number;
-  userId: number;
 }
 
-const CountComponent = ({ label, count, editId, userId }: CountProps) => {
+const CountComponent = ({ label, count, editId }: CountProps) => {
   const [updateEdit] = useMutation(UPDATE_EDIT, {
     refetchQueries: [{ query: GET_ALL_GISTS }],
   });
 
   const [createAction] = useMutation(CREATE_ACTION);
 
+  const { user } = useAuth();
+
   const handleIncrement = async () => {
+    if (!user) return;
+
     if (label == "N") {
       try {
         const actionResponse = await createAction({
           variables: {
             action: {
-              userId: userId,
+              userId: user.id,
               editId: editId,
               field: "newnessCount",
               actionType: "increment",
@@ -56,7 +58,7 @@ const CountComponent = ({ label, count, editId, userId }: CountProps) => {
         const actionResponse = await createAction({
           variables: {
             action: {
-              userId: userId,
+              userId: user.id,
               editId: editId,
               field: "importantCount",
               actionType: "increment",
@@ -84,7 +86,7 @@ const CountComponent = ({ label, count, editId, userId }: CountProps) => {
         const actionResponse = await createAction({
           variables: {
             action: {
-              userId: userId,
+              userId: user.id,
               editId: editId,
               field: "qualityCount",
               actionType: "increment",
@@ -109,12 +111,14 @@ const CountComponent = ({ label, count, editId, userId }: CountProps) => {
   };
 
   const handleDecrement = async () => {
+    if (!user) return;
+
     if (label == "N") {
       try {
         const actionResponse = await createAction({
           variables: {
             action: {
-              userId: userId,
+              userId: user.id,
               editId: editId,
               field: "newnessCount",
               actionType: "decrement",
@@ -142,7 +146,7 @@ const CountComponent = ({ label, count, editId, userId }: CountProps) => {
         const actionResponse = await createAction({
           variables: {
             action: {
-              userId: userId,
+              userId: user.id,
               editId: editId,
               field: "importantCount",
               actionType: "decrement",
@@ -170,7 +174,7 @@ const CountComponent = ({ label, count, editId, userId }: CountProps) => {
         const actionResponse = await createAction({
           variables: {
             action: {
-              userId: userId,
+              userId: user.id,
               editId: editId,
               field: "qualityCount",
               actionType: "decrement",

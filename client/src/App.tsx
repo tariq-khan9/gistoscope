@@ -7,6 +7,10 @@ import Navbar from "./components/Navbar";
 import CreateGist from "./components/dashboard/gist/CreateGist";
 import SubjectTree from "./components/subject/SubjectTree";
 
+import Profile from "./components/auth/Profile";
+import ProtectedRoute from "./components/auth/ProtectedRoutes";
+import Login from "./components/auth/Login";
+
 const App: React.FC = () => {
   return (
     <Router>
@@ -17,7 +21,16 @@ const App: React.FC = () => {
         <Route path="/" element={<Home />} />
         <Route path="/dashboard" element={<Index />} />
         <Route path="/sub" element={<SubjectTree />} />
-        <Route path="/reply/:id" element={<CreateGist />} />
+        <Route path="/login" element={<Login />} />
+
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );

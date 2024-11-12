@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import { useAuth } from "../context/AuthContext";
 import { FaRegSave, FaEdit } from "react-icons/fa";
 import { useMutation, useQuery } from "@apollo/client";
 import {
@@ -67,6 +67,8 @@ const Edit: React.FC<EditProps> = ({
 
   const [content, setContent] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
+
+  const { user } = useAuth();
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % edits?.length);
@@ -247,30 +249,25 @@ const Edit: React.FC<EditProps> = ({
                 label="N"
                 count={edits[currentIndex].newnessCount}
                 editId={edits[currentIndex].id}
-                userId={edits[currentIndex].user.id}
               />
               <CountComponent
                 label="I"
                 count={edits[currentIndex].importantCount}
                 editId={edits[currentIndex].id}
-                userId={edits[currentIndex].user.id}
               />
               <CountComponent
                 label="Q"
                 count={edits[currentIndex].qualityCount}
                 editId={edits[currentIndex].id}
-                userId={edits[currentIndex].user.id}
               />
               <FlagComponent
                 flag={edits[currentIndex].flag}
                 editId={edits[currentIndex].id}
               />
-              <FavComponent
-                userId={edits[currentIndex].user.id}
-                editId={edits[currentIndex].id}
-              />
+              <FavComponent editId={edits[currentIndex].id} />
 
               <button
+                disabled={!user}
                 onClick={() => handleCreateVersion()}
                 className="text-gray-500 hover:text-gray-400"
               >

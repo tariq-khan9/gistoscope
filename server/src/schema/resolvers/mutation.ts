@@ -6,7 +6,8 @@ export const Mutation = {
   async addUser(_: any, args: any) {
     const user = await prisma.user.create({
       data: {
-        username: args.user.username,
+        email: args.user.email,
+        authType: args.user.authType,
         password: args.user.password,
         name: args.user.name,
         image: args.user.image,
@@ -19,7 +20,7 @@ export const Mutation = {
     const user = await prisma.user.update({
       where: { id: args.id },
       data: {
-        username: args.user.username,
+        email: args.user.email,
         password: args.user.password,
         name: args.user.name,
         image: args.user.image,

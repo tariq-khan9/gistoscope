@@ -30,8 +30,11 @@ model Subject {
 // User model
 model User {
   id         Int      @id @default(autoincrement())
-  username   String
-  password   String
+  email   String?   @unique
+  authType   AuthType
+  password   String?
+  resetPasswordToken    String?   // Optional field for reset token
+  resetPasswordExpires  DateTime?
   name       String
   image      String?
   createdAt  DateTime @default(now())
@@ -161,6 +164,12 @@ enum ActionField {
 enum ActionType {
   increment
   decrement
+}
+
+enum AuthType {
+  google
+  github
+  local
 }
 
 

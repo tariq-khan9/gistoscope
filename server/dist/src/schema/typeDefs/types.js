@@ -3,8 +3,9 @@ export const User = `#graphql
 ${DateTimeTypeDefinition}
 type User{
   id: Int!,
-  username: String!,
-  password: String!,
+  email: String!,
+  password: String,
+  authType: String!,
   name: String!,
   image: String,
   createdAt: DateTime,

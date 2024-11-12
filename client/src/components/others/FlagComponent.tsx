@@ -2,6 +2,7 @@ import { FaFlag, FaRegFlag } from "react-icons/fa";
 import { UPDATE_EDIT } from "../../services/graphql/queriesMutations";
 import { useMutation } from "@apollo/client";
 import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 interface FlagComponentProps {
   flag: boolean;
@@ -22,11 +23,14 @@ const FlagComponent = ({ flag, editId }: FlagComponentProps) => {
     },
   });
 
+  const { user } = useAuth();
+
   useEffect(() => {
     setIsFlagged(flag);
   }, [editId]);
 
   const handleClick = async () => {
+    if (!user) return;
     try {
       // Call mutation with the opposite flag value
       const res = await updateEdit({

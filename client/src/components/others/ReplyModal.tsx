@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useMutation, useQuery } from "@apollo/client";
 import {
@@ -43,6 +43,8 @@ const ReplyModal: React.FC<Props> = ({ setShowModal, gist_id }) => {
     notifyOnNetworkStatusChange: true,
   });
 
+  const { user } = useAuth();
+
   const onSubmit: SubmitHandler<FormValues> = async (formData) => {
     console.log("Content:", content);
     if (content.length < 15) {
@@ -58,7 +60,7 @@ const ReplyModal: React.FC<Props> = ({ setShowModal, gist_id }) => {
         variables: {
           gist: {
             title: formData.title,
-            userId: 1,
+            userId: user?.id,
             createdAt: new Date().toISOString(),
             parentId: gist_id,
           },
@@ -74,7 +76,7 @@ const ReplyModal: React.FC<Props> = ({ setShowModal, gist_id }) => {
             version: {
               gistId: new_gist_id,
               point: formData.point,
-              userId: 1,
+              userId: user?.id,
               createdAt: new Date().toISOString(),
             },
           },
@@ -87,7 +89,7 @@ const ReplyModal: React.FC<Props> = ({ setShowModal, gist_id }) => {
               edit: {
                 versionId: new_version_id,
                 body: content,
-                userId: 1,
+                userId: user?.id,
                 createdAt: new Date().toISOString(),
               },
             },

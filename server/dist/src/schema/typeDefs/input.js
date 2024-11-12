@@ -2,8 +2,9 @@ import { DateTimeTypeDefinition } from "graphql-scalars";
 export const AddUserInput = `#graphql
 ${DateTimeTypeDefinition}
 input AddUserInput{
-  username: String!,
-  password: String!,
+  email: String!,
+  password: String,
+  authType: String!,
   name: String!,
   image: String,
   createdAt: DateTime,

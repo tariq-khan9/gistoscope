@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import { IoSend } from "react-icons/io5";
 import { CREATE_COMMENT } from "../../services/graphql/queriesMutations";
 import { useMutation } from "@apollo/client";
@@ -23,7 +24,10 @@ const SendComment = ({
 
   const [content, setContent] = useState("");
 
+  const { user } = useAuth();
+
   const handleClick = async () => {
+    if (!user) return;
     if (content === "") return;
     try {
       const res = await createComment({
@@ -42,6 +46,7 @@ const SendComment = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (!user) return;
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault(); // Prevents a new line in the textarea
       handleClick();
@@ -53,6 +58,7 @@ const SendComment = ({
       <div className="relative w-full">
         <textarea
           value={content}
+          disabled={!user}
           onKeyDown={handleKeyDown}
           onChange={(e) => setContent(e.target.value)}
           className="p-1 px-2 border border-slate-600 w-full rounded-md text-[13px] pr-10" // Add padding to the right for the icon
@@ -65,6 +71,7 @@ const SendComment = ({
       </div>
       <div>
         <button
+          disabled={!user}
           onClick={() => setShowModal(true)}
           className="  text-slate-600 h-12  px-6 text-[13px] rounded-md border border-slate-600 hover:border-amber-600  hover:bg-white hover:text-amber-600"
         >

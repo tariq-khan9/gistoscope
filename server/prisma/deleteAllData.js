@@ -29,7 +29,8 @@ async function resetDatabase() {
     // Create a user
     const user = await prisma.user.create({
       data: {
-        username: "tariq",
+        email: "tariq",
+        authType: "local",
         password: "password123",
         name: "tariq khan",
         image: null, // Optional

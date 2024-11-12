@@ -4,6 +4,9 @@ CREATE TYPE "ActionField" AS ENUM ('importantCount', 'qualityCount', 'newnessCou
 -- CreateEnum
 CREATE TYPE "ActionType" AS ENUM ('increment', 'decrement');
 
+-- CreateEnum
+CREATE TYPE "AuthType" AS ENUM ('google', 'github', 'local');
+
 -- CreateTable
 CREATE TABLE "Subject" (
     "id" SERIAL NOT NULL,
@@ -19,8 +22,11 @@ CREATE TABLE "Subject" (
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
-    "username" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
+    "email" TEXT,
+    "authType" "AuthType" NOT NULL,
+    "password" TEXT,
+    "resetPasswordToken" TEXT,
+    "resetPasswordExpires" TIMESTAMP(3),
     "name" TEXT NOT NULL,
     "image" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -114,6 +120,9 @@ CREATE TABLE "CommentLike" (
 
     CONSTRAINT "CommentLike_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "UserEditAction_userId_editId_field_actionType_key" ON "UserEditAction"("userId", "editId", "field", "actionType");
