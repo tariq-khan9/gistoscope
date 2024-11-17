@@ -10,6 +10,9 @@ import SubjectTree from "./components/subject/SubjectTree";
 import Profile from "./components/auth/Profile";
 import ProtectedRoute from "./components/auth/ProtectedRoutes";
 import Login from "./components/auth/Login";
+import Register from "./components/auth/Register";
+import ForgotPassword from "./components/auth/ForgotPassword";
+import ResetPassword from "./components/auth/ResetPassword";
 
 const App: React.FC = () => {
   return (
@@ -22,6 +25,9 @@ const App: React.FC = () => {
         <Route path="/dashboard" element={<Index />} />
         <Route path="/sub" element={<SubjectTree />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
 
         <Route
           path="/profile"

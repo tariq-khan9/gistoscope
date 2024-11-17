@@ -29,9 +29,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const res = await axios.get("http://localhost:4000/auth/session", {
-          withCredentials: true,
-        });
+        const res = await axios.get(
+          `${process.env.REACT_APP_SERVER_URL}/auth/session`,
+          {
+            withCredentials: true,
+          }
+        );
         setUser(res.data.user);
       } catch (error) {
         setUser(null);
@@ -46,7 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const login = async (email: string, password: string) => {
     try {
       const res = await axios.post(
-        "http://localhost:4000/auth/login-local",
+        `${process.env.REACT_APP_SERVER_URL}/auth/login-local`,
         { email, password },
         { withCredentials: true }
       );
@@ -58,14 +61,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Google login
   const googleLogin = () => {
-    window.open("http://localhost:4000/auth/google", "_self");
+    window.open(`${process.env.REACT_APP_SERVER_URL}/auth/google`, "_self");
   };
 
   // Logout
   const logout = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:4000/auth/logout",
+        `${process.env.REACT_APP_SERVER_URL}/auth/logout`,
         {},
         { withCredentials: true }
       );

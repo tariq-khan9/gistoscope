@@ -22,6 +22,7 @@ export const GET_ALL_GISTS = gql`
           user {
             id
             name
+            image
           }
           newnessCount
           importantCount

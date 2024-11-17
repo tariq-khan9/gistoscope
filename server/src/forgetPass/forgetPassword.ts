@@ -1,5 +1,6 @@
 // auth/forgotPassword.ts
-
+import dotenv from "dotenv";
+dotenv.config();
 import crypto from "crypto";
 import prisma from "../../prisma/prismaClient.js";
 import nodemailer from "nodemailer";
@@ -32,27 +33,35 @@ export const forgotPassword = async (
   });
 
   // Configure nodemailer transporter
+  console.log("user email ", process.env.EMAIL_USER, process.env.EMAIL_PASS);
   const transporter = nodemailer.createTransport({
-    service: "Gmail",
+    service: "gmail",
+    //host: "smtp.gmail.com",
+    //port: 587,
     auth: {
-      user: process.env.EMAIL_USERNAME as string,
-      pass: process.env.EMAIL_PASSWORD as string,
+      user: process.env.EMAIL_USER as string,
+      pass: process.env.EMAIL_PASS as string,
     },
   });
 
   const resetUrl = `${process.env.CLIENT_URL}/reset-password/${token}`;
   const mailOptions = {
     to: email,
-    from: process.env.EMAIL_FROM || "your-email@example.com",
+    from: process.env.EMAIL_FROM || "gistoscope99@gmail.com",
     subject: "Password Reset",
     text: `You are receiving this email because you requested a password reset. Please click the following link to reset your password: ${resetUrl}`,
   };
 
   try {
     await transporter.sendMail(mailOptions);
-    res.status(200).json({ message: "Password reset email sent" });
+    res.status(200).json({
+      message:
+        "An email has been sent to you. please click the link in email to reset password.",
+    });
   } catch (error) {
     console.error("Error sending email:", error);
-    res.status(500).json({ message: "Failed to send reset email" });
+    res
+      .status(500)
+      .json({ message: "Failed to send reset email, please try later." });
   }
 };

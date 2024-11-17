@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import prisma from "../../prisma/prismaClient.js";
 import passport from "passport";
+import bcrypt from "bcrypt";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy } from "passport-local";
 
@@ -72,7 +73,12 @@ passport.use(
         return done(null, false, { message: "Incorrect username." });
       }
 
-      if (user.password !== password) {
+      // if (user.password !== password) {
+      //   return done(null, false, { message: "Incorrect password." });
+      // }
+
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
         return done(null, false, { message: "Incorrect password." });
       }
 

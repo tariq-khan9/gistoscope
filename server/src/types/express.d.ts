@@ -13,6 +13,17 @@ declare global {
 
     interface Request {
       user?: User;
+      file?: {
+        fieldname: string;
+        originalname: string;
+        encoding: string;
+        mimetype: string;
+        size: number;
+        destination: string;
+        filename: string; // The property multer adds to the file object
+        path: string;
+        buffer: Buffer;
+      };
       logout(): void;
       isAuthenticated: () => boolean;
     }

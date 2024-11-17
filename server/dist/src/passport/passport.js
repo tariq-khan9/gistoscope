@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import prisma from "../../prisma/prismaClient.js";
 import passport from "passport";
+import bcrypt from "bcrypt";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy } from "passport-local";
 passport.use(new GoogleStrategy({
@@ -45,7 +46,6 @@ passport.use(new GoogleStrategy({
     }
 }));
 passport.use(new Strategy({ usernameField: "email" }, async function (email, password, done) {
-    console.log(email, password);
     try {
         // Find the user in the PostgreSQL database using Prisma
         const user = await prisma.user.findUnique({
@@ -55,7 +55,11 @@ passport.use(new Strategy({ usernameField: "email" }, async function (email, pas
         if (!user) {
             return done(null, false, { message: "Incorrect username." });
         }
-        if (user.password !== password) {
+        // if (user.password !== password) {
+        //   return done(null, false, { message: "Incorrect password." });
+        // }
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
             return done(null, false, { message: "Incorrect password." });
         }
         // If everything is okay, return the user object

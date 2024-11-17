@@ -1,8 +1,10 @@
 // src/components/Login.tsx
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Login: React.FC = () => {
+  const navigate = useNavigate();
   const { login, googleLogin } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,6 +14,7 @@ const Login: React.FC = () => {
     e.preventDefault();
     try {
       await login(email, password);
+      navigate("/");
     } catch (err) {
       setError("Invalid username or password");
     }
@@ -47,6 +50,15 @@ const Login: React.FC = () => {
 
         <div className="w-1/2 p-2 ">
           <form className="flex flex-col p-4" onSubmit={handleLocalLogin}>
+            <label className="mb-2 text-[12px] text-gray-500">
+              dont have accout?{" "}
+              <a
+                className="text-gray-700 font-semibold italic hover:text-gray-500"
+                href="/register"
+              >
+                register here!
+              </a>
+            </label>
             <label>Username</label>
             <input
               type="text"

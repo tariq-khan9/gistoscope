@@ -7,7 +7,6 @@ router.get("/google/callback", passport.authenticate("google", {
     failureRedirect: "/login/failed",
 }));
 router.post("/login-local", passport.authenticate("local"), (req, res) => {
-    console.log("Request received at /login-local");
     res.status(200).json({
         success: true,
         message: "Login successful",

@@ -229,7 +229,11 @@ const Edit: React.FC<EditProps> = ({
       <div className="w-full flex flex-col justify-between px-10 py-4 rounded-lg">
         <div className="user-arrow-btn  flex flex-row w-full  justify-between">
           <div className="flex flex-row space-x-4 items-center justify-center">
-            <div className="w-10 h-10 bg-slate-200 rounded-full"></div>
+            <img
+              src={edits[currentIndex].user.image}
+              className="h-10 w-10 rounded-full"
+              alt="imgae"
+            />
             <div className="flex flex-col">
               <h1 className="text-[16px] text-slate-500 uppercase">
                 {" "}

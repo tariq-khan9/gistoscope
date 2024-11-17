@@ -1,5 +1,6 @@
 import { Router } from "express";
 import passport from "passport";
+import bcrypt from "bcrypt";
 
 export const router = Router();
 

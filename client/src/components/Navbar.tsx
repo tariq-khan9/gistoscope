@@ -31,11 +31,6 @@ const Navbar: React.FC = () => {
             <a href="/login" className="text-gray-100">
               Login
             </a>
-            <span>|</span>
-            <button onClick={googleLogin} className="">
-              <span className="text-[10px]">with</span>{" "}
-              <span className="text-gray-100">Google</span>
-            </button>
           </div>
         )}
       </div>
