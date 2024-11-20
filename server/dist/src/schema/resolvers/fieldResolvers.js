@@ -8,6 +8,18 @@ export const fieldResolvers = {
             });
         },
     },
+    Subject: {
+        async gists(parent) {
+            return await prisma.gist.findMany({
+                where: { userId: parent.id },
+            });
+        },
+        async user(parent) {
+            return await prisma.user.findUnique({
+                where: { id: parent.userId },
+            });
+        },
+    },
     Gist: {
         async versions(parent) {
             return await prisma.version.findMany({

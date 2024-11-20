@@ -33,6 +33,7 @@ passport.use(
             data: {
               email: email,
               authType: "google",
+              userType: "member",
               name: name,
               image: image,
             },

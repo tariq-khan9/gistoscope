@@ -30,12 +30,13 @@ model Subject {
 // User model
 model User {
   id         Int      @id @default(autoincrement())
-  email   String?   @unique
-  authType   AuthType
+  email   String   @unique
   password   String?
+  name       String
+  authType   AuthType
+  userType  UserType
   resetPasswordToken    String?   // Optional field for reset token
   resetPasswordExpires  DateTime?
-  name       String
   image      String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -170,6 +171,12 @@ enum AuthType {
   google
   github
   local
+}
+
+enum UserType {
+  admin
+  moderator
+  member
 }
 
 

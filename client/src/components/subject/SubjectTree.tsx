@@ -1,210 +1,124 @@
 import React, { useState } from "react";
-import Tree, { RawNodeDatum, TreeNodeDatum } from "react-d3-tree";
-import { HierarchyPointNode } from "d3-hierarchy";
-import AddSubjectModal from "./AddSubjectModal";
-import "./tree.css";
+import { Tooltip } from "react-tooltip";
+import "react-tooltip/dist/react-tooltip.css";
+import { Tree, TreeNode } from "react-organizational-chart";
+import {
+  GET_ALL_SUBJECTS,
+  UPDATE_SUBJECT,
+} from "../../services/graphql/queriesMutations";
+import { useQuery, useMutation } from "@apollo/client";
+import { Modal, Button } from "antd";
+import { DndProvider, useDrag, useDrop } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import DraggableTreeNode from "./DraggableTreeNode";
+import { CgDisplayGrid } from "react-icons/cg";
+import { RiFunctionAddLine, RiDeleteBin6Line } from "react-icons/ri";
 
-interface CustomNodeProps {
-  nodeDatum: TreeNodeDatum;
-  toggleNode: () => void;
+import { BiEdit } from "react-icons/bi";
+import ActionButtons from "./ModalActionButtons";
+import NodeActionModal from "./NodeActionModal";
+
+interface Subject {
+  id: number;
+  title: string;
+  parentId: number | null;
 }
 
-const initial_tree = [
-  {
-    name: "Child 1",
-    children: [
-      {
-        name: "Child 1.1",
-        children: [
-          { name: "Child 1.1.1", children: [] },
-          { name: "Child 1.1.2", children: [] },
-        ],
-      },
-      {
-        name: "Child 1.2",
-        children: [
-          { name: "Child 1.2.1", children: [] },
-          { name: "Child 1.2.2", children: [] },
-        ],
-      },
-    ],
-  },
-  {
-    name: "Child 2",
-    children: [
-      {
-        name: "Child 2.1",
-        children: [
-          { name: "Child 2.1.1", children: [] },
-          { name: "Child 2.1.2", children: [] },
-        ],
-      },
-      {
-        name: "Child 2.2",
-        children: [
-          {
-            name: "Long text example for node 2.2.1 to test spacing",
-            children: [],
-          },
-          {
-            name: "Another long text example for node 2.2.2 to test spacing",
-            children: [],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    name: "Child 3",
-    children: [
-      {
-        name: "Child 3.1",
-        children: [
-          { name: "Child 3.1.1", children: [] },
-          { name: "Child 3.1.2", children: [] },
-        ],
-      },
-      {
-        name: "Child 3.2",
-        children: [
-          { name: "Child 3.2.1", children: [] },
-          { name: "Child 3.2.2", children: [] },
-        ],
-      },
-    ],
-  },
-];
-
-const SubjectTree = () => {
-  const [tree, setTree] = useState<RawNodeDatum | RawNodeDatum[]>({
-    name: "Subject",
-    children: initial_tree,
+const SubjectTree: React.FC = () => {
+  const { data, loading } = useQuery(GET_ALL_SUBJECTS);
+  const [updateSubjectParent] = useMutation(UPDATE_SUBJECT, {
+    refetchQueries: [{ query: GET_ALL_SUBJECTS }],
+    awaitRefetchQueries: true,
   });
-  const [node, setNode] = useState<
-    undefined | HierarchyPointNode<TreeNodeDatum>
-  >(undefined);
+  const [selectedNode, setSelectedNode] = useState<Subject | null>(null);
+  const [modalAction, setModalAction] = useState<string>("none");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
 
-  const handleSubmit = (subject: string) => {
-    if (node) {
-      const new_tree = bfs(node.data.name, tree, subject);
-      if (new_tree) {
-        setTree(new_tree);
-      }
+  if (loading) return <h1>Loading...</h1>;
+
+  const handleNodeClick = (event: React.MouseEvent, node: Subject): void => {
+    event.stopPropagation(); // Prevent event bubbling
+    setModalAction("none");
+    const modalWidth = 300; // Modal width (same as defined in the modal `width` prop)
+    const modalHeight = 200; // Approximate modal height
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    let x = event.clientX;
+    let y = event.clientY;
+
+    // Adjust position if the modal goes out of bounds
+    if (x + modalWidth > viewportWidth) {
+      x = viewportWidth - modalWidth - 20; // 10px margin from the edge
+    }
+    if (y + modalHeight > viewportHeight) {
+      y = viewportHeight - modalHeight - 20; // 10px margin from the edge
+    }
+
+    setSelectedNode(node);
+    setModalPosition({ x, y });
+    setModalVisible(true);
+  };
+
+  const handleModalClose = () => {
+    setModalVisible(false);
+    setSelectedNode(null);
+  };
+
+  const handleDrop = async (draggedId: number, targetId: number) => {
+    if (draggedId === targetId) return;
+    try {
+      await updateSubjectParent({
+        variables: { id: draggedId, subject: { parentId: targetId } },
+      });
+    } catch (err) {
+      console.error("Error updating parent ID:", err);
     }
   };
 
-  const handleRightClick = (
-    event: React.MouseEvent,
-    nodeDatum: TreeNodeDatum
-  ) => {
-    event.preventDefault(); // Prevent the default right-click menu
-    setNode({ data: nodeDatum } as HierarchyPointNode<TreeNodeDatum>);
+  const renderTreeNodes = (parentId: number | null): JSX.Element[] => {
+    return data.subjects
+      .filter((node: Subject) => node.parentId === parentId)
+      .map((node: Subject) => (
+        <TreeNode
+          key={node.id}
+          label={
+            <DraggableTreeNode
+              onClick={(e, clickedNode) => handleNodeClick(e, clickedNode)}
+              node={node}
+              onDrop={handleDrop}
+            />
+          }
+        >
+          {renderTreeNodes(node.id)}
+        </TreeNode>
+      ));
   };
 
-  interface CustomNodeProps {
-    nodeDatum: TreeNodeDatum;
-    toggleNode: () => void;
-  }
-
-  const renderCustomNode = ({ nodeDatum, toggleNode }: CustomNodeProps) => (
-    <g>
-      {/* Rectangle Node */}
-      <rect
-        width={calculateWidth(nodeDatum.name)}
-        height={30}
-        x={-calculateWidth(nodeDatum.name) / 2} // Center the rectangle
-        y={-15}
-        fill="white"
-        stroke="#457696"
-        strokeWidth="1"
-        rx="5"
-        onClick={toggleNode} // Left-click to toggle children
-        onContextMenu={(event) => handleRightClick(event, nodeDatum)} // Right-click to open modal
-      />
-      <text
-        fill="#0a0909" // Text color
-        textAnchor="middle"
-        alignmentBaseline="central"
-        x="0"
-        y="0"
-        stroke="none"
-        style={{
-          pointerEvents: "none",
-          color: "black",
-          fontFamily: "Roboto, sans-serif",
-          fontWeight: 400,
-          fontSize: 12,
-        }}
-      >
-        {nodeDatum.name}
-      </text>
-    </g>
-  );
+  // all functions for modal i.e add, delete, update subject or create gist for subject
 
   return (
-    <div className="m-12 w-full h-[600px]">
+    <DndProvider backend={HTML5Backend}>
       <Tree
-        data={tree}
-        rootNodeClassName="node__root"
-        branchNodeClassName="node__branch"
-        leafNodeClassName="node__leaf"
-        pathFunc="diagonal"
-        orientation="vertical"
-        //  initialDepth={1}
-        transitionDuration={300}
-        enableLegacyTransitions={true}
-        separation={{ siblings: 2, nonSiblings: 2 }}
-        renderCustomNodeElement={renderCustomNode}
-        translate={{
-          x: 700,
-          y: 100,
-        }}
+        lineWidth={"2px"}
+        lineColor={"gray"}
+        lineBorderRadius={"10px"}
+        label={<div>Subjects</div>}
+      >
+        {renderTreeNodes(null)}
+      </Tree>
+
+      {/*----------------------- Modal for Node Actions -------------------------------*/}
+      <NodeActionModal
+        visible={modalVisible}
+        position={modalPosition}
+        nodeTitle={selectedNode?.title || null}
+        onClose={handleModalClose}
+        setModalAction={setModalAction}
       />
-      {/* Modal to Add New Node */}
-      <AddSubjectModal
-        isOpen={Boolean(node)}
-        setIsOpen={setNode}
-        title="Add New Item"
-        onAdd={handleSubmit}
-      />
-    </div>
+    </DndProvider>
   );
-};
-
-// Function to traverse and add a child node to a specific parent node by name
-function bfs(
-  name: string,
-  tree: RawNodeDatum | RawNodeDatum[],
-  new_node_name: string
-) {
-  const queue: RawNodeDatum[] = [];
-  queue.unshift(tree as RawNodeDatum);
-
-  while (queue.length > 0) {
-    const current_node = queue.pop();
-    if (current_node && current_node.name === name) {
-      current_node.children = current_node.children || [];
-      current_node.children.push({
-        name: new_node_name,
-        children: [],
-      });
-      return { ...tree };
-    }
-
-    if (current_node?.children) {
-      current_node.children.forEach((child) => queue.unshift(child));
-    }
-  }
-}
-
-const calculateWidth = (text: string) => {
-  const canvas = document.createElement("canvas");
-  const context = canvas.getContext("2d");
-  if (context) {
-    context.font = "12px Arial"; // Match the font style you are using in the text
-    return Math.max(100, context.measureText(text).width + 10); // Add padding
-  }
-  return 100; // Default width if canvas context is not available
 };
 
 export default SubjectTree;

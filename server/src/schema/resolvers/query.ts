@@ -1,11 +1,16 @@
 import { PrismaClient } from "@prisma/client";
 import { Edit } from "../typeDefs/types";
+import { subscribe } from "diagnostics_channel";
 
 const prisma = new PrismaClient();
 
 export const Query = {
   users() {
     return prisma.user.findMany();
+  },
+
+  subjects() {
+    return prisma.subject.findMany();
   },
 
   gists() {
@@ -30,6 +35,12 @@ export const Query = {
 
   async user(_: any, args: any) {
     return await prisma.user.findUnique({
+      where: { id: args.id },
+    });
+  },
+
+  async subject(_: any, args: any) {
+    return await prisma.subject.findUnique({
       where: { id: args.id },
     });
   },

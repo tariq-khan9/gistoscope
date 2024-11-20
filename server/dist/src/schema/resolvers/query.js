@@ -4,6 +4,9 @@ export const Query = {
     users() {
         return prisma.user.findMany();
     },
+    subjects() {
+        return prisma.subject.findMany();
+    },
     gists() {
         return prisma.gist.findMany();
     },
@@ -22,6 +25,11 @@ export const Query = {
     },
     async user(_, args) {
         return await prisma.user.findUnique({
+            where: { id: args.id },
+        });
+    },
+    async subject(_, args) {
+        return await prisma.subject.findUnique({
             where: { id: args.id },
         });
     },

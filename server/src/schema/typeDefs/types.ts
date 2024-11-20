@@ -7,6 +7,7 @@ type User{
   email: String!,
   password: String,
   authType: String!,
+  userType: String!,
   name: String!,
   image: String,
   createdAt: DateTime,
@@ -16,6 +17,22 @@ type User{
   edits: [Edit]
 }
 `;
+
+export const Subject = `#graphql
+${DateTimeTypeDefinition}
+type Subject{
+  id: Int!,
+  title: String!,
+  parentId: Int,
+  userId: Int!,
+  createdAt: DateTime,
+  updatedAt: DateTime,
+  user: User,
+  gists: [Gist],
+  subjects: [Subject]
+}
+`;
+
 export const Gist = `#graphql
 ${DateTimeTypeDefinition}
 type Gist{

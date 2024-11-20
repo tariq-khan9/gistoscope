@@ -1,5 +1,6 @@
 import {
   User,
+  Subject,
   Gist,
   Version,
   Edit,
@@ -13,6 +14,8 @@ import {
   AddUserEditActionInput,
   UpdateUserInput,
   AddUserInput,
+  AddSubjectInput,
+  UpdateSubjectInput,
   AddGistInput,
   AddVersionInput,
   AddFavoriteInput,
@@ -21,6 +24,7 @@ import {
 
 export const typeDefs = `#graphql
 ${User}
+${Subject}
 ${Gist}
 ${Version}
 ${Edit}
@@ -33,6 +37,9 @@ ${UpdateEditInput}
 ${AddUserEditActionInput}
 ${UpdateUserInput}
 ${AddUserInput}
+
+${AddSubjectInput}
+${UpdateSubjectInput}
 
 ${AddGistInput}
 
@@ -48,6 +55,8 @@ type Query{
     users: [User]
     user(id: Int!): User
 
+    subjects: [Subject]
+    subject: Subject
     gists: [Gist]
     rootGists: [Gist]
     gist(id: Int!): Gist
@@ -66,6 +75,9 @@ type Mutation{
     addUser(user: AddUserInput): User
     updateUser(id: Int!, user: UpdateUserInput): User
     deleteUser(id: Int!): User
+
+    addSubject(subject: AddSubjectInput): Subject
+    updateSubject(id: Int!, subject: UpdateSubjectInput): Subject
 
     addGist(gist: AddGistInput): Gist
     deleteGist(id: Int!): Gist

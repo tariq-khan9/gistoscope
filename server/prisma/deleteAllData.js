@@ -26,49 +26,101 @@ async function resetDatabase() {
     await prisma.$executeRaw`ALTER SEQUENCE "Subject_id_seq" RESTART WITH 1`;
     await prisma.$executeRaw`ALTER SEQUENCE "CommentLike_id_seq" RESTART WITH 1`;
 
-    // Create a user
-    const user = await prisma.user.create({
+    // Create users
+    const admin = await prisma.user.create({
       data: {
-        email: "tariq",
+        email: "admin@example.com",
         authType: "local",
-        password: "password123",
-        name: "tariq khan",
-        image: null, // Optional
+        password: "adminpassword",
+        name: "Admin User",
+        userType: "admin",
+        image: null,
       },
     });
 
-    // Create a subject associated with the user
-    const subject = await prisma.subject.create({
+    const member1 = await prisma.user.create({
       data: {
-        title: "Sample Subject",
-        userId: user.id,
+        email: "member1@example.com",
+        authType: "local",
+        password: "memberpassword1",
+        name: "Member One",
+        userType: "member",
+        image: null,
       },
     });
 
-    // Create a gist associated with the subject and user
+    const member2 = await prisma.user.create({
+      data: {
+        email: "member2@example.com",
+        authType: "local",
+        password: "memberpassword2",
+        name: "Member Two",
+        userType: "member",
+        image: null,
+      },
+    });
+
+    // Create top-level subjects
+    const topSubjects = await Promise.all(
+      ["Subject 1", "Subject 2", "Subject 3"].map((title) =>
+        prisma.subject.create({
+          data: { title, userId: admin.id },
+        })
+      )
+    );
+
+    // Create sub-subjects for each top-level subject
+    for (const topSubject of topSubjects) {
+      const subSubjects = await Promise.all(
+        ["Sub 1", "Sub 2", "Sub 3"].map((subTitle) =>
+          prisma.subject.create({
+            data: {
+              title: `${topSubject.title} - ${subTitle}`,
+              parentId: topSubject.id,
+              userId: admin.id,
+            },
+          })
+        )
+      );
+
+      // Create sub-sub-subjects for each sub-subject
+      for (const subSubject of subSubjects) {
+        await Promise.all(
+          ["Sub-Sub 1", "Sub-Sub 2"].map((subSubTitle) =>
+            prisma.subject.create({
+              data: {
+                title: `${subSubject.title} - ${subSubTitle}`,
+                parentId: subSubject.id,
+                userId: admin.id,
+              },
+            })
+          )
+        );
+      }
+    }
+
+    // The remaining part of the seed logic stays the same
     const gist = await prisma.gist.create({
       data: {
         title: "Sample Gist",
-        userId: user.id,
-        subjectId: subject.id,
+        userId: admin.id,
+        subjectId: topSubjects[0].id,
       },
     });
 
-    // Create a version associated with the gist and user
     const version = await prisma.version.create({
       data: {
         point: "Initial version point",
         gistId: gist.id,
-        userId: user.id,
+        userId: admin.id,
       },
     });
 
-    // Create two edits for the version
     const edit1 = await prisma.edit.create({
       data: {
         body: "First edit for the version",
         versionId: version.id,
-        userId: user.id,
+        userId: admin.id,
         flag: false,
         newnessCount: 2,
         importantCount: 3,
@@ -80,7 +132,7 @@ async function resetDatabase() {
       data: {
         body: "Second edit for the version",
         versionId: version.id,
-        userId: user.id,
+        userId: admin.id,
         flag: true,
         newnessCount: 1,
         importantCount: 2,
@@ -88,10 +140,9 @@ async function resetDatabase() {
       },
     });
 
-    // Add user actions on edits
     const action1 = await prisma.userEditAction.create({
       data: {
-        userId: user.id,
+        userId: member1.id,
         editId: edit1.id,
         field: "qualityCount",
         actionType: "increment",
@@ -100,26 +151,24 @@ async function resetDatabase() {
 
     const action2 = await prisma.userEditAction.create({
       data: {
-        userId: user.id,
+        userId: member2.id,
         editId: edit2.id,
         field: "importantCount",
         actionType: "increment",
       },
     });
 
-    // Add a favorite for an edit
     const favorite = await prisma.favorite.create({
       data: {
-        userId: user.id,
+        userId: member1.id,
         editId: edit1.id,
       },
     });
 
-    // Add comments on an edit
     const comment1 = await prisma.comment.create({
       data: {
         comment: "This is a comment on the first edit.",
-        userId: user.id,
+        userId: member1.id,
         editId: edit1.id,
       },
     });
@@ -127,33 +176,19 @@ async function resetDatabase() {
     const comment2 = await prisma.comment.create({
       data: {
         comment: "Another comment on the first edit.",
-        userId: user.id,
+        userId: member2.id,
         editId: edit1.id,
       },
     });
 
-    // Add likes on comments
     const commentLike = await prisma.commentLike.create({
       data: {
-        userId: user.id,
+        userId: member1.id,
         commentId: comment1.id,
       },
     });
 
-    console.log(
-      "Database reset and seeded with user, subject, gist, version, edits, actions, comments, favorites, and comment likes:",
-      {
-        user,
-        subject,
-        gist,
-        version,
-        edits: [edit1, edit2],
-        actions: [action1, action2],
-        favorites: [favorite],
-        comments: [comment1, comment2],
-        commentLikes: [commentLike],
-      }
-    );
+    console.log("Database reset and seeded successfully.");
   } catch (error) {
     console.error("Error resetting database:", error);
   } finally {

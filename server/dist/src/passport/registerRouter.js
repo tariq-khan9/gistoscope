@@ -30,6 +30,7 @@ registerRouter.post("/", upload.single("image"), async (req, res) => {
                 name,
                 email,
                 password: hashedPassword,
+                userType: "member",
                 authType: "local",
                 image: imageUrl,
             },

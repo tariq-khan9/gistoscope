@@ -8,6 +8,17 @@ export interface UserType {
   versions: VersionType[];
   edits: EditType[];
 }
+
+export interface SubjectType {
+  id: number;
+  title: string;
+  parentId: number | null;
+  userId: number;
+  createdAt: string;
+  gists: GistType[];
+  user: UserType;
+}
+
 export interface GistType {
   id: number;
   title: string;

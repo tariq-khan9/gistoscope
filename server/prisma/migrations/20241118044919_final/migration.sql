@@ -7,6 +7,9 @@ CREATE TYPE "ActionType" AS ENUM ('increment', 'decrement');
 -- CreateEnum
 CREATE TYPE "AuthType" AS ENUM ('google', 'github', 'local');
 
+-- CreateEnum
+CREATE TYPE "UserType" AS ENUM ('admin', 'moderator', 'member');
+
 -- CreateTable
 CREATE TABLE "Subject" (
     "id" SERIAL NOT NULL,
@@ -22,12 +25,13 @@ CREATE TABLE "Subject" (
 -- CreateTable
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
-    "email" TEXT,
-    "authType" "AuthType" NOT NULL,
+    "email" TEXT NOT NULL,
     "password" TEXT,
+    "name" TEXT NOT NULL,
+    "authType" "AuthType" NOT NULL,
+    "userType" "UserType" NOT NULL,
     "resetPasswordToken" TEXT,
     "resetPasswordExpires" TIMESTAMP(3),
-    "name" TEXT NOT NULL,
     "image" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,

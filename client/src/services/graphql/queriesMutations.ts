@@ -62,6 +62,44 @@ export const DELETE_GIST = gql`
   }
 `;
 
+export const GET_ALL_SUBJECTS = gql`
+  query Subjects {
+    subjects {
+      id
+      title
+      parentId
+    }
+  }
+`;
+
+export const CREATE_SUBJECT = gql`
+  mutation AddSubject($subject: AddSubjectInput) {
+    addSubject(subject: $subject) {
+      id
+      title
+      parentId
+      userId
+    }
+  }
+`;
+
+export const UPDATE_SUBJECT = gql`
+  mutation updateSubject($id: Int!, $subject: UpdateSubjectInput!) {
+    updateSubject(id: $id, subject: $subject) {
+      title
+      parentId
+    }
+  }
+`;
+
+export const DELETE_SUBJECT = gql`
+  mutation deleteSubject($id: Int!) {
+    deleteSubject(id: $id) {
+      id
+    }
+  }
+`;
+
 export const CREATE_VERSION = gql`
   mutation AddVersion($version: AddVersionInput) {
     addVersion(version: $version) {

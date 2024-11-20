@@ -5,6 +5,7 @@ input AddUserInput{
   email: String!,
   password: String,
   authType: String!,
+  userType: String!,
   name: String!,
   image: String,
   createdAt: DateTime,
@@ -15,13 +16,32 @@ input AddUserInput{
 export const UpdateUserInput = `#graphql
 ${DateTimeTypeDefinition}
 input UpdateUserInput{
-  username: String,
+  email: String,
   password: String,
   name: String,
   image: String,
   createdAt: DateTime,
   updatedAt: DateTime
   
+}
+`;
+export const AddSubjectInput = `#graphql
+${DateTimeTypeDefinition}
+input AddSubjectInput{
+  title: String!,
+  parentId: Int,
+  userId: Int!,
+  createdAt: DateTime,
+  updatedAt: DateTime,
+}
+`;
+export const UpdateSubjectInput = `#graphql
+${DateTimeTypeDefinition}
+input UpdateSubjectInput{
+  title: String,
+  parentId: Int,
+  createdAt: DateTime,
+  updatedAt: DateTime,
 }
 `;
 export const AddGistInput = `#graphql

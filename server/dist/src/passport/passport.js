@@ -26,6 +26,7 @@ passport.use(new GoogleStrategy({
                 data: {
                     email: email,
                     authType: "google",
+                    userType: "member",
                     name: name,
                     image: image,
                 },

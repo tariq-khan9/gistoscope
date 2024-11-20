@@ -7,6 +7,7 @@ export const Mutation = {
     const user = await prisma.user.create({
       data: {
         email: args.user.email,
+        userType: args.user.userType,
         authType: args.user.authType,
         password: args.user.password,
         name: args.user.name,
@@ -34,6 +35,30 @@ export const Mutation = {
       where: { id: args.id },
     });
     return user;
+  },
+
+  // ------//////////------   subject muations -------////////////----------
+
+  async addSubject(_: any, args: any) {
+    const subject = await prisma.subject.create({
+      data: {
+        title: args.subject.title,
+        parentId: args.subject.parentId,
+        userId: args.subject.userId,
+      },
+    });
+    return subject;
+  },
+
+  async updateSubject(_: any, args: any) {
+    const subject = await prisma.subject.update({
+      where: { id: args.id },
+      data: {
+        title: args.subject.title,
+        parentId: args.subject.parentId,
+      },
+    });
+    return subject;
   },
 
   // ------//////////------   gist muations -------////////////----------
