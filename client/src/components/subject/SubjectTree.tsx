@@ -7,15 +7,9 @@ import {
   UPDATE_SUBJECT,
 } from "../../services/graphql/queriesMutations";
 import { useQuery, useMutation } from "@apollo/client";
-import { Modal, Button } from "antd";
-import { DndProvider, useDrag, useDrop } from "react-dnd";
+import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import DraggableTreeNode from "./DraggableTreeNode";
-import { CgDisplayGrid } from "react-icons/cg";
-import { RiFunctionAddLine, RiDeleteBin6Line } from "react-icons/ri";
-
-import { BiEdit } from "react-icons/bi";
-import ActionButtons from "./ModalActionButtons";
 import NodeActionModal from "./NodeActionModal";
 
 interface Subject {
@@ -104,7 +98,7 @@ const SubjectTree: React.FC = () => {
         lineWidth={"2px"}
         lineColor={"gray"}
         lineBorderRadius={"10px"}
-        label={<div>Subjects</div>}
+        label={<div>SUBJECTS</div>}
       >
         {renderTreeNodes(null)}
       </Tree>
@@ -113,9 +107,10 @@ const SubjectTree: React.FC = () => {
       <NodeActionModal
         visible={modalVisible}
         position={modalPosition}
-        nodeTitle={selectedNode?.title || null}
+        node={selectedNode || null}
         onClose={handleModalClose}
         setModalAction={setModalAction}
+        modalAction={modalAction}
       />
     </DndProvider>
   );

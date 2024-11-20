@@ -30,7 +30,7 @@ const ModalActionButtons = () => {
   ];
 
   return (
-    <div className="flex flex-row w-40 text-[25px] space-x-6 pt-6">
+    <div className="flex flex-row w-40 text-[15px] space-x-6 pt-6">
       {actions.map(({ action, icon, tooltip }) => {
         const isDisabled = modalAction !== "none" && modalAction !== action;
 

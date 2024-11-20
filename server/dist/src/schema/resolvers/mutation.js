@@ -53,6 +53,12 @@ export const Mutation = {
         });
         return subject;
     },
+    async deleteSubject(_, args) {
+        const subject = await prisma.subject.delete({
+            where: { id: args.id },
+        });
+        return subject;
+    },
     // ------//////////------   gist muations -------////////////----------
     async addGist(_, args) {
         const gist = await prisma.gist.create({

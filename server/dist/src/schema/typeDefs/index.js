@@ -56,6 +56,7 @@ type Mutation{
 
     addSubject(subject: AddSubjectInput): Subject
     updateSubject(id: Int!, subject: UpdateSubjectInput): Subject
+    deleteSubject(id: Int!): Subject
 
     addGist(gist: AddGistInput): Gist
     deleteGist(id: Int!): Gist
