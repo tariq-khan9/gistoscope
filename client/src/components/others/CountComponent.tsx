@@ -1,4 +1,4 @@
-import { useAuth } from "../context/AuthContext";
+import { useGlobalContext } from "../context/AuthContext";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { useMutation } from "@apollo/client";
 import {
@@ -20,7 +20,7 @@ const CountComponent = ({ label, count, editId }: CountProps) => {
 
   const [createAction] = useMutation(CREATE_ACTION);
 
-  const { user } = useAuth();
+  const { user } = useGlobalContext();
 
   const handleIncrement = async () => {
     if (!user) return;

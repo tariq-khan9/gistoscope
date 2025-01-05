@@ -3,12 +3,13 @@ import { useParams } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Modal, Form, Input, Button, notification } from "antd";
 import { useMutation } from "@apollo/client";
+
 import {
   CREATE_GIST,
   CREATE_VERSION,
   CREATE_EDIT,
 } from "../../services/graphql/queriesMutations";
-import RichEditor from "./../dashboard/RichEditor";
+import RichEditor from "../dashboard/RichEditor";
 
 type FormValues = {
   title: string;
@@ -16,11 +17,11 @@ type FormValues = {
   body: string;
 };
 
-const CreateGistModal: React.FC<{ visible: boolean; onClose: () => void }> = ({
-  visible,
-  onClose,
-}) => {
-  const { id: replyParentId } = useParams();
+const CreateGistModal: React.FC<{
+  visible: boolean;
+  onClose: () => void;
+  subjectId: number | undefined;
+}> = ({ visible, onClose, subjectId }) => {
   const [form] = Form.useForm();
   const [content, setContent] = useState<string>("");
   const [createGist] = useMutation(CREATE_GIST);
@@ -36,7 +37,7 @@ const CreateGistModal: React.FC<{ visible: boolean; onClose: () => void }> = ({
             title: values.title,
             userId: 1,
             createdAt: new Date().toISOString(),
-            parentId: replyParentId ? parseInt(replyParentId) : null,
+            subjectId: subjectId,
           },
         },
       });
@@ -129,7 +130,7 @@ const CreateGistModal: React.FC<{ visible: boolean; onClose: () => void }> = ({
 
         <Form.Item label="Body">
           <RichEditor
-            editable={true}
+            editable={false}
             content={content}
             setContent={setContent}
           />

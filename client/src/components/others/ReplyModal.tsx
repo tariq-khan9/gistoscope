@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useGlobalContext } from "../context/AuthContext";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useMutation, useQuery } from "@apollo/client";
 import {
@@ -43,7 +43,7 @@ const ReplyModal: React.FC<Props> = ({ setShowModal, gist_id }) => {
     notifyOnNetworkStatusChange: true,
   });
 
-  const { user } = useAuth();
+  const { user } = useGlobalContext();
 
   const onSubmit: SubmitHandler<FormValues> = async (formData) => {
     console.log("Content:", content);

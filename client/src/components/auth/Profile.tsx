@@ -1,9 +1,9 @@
 // src/components/Profile.tsx
 import React from "react";
-import { useAuth } from "../context/AuthContext";
+import { useGlobalContext } from "../context/AuthContext";
 
 const Profile: React.FC = () => {
-  const { user } = useAuth();
+  const { user } = useGlobalContext();
 
   if (!user) {
     return <p>Please log in to view your profile.</p>;

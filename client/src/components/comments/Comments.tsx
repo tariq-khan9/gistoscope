@@ -1,6 +1,6 @@
-import { CommentType } from "../../services/types";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import SingleComment from "./SingleComment";
+import { CommentType } from "../../services/types";
 
 interface Props {
   comment: CommentType;
@@ -16,13 +16,25 @@ export default function Comment({
   handleRefetchComments,
 }: Props) {
   const [childrenShow, setChildrenShow] = useState(false);
-  const children = comment.replies;
+  const [childrenLoaded, setChildrenLoaded] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {}, [children]);
+  const handleToggleChildren = async () => {
+    setChildrenShow((prev) => !prev);
+    if (!childrenLoaded) {
+      setLoading(true);
+
+      // Simulate an async fetch for replies (if needed).
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulates a delay.
+
+      setChildrenLoaded(true);
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex flex-col">
-      <SingleComment
+      {/* <SingleComment
         comment={comment}
         userId={userId}
         editId={editId}
@@ -31,30 +43,34 @@ export default function Comment({
         handleRefetchComments={handleRefetchComments}
       />
 
-      {children && children.length > 0 && (
-        <div
-          className={`flex flex-row w-full justify-between ${
-            childrenShow ? "flex" : "hidden"
-          }`}
-        >
+      {comment.replies && comment.replies.length > 0 && (
+        <div className="flex flex-col mt-4">
           <button
-            onClick={() => setChildrenShow(!childrenShow)}
-            className={`mt-4 border-l-[2px] hover:border-gray-500 border-gray-300`}
-            aria-label="Hide Replies"
-          />
-          <div className="w-full ml-4">
-            {children.map((childComment) => (
-              <Comment
-                key={childComment.id}
-                comment={childComment}
-                userId={userId}
-                editId={editId}
-                handleRefetchComments={handleRefetchComments}
-              />
-            ))}
-          </div>
+            onClick={handleToggleChildren}
+            className="text-blue-500 hover:underline"
+          >
+            {childrenShow
+              ? "Hide Replies"
+              : loading
+              ? "Loading..."
+              : `Show Replies (${comment.replies.length})`}
+          </button>
+
+          {childrenShow && childrenLoaded && (
+            <div className="ml-4 border-l pl-4">
+              {comment.replies.map((childComment) => (
+                <Comment
+                  key={childComment.id}
+                  comment={childComment}
+                  userId={userId}
+                  editId={editId}
+                  handleRefetchComments={handleRefetchComments}
+                />
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      )} */}
     </div>
   );
 }

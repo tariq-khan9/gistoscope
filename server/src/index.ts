@@ -18,7 +18,9 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions)); // Use CORS middleware
-app.use(express.json());
+// Set JSON body parser with an increased payload limit
+app.use(express.json({ limit: "20mb" }));
+app.use(express.urlencoded({ limit: "20mb", extended: true })); // For form data
 
 const apolloServer = new ApolloServer({
   typeDefs,

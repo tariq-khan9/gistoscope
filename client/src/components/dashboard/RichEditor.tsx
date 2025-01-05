@@ -1,3 +1,4 @@
+import { BorderHorizontalOutlined, BorderOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -24,23 +25,22 @@ export default function RichEditor({
       ["clean"],
     ],
   };
-  const formats = undefined;
-  // [
-  //   "header",
-  //   "bold",
-  //   "italic",
-  //   "underline",
-  //   "strike",
-  //   "blockquote",
-  //   "list",
-  //   "bullet",
-  //    "color",
-  //    "background",
-  //   "link",
-  //   "image",
-  //   "video",
-  //   "code-block",
-  // ];
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "color",
+    "background",
+    "link",
+    "image",
+    "video",
+    "code-block",
+  ];
 
   return (
     <div className="flex bg-white mt-1 w-full rounded-md">

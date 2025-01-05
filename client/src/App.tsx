@@ -19,13 +19,14 @@ import SubjectTree from "./components/subject/SubjectTree";
 const App: React.FC = () => {
   return (
     <Router>
-      <div className="mb-[60px]">
+      <div className="mb-[60px] fixed top-0 left-0 w-full bg-white z-50 shadow-md">
         <Navbar />
       </div>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/dashboard" element={<Index />} />
-        <Route path="/sub" element={<SubjectTree />} />
+        <Route path="/subjects" element={<SubjectTree />} />
+        <Route path="/subjects/:id" element={<Home />} />
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

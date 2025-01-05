@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useGlobalContext } from "../context/AuthContext";
 import { IoSend } from "react-icons/io5";
 import { CREATE_COMMENT } from "../../services/graphql/queriesMutations";
 import { useMutation } from "@apollo/client";
@@ -24,7 +24,7 @@ const SendComment = ({
 
   const [content, setContent] = useState("");
 
-  const { user } = useAuth();
+  const { user } = useGlobalContext();
 
   const handleClick = async () => {
     if (!user) return;

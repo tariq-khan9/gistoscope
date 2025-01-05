@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
-import { FaRegSave, FaEdit } from "react-icons/fa";
+import { useGlobalContext } from "../context/AuthContext";
+import { FaRegSave } from "react-icons/fa";
 import { useMutation, useQuery } from "@apollo/client";
 import {
   CREATE_VERSION,
@@ -11,14 +11,15 @@ import {
 } from "../../services/graphql/queriesMutations";
 import { EditType, VersionType } from "../../services/types";
 import { IoIosArrowDropleft, IoIosArrowDropright } from "react-icons/io";
+import { CgCloseR } from "react-icons/cg";
 import RichEditor from "../dashboard/RichEditor";
 import ReplyModal from "../others/ReplyModal";
 import CountComponent from "../others/CountComponent";
 import FlagComponent from "../others/FlagComponent";
 import FavComponent from "../others/FavComponent";
-import SingleComment from "../comments/SingleComment";
 import SendComment from "../comments/SendComment";
 import CommentWrapper from "../comments/CommentWrapper";
+import { Modal } from "antd";
 
 type EditProps = {
   edits: EditType[];
@@ -34,13 +35,7 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
   dateStyle: "medium",
 });
 
-const Edit: React.FC<EditProps> = ({
-  edits,
-  versionData,
-  newVersionData,
-  createVersion,
-  setCreateVersion,
-}) => {
+const Edit: React.FC<EditProps> = ({ edits, versionData, newVersionData }) => {
   const [createNewVersion] = useMutation(CREATE_VERSION, {
     refetchQueries: [{ query: GET_ALL_GISTS }],
   });
@@ -55,24 +50,26 @@ const Edit: React.FC<EditProps> = ({
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  const [fetchComments, setFetchComments] = useState(false);
+
   const {
     data,
     loading,
     refetch: refetchComments,
   } = useQuery(GET_COMMENT, {
-    variables: {
-      editId: edits[currentIndex].id,
-    },
+    skip: !fetchComments, // Skip query execution if fetchComments is false
+    variables: { editId: edits[currentIndex].id },
   });
 
   const [content, setContent] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [richtextEdit, setRichtextEdit] = useState<boolean>(false);
 
-  const { user } = useAuth();
+  const { user, textareaEdit, setTextareaEdit } = useGlobalContext();
 
   const handleNext = () => {
+    setFetchComments(false);
     setCurrentIndex((prevIndex) => (prevIndex + 1) % edits?.length);
-    console.log(edits[currentIndex]);
   };
 
   const handlePrev = () => {
@@ -83,14 +80,26 @@ const Edit: React.FC<EditProps> = ({
     refetchComments();
   };
 
+  const handleLoadComments = () => {
+    setFetchComments(true);
+  };
+
   const handleCreateVersion = async () => {
-    setCreateVersion(!createVersion);
+    if (!newVersionData) {
+      Modal.error({
+        title: "Validation Error",
+        content: "Version cannot be empty",
+      });
+      return;
+    }
     //---------if  nothing has changed ---------------------
     if (
       newVersionData === versionData.point &&
       content === edits[currentIndex]?.body
     ) {
       console.log("nothing has changeed");
+      setRichtextEdit(false);
+      setTextareaEdit(false);
       return;
     }
     //---------if only version has changed ---------------------
@@ -137,6 +146,7 @@ const Edit: React.FC<EditProps> = ({
         }
       }
       console.log("if only version has changed");
+      setTextareaEdit(false);
       return;
     }
 
@@ -185,6 +195,8 @@ const Edit: React.FC<EditProps> = ({
         }
       }
       console.log("if both have changed");
+      setRichtextEdit(false);
+      setTextareaEdit(false);
       return;
     }
 
@@ -194,7 +206,7 @@ const Edit: React.FC<EditProps> = ({
       newVersionData === versionData.point &&
       content !== edits[currentIndex]?.body
     ) {
-      if (createVersion) {
+      if (richtextEdit) {
         await createEdit({
           variables: {
             edit: {
@@ -208,8 +220,16 @@ const Edit: React.FC<EditProps> = ({
       }
 
       console.log("only edit has changeed");
+      setRichtextEdit(false);
       return;
     }
+  };
+
+  const handleCancelCreateVersion = () => {
+    newVersionData = versionData.point;
+    setContent(edits[currentIndex].body);
+    setRichtextEdit(false);
+    setTextareaEdit(false);
   };
 
   useEffect(() => {
@@ -219,7 +239,6 @@ const Edit: React.FC<EditProps> = ({
 
   useEffect(() => {
     setContent(edits[currentIndex]?.body);
-    refetchComments({ editId: edits[currentIndex].id });
   }, [currentIndex]);
 
   if (loading) return <h1>loading...</h1>;
@@ -249,6 +268,31 @@ const Edit: React.FC<EditProps> = ({
 
           <div className="flex flex-row text-[14px] justify-center items-center  space-x-6">
             <div className="flex flex-row text-sky-900 justify-center align-middle items-center space-x-5 text-[20px]">
+              {(richtextEdit || textareaEdit) && user && (
+                <div className="flex justify-center">
+                  <button
+                    disabled={!user}
+                    onClick={() => handleCancelCreateVersion()}
+                    className="text-gray-500 hover:text-gray-400 pt-[2px]"
+                  >
+                    {<CgCloseR />}
+                  </button>
+                  <button
+                    disabled={!user}
+                    onClick={() => handleCreateVersion()}
+                    className="text-gray-500 hover:text-gray-400 ml-4"
+                  >
+                    {<FaRegSave />}
+                  </button>
+                </div>
+              )}
+
+              <FlagComponent
+                flag={edits[currentIndex].flag}
+                editId={edits[currentIndex].id}
+              />
+              <FavComponent editId={edits[currentIndex].id} />
+
               <CountComponent
                 label="N"
                 count={edits[currentIndex].newnessCount}
@@ -264,19 +308,6 @@ const Edit: React.FC<EditProps> = ({
                 count={edits[currentIndex].qualityCount}
                 editId={edits[currentIndex].id}
               />
-              <FlagComponent
-                flag={edits[currentIndex].flag}
-                editId={edits[currentIndex].id}
-              />
-              <FavComponent editId={edits[currentIndex].id} />
-
-              <button
-                disabled={!user}
-                onClick={() => handleCreateVersion()}
-                className="text-gray-500 hover:text-gray-400"
-              >
-                {!createVersion ? <FaEdit size={20} /> : <FaRegSave />}
-              </button>
             </div>
 
             <div className="nav-buttons flex flex-row text-[14px] justify-center items-center  space-x-[4px]">
@@ -306,12 +337,16 @@ const Edit: React.FC<EditProps> = ({
         </div>
 
         {edits?.length > 0 && (
-          <div className="mt-4">
+          <div
+            className="mt-4"
+            onDoubleClick={() => user && setRichtextEdit(true)}
+          >
             <RichEditor
-              editable={!createVersion}
+              editable={!richtextEdit}
               content={content}
               setContent={setContent}
             />
+            ;
           </div>
         )}
       </div>
@@ -323,15 +358,18 @@ const Edit: React.FC<EditProps> = ({
           userId={edits[currentIndex].user.id}
           handleRefetchComments={handleRefetchComments}
         />
+        <button onClick={handleLoadComments}>Load Comments</button>
       </div>
 
       <div className="show all comments  px-10 py-4 max-h-[500px] overflow-y-auto">
-        <CommentWrapper
-          comments={data.comments}
-          userId={edits[currentIndex].user.id}
-          editId={edits[currentIndex].id}
-          handleRefetchComments={handleRefetchComments}
-        />
+        {fetchComments && (
+          <CommentWrapper
+            comments={data.comments}
+            userId={edits[currentIndex].user.id}
+            editId={edits[currentIndex].id}
+            handleRefetchComments={handleRefetchComments}
+          />
+        )}
       </div>
 
       {showModal && (

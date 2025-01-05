@@ -16,15 +16,22 @@ async function resetDatabase() {
     await prisma.user.deleteMany();
 
     // Reset sequence of IDs for PostgreSQL
-    await prisma.$executeRaw`ALTER SEQUENCE "User_id_seq" RESTART WITH 1`;
-    await prisma.$executeRaw`ALTER SEQUENCE "Gist_id_seq" RESTART WITH 1`;
-    await prisma.$executeRaw`ALTER SEQUENCE "Version_id_seq" RESTART WITH 1`;
-    await prisma.$executeRaw`ALTER SEQUENCE "Edit_id_seq" RESTART WITH 1`;
-    await prisma.$executeRaw`ALTER SEQUENCE "Comment_id_seq" RESTART WITH 1`;
-    await prisma.$executeRaw`ALTER SEQUENCE "Favorite_id_seq" RESTART WITH 1`;
-    await prisma.$executeRaw`ALTER SEQUENCE "UserEditAction_id_seq" RESTART WITH 1`;
-    await prisma.$executeRaw`ALTER SEQUENCE "Subject_id_seq" RESTART WITH 1`;
-    await prisma.$executeRaw`ALTER SEQUENCE "CommentLike_id_seq" RESTART WITH 1`;
+    const sequences = [
+      "User",
+      "Gist",
+      "Version",
+      "Edit",
+      "Comment",
+      "Favorite",
+      "UserEditAction",
+      "Subject",
+      "CommentLike",
+    ];
+    for (const seq of sequences) {
+      await prisma.$executeRawUnsafe(
+        `ALTER SEQUENCE "${seq}_id_seq" RESTART WITH 1`
+      );
+    }
 
     // Create users
     const admin = await prisma.user.create({
@@ -99,94 +106,44 @@ async function resetDatabase() {
       }
     }
 
-    // The remaining part of the seed logic stays the same
-    const gist = await prisma.gist.create({
-      data: {
-        title: "Sample Gist",
-        userId: admin.id,
-        subjectId: topSubjects[0].id,
-      },
-    });
+    // Create Gists, Versions, and Edits
+    for (const [gistIndex, gistTitle] of [
+      "First Gist",
+      "Second Gist",
+      "Third Gist",
+    ].entries()) {
+      const gist = await prisma.gist.create({
+        data: {
+          title: gistTitle,
+          userId: admin.id,
+          subjectId: topSubjects[gistIndex % topSubjects.length].id, // Assign a subject cyclically
+        },
+      });
 
-    const version = await prisma.version.create({
-      data: {
-        point: "Initial version point",
-        gistId: gist.id,
-        userId: admin.id,
-      },
-    });
+      for (let versionIndex = 1; versionIndex <= 3; versionIndex++) {
+        const version = await prisma.version.create({
+          data: {
+            point: `${gistTitle} Version ${versionIndex}`,
+            gistId: gist.id,
+            userId: admin.id,
+          },
+        });
 
-    const edit1 = await prisma.edit.create({
-      data: {
-        body: "First edit for the version",
-        versionId: version.id,
-        userId: admin.id,
-        flag: false,
-        newnessCount: 2,
-        importantCount: 3,
-        qualityCount: 4,
-      },
-    });
-
-    const edit2 = await prisma.edit.create({
-      data: {
-        body: "Second edit for the version",
-        versionId: version.id,
-        userId: admin.id,
-        flag: true,
-        newnessCount: 1,
-        importantCount: 2,
-        qualityCount: 3,
-      },
-    });
-
-    const action1 = await prisma.userEditAction.create({
-      data: {
-        userId: member1.id,
-        editId: edit1.id,
-        field: "qualityCount",
-        actionType: "increment",
-      },
-    });
-
-    const action2 = await prisma.userEditAction.create({
-      data: {
-        userId: member2.id,
-        editId: edit2.id,
-        field: "importantCount",
-        actionType: "increment",
-      },
-    });
-
-    const favorite = await prisma.favorite.create({
-      data: {
-        userId: member1.id,
-        editId: edit1.id,
-      },
-    });
-
-    const comment1 = await prisma.comment.create({
-      data: {
-        comment: "This is a comment on the first edit.",
-        userId: member1.id,
-        editId: edit1.id,
-      },
-    });
-
-    const comment2 = await prisma.comment.create({
-      data: {
-        comment: "Another comment on the first edit.",
-        userId: member2.id,
-        editId: edit1.id,
-      },
-    });
-
-    const commentLike = await prisma.commentLike.create({
-      data: {
-        userId: member1.id,
-        commentId: comment1.id,
-      },
-    });
+        for (let editIndex = 1; editIndex <= 2; editIndex++) {
+          await prisma.edit.create({
+            data: {
+              body: `${gistTitle} Version ${versionIndex} Edit ${editIndex}`,
+              versionId: version.id,
+              userId: admin.id,
+              flag: false,
+              newnessCount: 0,
+              importantCount: 0,
+              qualityCount: 0,
+            },
+          });
+        }
+      }
+    }
 
     console.log("Database reset and seeded successfully.");
   } catch (error) {

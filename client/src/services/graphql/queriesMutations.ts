@@ -45,6 +45,51 @@ export const GET_ALL_GISTS = gql`
   }
 `;
 
+export const GET_GISTS_BY_SUBJECT = gql`
+  query GistsBySubject($subjectId: Int!) {
+    gistsBySubject(subjectId: $subjectId) {
+      id
+      title
+      parentId
+      createdAt
+      versions {
+        id
+        point
+        gistId
+        user {
+          name
+        }
+        createdAt
+        edits {
+          id
+          body
+          versionId
+          user {
+            id
+            name
+            image
+          }
+          newnessCount
+          importantCount
+          qualityCount
+          flag
+          comments {
+            id
+            comment
+            parentId
+            user {
+              id
+              name
+            }
+            createdAt
+          }
+          createdAt
+        }
+      }
+    }
+  }
+`;
+
 export const CREATE_GIST = gql`
   mutation AddGist($gist: AddGistInput) {
     addGist(gist: $gist) {

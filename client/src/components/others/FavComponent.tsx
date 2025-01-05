@@ -1,4 +1,4 @@
-import { useAuth } from "../context/AuthContext";
+import { useGlobalContext } from "../context/AuthContext";
 import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
 import {
   GET_FAVORITE,
@@ -11,21 +11,24 @@ interface Props {
 }
 
 const FavComponent = ({ editId }: Props) => {
-  const { user } = useAuth();
+  const { user } = useGlobalContext();
   const userId = user?.id;
+
   const { data, loading, error } = useQuery(GET_FAVORITE, {
     variables: { userId, editId },
+    skip: !user, // Skip the query if the user is not logged in
   });
 
   const [createFavorite] = useMutation(CREATE_FAVORITE, {
     refetchQueries: [{ query: GET_FAVORITE, variables: { userId, editId } }],
   });
+
   const favoriteId = data?.favorite?.id;
 
   const handleClick = async () => {
     if (!user) return;
     try {
-      const res = await createFavorite({
+      await createFavorite({
         variables: {
           fav: {
             userId: userId,
@@ -33,13 +36,18 @@ const FavComponent = ({ editId }: Props) => {
           },
         },
       });
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error adding favorite:", error);
+    }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    // Render a placeholder icon during loading
+    return <MdFavoriteBorder color="gray" />;
+  }
 
   return favoriteId ? (
-    <MdFavorite color="red" />
+    <MdFavorite color="red" onClick={handleClick} />
   ) : (
     <MdFavoriteBorder onClick={handleClick} />
   );

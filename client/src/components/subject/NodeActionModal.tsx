@@ -10,6 +10,7 @@ import {
   UPDATE_SUBJECT,
   DELETE_SUBJECT,
   GET_ALL_SUBJECTS,
+  GET_GISTS_BY_SUBJECT,
 } from "../../services/graphql/queriesMutations";
 import { useQuery, useMutation } from "@apollo/client";
 import CreateGistModal from "./CreateGistModal";
@@ -169,6 +170,7 @@ const NodeActionModal: React.FC<NodeActionModalProps> = ({
       <CreateGistModal
         visible={createGistModalVisible}
         onClose={() => setCreateGistModalVisible(false)}
+        subjectId={node?.id}
       />
 
       <input

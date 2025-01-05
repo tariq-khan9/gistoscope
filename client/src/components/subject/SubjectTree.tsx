@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Tooltip } from "react-tooltip";
+import { useNavigate } from "react-router-dom";
 import "react-tooltip/dist/react-tooltip.css";
 import { Tree, TreeNode } from "react-organizational-chart";
 import {
@@ -28,6 +28,8 @@ const SubjectTree: React.FC = () => {
   const [modalAction, setModalAction] = useState<string>("none");
   const [modalVisible, setModalVisible] = useState(false);
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
+
+  const navigate = useNavigate();
 
   if (loading) return <h1>Loading...</h1>;
 
@@ -94,14 +96,16 @@ const SubjectTree: React.FC = () => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <Tree
-        lineWidth={"2px"}
-        lineColor={"gray"}
-        lineBorderRadius={"10px"}
-        label={<div>SUBJECTS</div>}
-      >
-        {renderTreeNodes(null)}
-      </Tree>
+      <div className="mt-20">
+        <Tree
+          lineWidth={"2px"}
+          lineColor={"gray"}
+          lineBorderRadius={"10px"}
+          label={<div>SUBJECTS</div>}
+        >
+          {renderTreeNodes(null)}
+        </Tree>
+      </div>
 
       {/*----------------------- Modal for Node Actions -------------------------------*/}
       <NodeActionModal

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { CommentType } from "../../services/types";
 import Comments from "./Comments";
 import { groupCommentsByParent } from "../../services/utils/groupCommentsByParent";
@@ -17,16 +17,22 @@ export default function CommentWrapper({
   editId,
   handleRefetchComments,
 }: Props) {
-  const groupedComments = groupCommentsByParent(comments);
+  const groupedComments = useMemo(
+    () => groupCommentsByParent(comments),
+    [comments]
+  );
 
-  const sortedComments = sortCommentsByCreatedAt(groupedComments);
+  const sortedComments = useMemo(
+    () => sortCommentsByCreatedAt(groupedComments),
+    [groupedComments]
+  );
 
   return (
     <>
       {sortedComments && sortedComments.length > 0 ? (
         sortedComments.map((comment, index) => (
           <Comments
-            key={index}
+            key={comment.id}
             comment={comment}
             userId={userId}
             editId={editId}

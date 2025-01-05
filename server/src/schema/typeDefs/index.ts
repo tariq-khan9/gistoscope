@@ -57,8 +57,10 @@ type Query{
 
     subjects: [Subject]
     subject: Subject
+
     gists: [Gist]
     rootGists: [Gist]
+    gistsBySubject(subjectId: Int!): [Gist]
     gist(id: Int!): Gist
 
     versions: [Version]

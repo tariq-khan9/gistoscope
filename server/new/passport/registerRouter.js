@@ -1,8 +1,9 @@
 import express from "express";
 import multer from "multer";
 import path from "path";
+import bcrypt from "bcrypt";
 import prisma from "../../prisma/prismaClient.js"; // Make sure this is correctly imported to interact with your database
-const routeRegister = express.Router();
+const registerRouter = express.Router();
 const uploadDir = path.join(process.cwd(), "uploads/profile");
 // Configure multer for storing images in 'uploads/profile'
 const storage = multer.diskStorage({
@@ -16,16 +17,20 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 // User registration route
-routeRegister.post("/", upload.single("image"), async (req, res) => {
+registerRouter.post("/", upload.single("image"), async (req, res) => {
     try {
         const { name, email, password } = req.body;
-        const imageUrl = req.file ? `/uploads/profile/${req.file.filename}` : null;
+        const imageUrl = req.file
+            ? `${process.env.SERVER_URL}/uploads/profile/${req.file.filename}`
+            : null;
+        const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
         // Save user data along with image URL in the database
         const user = await prisma.user.create({
             data: {
                 name,
                 email,
-                password,
+                password: hashedPassword,
+                userType: "member",
                 authType: "local",
                 image: imageUrl,
             },
@@ -37,4 +42,4 @@ routeRegister.post("/", upload.single("image"), async (req, res) => {
         res.status(500).json({ message: "Error registering user" });
     }
 });
-export default routeRegister;
+export default registerRouter;

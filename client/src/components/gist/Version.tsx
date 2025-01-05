@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
+import { useGlobalContext } from "../context/AuthContext";
 import { GistType, VersionType } from "../../services/types";
 import { useMutation } from "@apollo/client";
 import dayjs from "dayjs";
@@ -12,6 +13,7 @@ import { IoIosArrowDropright, IoIosArrowDropleft } from "react-icons/io";
 import BoxWithShadows from "../others/BoxWithShadow";
 import TextareaWithLimit from "../others/TextareaWithLimit";
 import ReplyModal from "../others/ReplyModal";
+import Navigation from "../others/Navigation";
 
 type VerionProps = {
   versions: VersionType[];
@@ -22,10 +24,12 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
 });
 
 const Version: React.FC<VerionProps> = ({ versions }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const { user, versionIndex, setVersionIndex, textareaEdit, setTextareaEdit } =
+    useGlobalContext();
+  const [vcurrentIndex, setversionIndex] = useState(0);
   const [createVersion, setCreateVersion] = useState(false);
   const [newVersionData, setNewVersionData] = useState<string>(
-    versions[currentIndex]?.point
+    versions[versionIndex]?.point
   );
 
   const [createNewVersion] = useMutation(CREATE_VERSION, {
@@ -33,17 +37,21 @@ const Version: React.FC<VerionProps> = ({ versions }) => {
   });
 
   const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % versions?.length);
+    setVersionIndex((prevIndex) => (prevIndex + 1) % versions?.length);
   };
 
   const handlePrev = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1) % versions?.length);
+    setVersionIndex((prevIndex) => (prevIndex - 1) % versions?.length);
+  };
+
+  const handleIndexChange = (newIndex: number) => {
+    setVersionIndex(newIndex);
   };
 
   const handleCreateVersion = async () => {
     setCreateVersion(!createVersion);
 
-    if (newVersionData === versions[currentIndex].point) {
+    if (newVersionData === versions[versionIndex].point) {
       return;
     }
 
@@ -52,7 +60,7 @@ const Version: React.FC<VerionProps> = ({ versions }) => {
         await createNewVersion({
           variables: {
             version: {
-              gistId: versions[currentIndex].gistId,
+              gistId: versions[versionIndex].gistId,
               point: newVersionData,
               userId: 1,
               createdAt: new Date().toISOString(),
@@ -60,7 +68,7 @@ const Version: React.FC<VerionProps> = ({ versions }) => {
             },
           },
         }).then(() => {
-          setCurrentIndex(versions.length - 1);
+          setVersionIndex(versions.length - 1);
         });
       } catch (e) {
         console.log("new version not created.", e);
@@ -70,9 +78,9 @@ const Version: React.FC<VerionProps> = ({ versions }) => {
 
   useEffect(() => {
     if (!createVersion) {
-      setNewVersionData(versions[currentIndex].point);
+      setNewVersionData(versions[versionIndex].point);
     }
-  }, [versions, currentIndex, createVersion]);
+  }, [versions, versionIndex, createVersion]);
 
   if (!versions || versions.length === 0) {
     return <div>No Versions available.</div>;
@@ -81,75 +89,69 @@ const Version: React.FC<VerionProps> = ({ versions }) => {
   return (
     <div className="flex flex-col space-y-4 p-4 rounded-lg">
       <div className="w-full h-32 p-2 flex flex-row justify-start px-4 space-x-4">
-        <div className="user-arrow-btn  flex flex-col justify-start space-y-8 border-r border-amber-400 pr-4">
+        <div className="w-[75%] ">
+          {versions?.length > 0 && (
+            <div className="text-[14px] w-full ">
+              {textareaEdit ? (
+                // <textarea className=' w-full h-full outline-none border-none focus:ring-0 focus:outline-none' value={newVersionData} onChange={(e)=>setNewVersionData(e.target.value)} />
+                <TextareaWithLimit
+                  maxChars={300}
+                  text={newVersionData}
+                  setText={setNewVersionData}
+                />
+              ) : (
+                <h1
+                  onDoubleClick={() => user && setTextareaEdit(true)}
+                  className="text-slate-800 text-[16px]"
+                >
+                  {newVersionData}
+                </h1>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/*--------------------- textarea end here ----------------------------------*/}
+
+        <div className="user-arrow-btn w-[25%]  flex flex-col justify-start space-y-8 border-l border-amber-400 pl-4">
           <div className="flex flex-row space-x-4 items-center">
             <div className="w-10 h-10 bg-gray-100 rounded-full"></div>
             <div className="flex flex-col">
               <h1 className="text-[16px] text-slate-700 uppercase">
-                {versions[currentIndex]?.user?.name}
+                {versions[versionIndex]?.user?.name}
               </h1>
               <h2 className="text-[12px] text-slate-600">
                 {dateFormatter.format(
-                  Date.parse(versions[currentIndex].createdAt)
+                  Date.parse(versions[versionIndex].createdAt)
                 )}
               </h2>
             </div>
           </div>
-
-          <div className="flex flex-row text-[14px]">
-            <button
-              className="arrow"
-              disabled={currentIndex === 0 || createVersion}
-              onClick={handlePrev}
-            >
-              <IoIosArrowDropleft className="arrow" />
-            </button>
-
-            <div className="flex flex-row mx-[2px] font-semibold justify-center text-slate-500 ">
-              {currentIndex + 1}
-              <h1 className="mx-[4px]">/</h1>
-              {versions?.length}
-            </div>
-
-            <button
-              className="arrow"
-              disabled={currentIndex + 1 === versions?.length || createVersion}
-              onClick={handleNext}
-            >
-              <IoIosArrowDropright className="arrow" />
-            </button>
+          <div className="flex justify-end">
+            <Navigation
+              currentIndex={versionIndex}
+              totalItems={versions.length}
+              onChangeIndex={handleIndexChange}
+              handlePrev={handlePrev}
+              handleNext={handleNext}
+            />
           </div>
         </div>
-
-        {versions?.length > 0 && (
-          <div className="text-[14px] w-full ">
-            {createVersion ? (
-              // <textarea className=' w-full h-full outline-none border-none focus:ring-0 focus:outline-none' value={newVersionData} onChange={(e)=>setNewVersionData(e.target.value)} />
-              <TextareaWithLimit
-                maxChars={300}
-                text={newVersionData}
-                setText={setNewVersionData}
-              />
-            ) : (
-              <h1 className="text-slate-800 text-[16px]">{newVersionData}</h1>
-            )}
-          </div>
-        )}
       </div>
-
+      {/*---------------------------------- edit section starts here -------------------------------------*/}
       <BoxWithShadows
-        visible={versions[currentIndex].edits.length > 1}
+        visible={versions[versionIndex]?.edits?.length > 1}
         boxBorder="border-slate-300"
         colorShades={["bg-white", "bg-slate-100", "bg-slate-50"]}
       >
-        {versions[currentIndex].edits && (
+        {versions[versionIndex].edits && (
           <Edit
-            edits={versions[currentIndex].edits}
-            versionData={versions[currentIndex]}
+            edits={versions[versionIndex].edits}
+            versionData={versions[versionIndex]}
             newVersionData={newVersionData}
             createVersion={createVersion}
             setCreateVersion={setCreateVersion}
-            setVersionIndex={setCurrentIndex}
+            setVersionIndex={setversionIndex}
             versionsLength={versions.length}
           />
         )}

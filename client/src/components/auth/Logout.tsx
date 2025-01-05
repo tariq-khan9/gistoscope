@@ -1,9 +1,9 @@
 // src/components/Logout.tsx
 import React from "react";
-import { useAuth } from "../context/AuthContext";
+import { useGlobalContext } from "../context/AuthContext";
 
 const Logout: React.FC = () => {
-  const { logout } = useAuth();
+  const { logout } = useGlobalContext();
 
   return <button onClick={logout}>Logout</button>;
 };
