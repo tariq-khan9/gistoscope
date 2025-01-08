@@ -34,7 +34,7 @@ export default function Comment({
 
   return (
     <div className="flex flex-col">
-      {/* <SingleComment
+      <SingleComment
         comment={comment}
         userId={userId}
         editId={editId}
@@ -70,7 +70,7 @@ export default function Comment({
             </div>
           )}
         </div>
-      )} */}
+      )}
     </div>
   );
 }

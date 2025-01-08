@@ -24,12 +24,17 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
 });
 
 const Version: React.FC<VerionProps> = ({ versions }) => {
-  const { user, versionIndex, setVersionIndex, textareaEdit, setTextareaEdit } =
-    useGlobalContext();
-  const [vcurrentIndex, setversionIndex] = useState(0);
+  const {
+    user,
+    versionCurrentIndex,
+    setVersionCurrentIndex,
+    textareaEdit,
+    setTextareaEdit,
+  } = useGlobalContext();
+
   const [createVersion, setCreateVersion] = useState(false);
   const [newVersionData, setNewVersionData] = useState<string>(
-    versions[versionIndex]?.point
+    versions[versionCurrentIndex]?.point
   );
 
   const [createNewVersion] = useMutation(CREATE_VERSION, {
@@ -37,50 +42,22 @@ const Version: React.FC<VerionProps> = ({ versions }) => {
   });
 
   const handleNext = () => {
-    setVersionIndex((prevIndex) => (prevIndex + 1) % versions?.length);
+    setVersionCurrentIndex((prevIndex) => (prevIndex + 1) % versions?.length);
   };
 
   const handlePrev = () => {
-    setVersionIndex((prevIndex) => (prevIndex - 1) % versions?.length);
+    setVersionCurrentIndex((prevIndex) => (prevIndex - 1) % versions?.length);
   };
 
   const handleIndexChange = (newIndex: number) => {
-    setVersionIndex(newIndex);
-  };
-
-  const handleCreateVersion = async () => {
-    setCreateVersion(!createVersion);
-
-    if (newVersionData === versions[versionIndex].point) {
-      return;
-    }
-
-    if (createVersion) {
-      try {
-        await createNewVersion({
-          variables: {
-            version: {
-              gistId: versions[versionIndex].gistId,
-              point: newVersionData,
-              userId: 1,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-            },
-          },
-        }).then(() => {
-          setVersionIndex(versions.length - 1);
-        });
-      } catch (e) {
-        console.log("new version not created.", e);
-      }
-    }
+    setVersionCurrentIndex(newIndex);
   };
 
   useEffect(() => {
     if (!createVersion) {
-      setNewVersionData(versions[versionIndex].point);
+      setNewVersionData(versions[versionCurrentIndex].point);
     }
-  }, [versions, versionIndex, createVersion]);
+  }, [versions, versionCurrentIndex, createVersion]);
 
   if (!versions || versions.length === 0) {
     return <div>No Versions available.</div>;
@@ -118,18 +95,18 @@ const Version: React.FC<VerionProps> = ({ versions }) => {
             <div className="w-10 h-10 bg-gray-100 rounded-full"></div>
             <div className="flex flex-col">
               <h1 className="text-[16px] text-slate-700 uppercase">
-                {versions[versionIndex]?.user?.name}
+                {versions[versionCurrentIndex]?.user?.name}
               </h1>
               <h2 className="text-[12px] text-slate-600">
                 {dateFormatter.format(
-                  Date.parse(versions[versionIndex].createdAt)
+                  Date.parse(versions[versionCurrentIndex].createdAt)
                 )}
               </h2>
             </div>
           </div>
           <div className="flex justify-end">
             <Navigation
-              currentIndex={versionIndex}
+              currentIndex={versionCurrentIndex}
               totalItems={versions.length}
               onChangeIndex={handleIndexChange}
               handlePrev={handlePrev}
@@ -140,18 +117,17 @@ const Version: React.FC<VerionProps> = ({ versions }) => {
       </div>
       {/*---------------------------------- edit section starts here -------------------------------------*/}
       <BoxWithShadows
-        visible={versions[versionIndex]?.edits?.length > 1}
+        visible={versions[versionCurrentIndex]?.edits?.length > 1}
         boxBorder="border-slate-300"
         colorShades={["bg-white", "bg-slate-100", "bg-slate-50"]}
       >
-        {versions[versionIndex].edits && (
+        {versions[versionCurrentIndex].edits && (
           <Edit
-            edits={versions[versionIndex].edits}
-            versionData={versions[versionIndex]}
+            edits={versions[versionCurrentIndex].edits}
+            versionData={versions[versionCurrentIndex]}
             newVersionData={newVersionData}
             createVersion={createVersion}
             setCreateVersion={setCreateVersion}
-            setVersionIndex={setversionIndex}
             versionsLength={versions.length}
           />
         )}

@@ -21,7 +21,7 @@ export default function CommentWrapper({
     () => groupCommentsByParent(comments),
     [comments]
   );
-
+  //console.log("commengs are", comments);
   const sortedComments = useMemo(
     () => sortCommentsByCreatedAt(groupedComments),
     [groupedComments]

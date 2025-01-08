@@ -14,23 +14,30 @@ type GistProps = {
 };
 
 const Gist: React.FC<GistProps> = ({ gists }) => {
-  const { setVersionIndex } = useGlobalContext();
+  const {
+    setVersionCurrentIndex,
+    setEditCurrentIndex,
+    gistCurrentIndex,
+    setGistCurrentIndex,
+  } = useGlobalContext();
   const sortedGists = sortGistsByTime(gists, "desc");
-  const [currentIndex, setCurrentIndex] = useState(0);
+
   const [showChild, setShowChild] = useState(false);
 
   const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % gists?.length);
-    setVersionIndex(0);
+    setGistCurrentIndex((prevIndex) => (prevIndex + 1) % gists?.length);
+    setVersionCurrentIndex(0);
+    setEditCurrentIndex(0);
   };
 
   const handlePrev = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1) % gists?.length);
-    setVersionIndex(0);
+    setGistCurrentIndex((prevIndex) => (prevIndex - 1) % gists?.length);
+    setVersionCurrentIndex(0);
+    setEditCurrentIndex(0);
   };
 
   const handleIndexChange = (newIndex: number) => {
-    setCurrentIndex(newIndex);
+    setGistCurrentIndex(newIndex);
     // loadGistData(newIndex);
   };
 
@@ -49,13 +56,13 @@ const Gist: React.FC<GistProps> = ({ gists }) => {
           {gists?.length > 0 && (
             <div className="">
               <h1 className="text-[16px] uppercase">
-                {gists[currentIndex]?.title}
+                {gists[gistCurrentIndex]?.title}
               </h1>
             </div>
           )}
 
           <div className="post-arrow-buttons flex flex-row items-center justify-center space-x-2">
-            {gists[currentIndex].gists.length > 0 && (
+            {gists[gistCurrentIndex].gists.length > 0 && (
               <button
                 className={`border border-gray-600 hover:bg-sky-800 hover:text-white rounded-full px-[16px] h-5 text-[10px]`}
                 onClick={() => setShowChild(!showChild)}
@@ -88,7 +95,7 @@ const Gist: React.FC<GistProps> = ({ gists }) => {
               </button>
             </div> */}
             <Navigation
-              currentIndex={currentIndex}
+              currentIndex={gistCurrentIndex}
               totalItems={gists.length}
               onChangeIndex={handleIndexChange}
               handlePrev={handlePrev}
@@ -99,19 +106,20 @@ const Gist: React.FC<GistProps> = ({ gists }) => {
       </BoxWithShadows>
 
       <BoxWithShadows
-        visible={gists[currentIndex].versions.length > 1}
+        visible={gists[gistCurrentIndex].versions.length > 1}
         boxBorder="border-amber-300"
         colorShades={["bg-amber-200", "bg-amber-100", "bg-amber-50"]}
       >
-        {gists[currentIndex].versions && (
-          <Version versions={sortedGists[currentIndex].versions} />
+        {gists[gistCurrentIndex].versions && (
+          <Version versions={sortedGists[gistCurrentIndex].versions} />
         )}
       </BoxWithShadows>
 
       <div className={`${showChild ? "flex w-full" : "hidden"}`}>
-        {gists[currentIndex].gists && gists[currentIndex].gists.length > 0 && (
-          <Gist gists={sortedGists[currentIndex].gists} />
-        )}
+        {gists[gistCurrentIndex].gists &&
+          gists[gistCurrentIndex].gists.length > 0 && (
+            <Gist gists={sortedGists[gistCurrentIndex].gists} />
+          )}
       </div>
     </div>
   );

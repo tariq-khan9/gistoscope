@@ -40,6 +40,7 @@ const SendComment = ({
           },
         },
       });
+      console.log(res);
       handleRefetchComments();
       setContent("");
     } catch (error) {}
