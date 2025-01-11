@@ -1,45 +1,39 @@
 import React, { useState, useEffect } from "react";
 import { useGlobalContext } from "../context/AuthContext";
-import { GistType, VersionType } from "../../services/types";
-import { useMutation } from "@apollo/client";
-import dayjs from "dayjs";
-import {
-  CREATE_VERSION,
-  CREATE_EDIT,
-  GET_ALL_GISTS,
-} from "../../services/graphql/queriesMutations";
+import { VersionType } from "../../services/types";
+
 import Edit from "./Edit";
-import { IoIosArrowDropright, IoIosArrowDropleft } from "react-icons/io";
 import BoxWithShadows from "../others/BoxWithShadow";
 import TextareaWithLimit from "../others/TextareaWithLimit";
-import ReplyModal from "../others/ReplyModal";
 import Navigation from "../others/Navigation";
 
 type VerionProps = {
   versions: VersionType[];
+  gistCurrentIndex: number;
+  editCurrentIndex: number;
+  setEditCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
+  versionCurrentIndex: number;
+  setVersionCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const dateFormatter = new Intl.DateTimeFormat(undefined, {
   dateStyle: "medium",
 });
 
-const Version: React.FC<VerionProps> = ({ versions }) => {
-  const {
-    user,
-    versionCurrentIndex,
-    setVersionCurrentIndex,
-    textareaEdit,
-    setTextareaEdit,
-  } = useGlobalContext();
-
+const Version: React.FC<VerionProps> = ({
+  versions,
+  editCurrentIndex,
+  setEditCurrentIndex,
+  versionCurrentIndex,
+  setVersionCurrentIndex,
+  gistCurrentIndex,
+}) => {
   const [createVersion, setCreateVersion] = useState(false);
   const [newVersionData, setNewVersionData] = useState<string>(
     versions[versionCurrentIndex]?.point
   );
 
-  const [createNewVersion] = useMutation(CREATE_VERSION, {
-    refetchQueries: [{ query: GET_ALL_GISTS }],
-  });
+  const { setTextareaEdit, user, textareaEdit } = useGlobalContext();
 
   const handleNext = () => {
     setVersionCurrentIndex((prevIndex) => (prevIndex + 1) % versions?.length);
@@ -52,6 +46,9 @@ const Version: React.FC<VerionProps> = ({ versions }) => {
   const handleIndexChange = (newIndex: number) => {
     setVersionCurrentIndex(newIndex);
   };
+  useEffect(() => {
+    setVersionCurrentIndex(0);
+  }, [gistCurrentIndex]);
 
   useEffect(() => {
     if (!createVersion) {
@@ -129,6 +126,11 @@ const Version: React.FC<VerionProps> = ({ versions }) => {
             createVersion={createVersion}
             setCreateVersion={setCreateVersion}
             versionsLength={versions.length}
+            versionCurrentIndex={versionCurrentIndex}
+            setVersionCurrentIndex={setVersionCurrentIndex}
+            editCurrentIndex={editCurrentIndex}
+            setEditCurrentIndex={setEditCurrentIndex}
+            gistCurrentIndex={gistCurrentIndex}
           />
         )}
       </BoxWithShadows>

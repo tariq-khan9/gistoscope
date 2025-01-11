@@ -51,6 +51,7 @@ export const GET_GISTS_BY_SUBJECT = gql`
       id
       title
       parentId
+
       createdAt
       versions {
         id

@@ -5,7 +5,7 @@ import Navbar from "./Navbar";
 
 const Home = () => {
   return (
-    <div className="flex flex-row w-full bg-gray-400   overflow-hidden">
+    <div className="flex flex-row w-full   overflow-hidden">
       {/* <div className="w-[20%] h-full ">
         <Sidebar />
       </div> */}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useGlobalContext } from "../context/AuthContext";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useMutation, useQuery } from "@apollo/client";
+import { useParams } from "react-router-dom";
 import {
   CREATE_GIST,
   CREATE_VERSION,
@@ -30,6 +31,9 @@ const ReplyModal: React.FC<Props> = ({ setShowModal, gist_id }) => {
     formState: { errors },
   } = useForm<FormValues>();
 
+  const { id: current_subject_id } = useParams<{ id?: string }>();
+  const numm = current_subject_id ? parseInt(current_subject_id) : 0;
+  console.log(numm, typeof numm);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [editValidationError, setEditValidationError] = useState(false);
   const [content, setContent] = useState<string>("");
@@ -60,12 +64,14 @@ const ReplyModal: React.FC<Props> = ({ setShowModal, gist_id }) => {
         variables: {
           gist: {
             title: formData.title,
+            subjectId: numm,
             userId: user?.id,
             createdAt: new Date().toISOString(),
             parentId: gist_id,
           },
         },
       });
+      console.log("gist created ", gistResponse);
 
       const new_gist_id: number = gistResponse.data.addGist.id;
 
