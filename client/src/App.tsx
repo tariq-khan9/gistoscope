@@ -23,10 +23,10 @@ const App: React.FC = () => {
         <Navbar />
       </div>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/dashboard" element={<Index />} />
-        <Route path="/subjects" element={<SubjectTree />} />
-        <Route path="/subjects/:id" element={<Home />} />
+        <Route path="/" element={<SubjectTree />} />
+        <Route path="/:title/:id" element={<Home />} />
 
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

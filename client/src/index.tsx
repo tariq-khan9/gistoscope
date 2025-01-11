@@ -16,13 +16,13 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
-  <React.StrictMode>
-    <ApolloProvider client={client}>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </ApolloProvider>
-  </React.StrictMode>
+  //<React.StrictMode>
+  <ApolloProvider client={client}>
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  </ApolloProvider>
+  // </React.StrictMode>
 );
 
 reportWebVitals();

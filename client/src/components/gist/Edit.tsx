@@ -9,7 +9,7 @@ import {
   GET_ALL_GISTS,
   GET_COMMENT,
 } from "../../services/graphql/queriesMutations";
-import { CommentType, EditType, VersionType } from "../../services/types";
+import { EditType, VersionType } from "../../services/types";
 import { IoIosArrowDropleft, IoIosArrowDropright } from "react-icons/io";
 import { CgCloseR } from "react-icons/cg";
 import RichEditor from "../dashboard/RichEditor";
@@ -27,7 +27,11 @@ type EditProps = {
   newVersionData: string;
   createVersion: boolean;
   setCreateVersion: (value: boolean) => void;
-
+  versionCurrentIndex: number;
+  setVersionCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
+  editCurrentIndex: number;
+  setEditCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
+  gistCurrentIndex: number;
   versionsLength: number;
 };
 
@@ -35,7 +39,16 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
   dateStyle: "medium",
 });
 
-const Edit: React.FC<EditProps> = ({ edits, versionData, newVersionData }) => {
+const Edit: React.FC<EditProps> = ({
+  edits,
+  versionData,
+  newVersionData,
+  versionCurrentIndex,
+  setVersionCurrentIndex,
+  editCurrentIndex,
+  setEditCurrentIndex,
+  gistCurrentIndex,
+}) => {
   const [createNewVersion] = useMutation(CREATE_VERSION, {
     refetchQueries: [{ query: GET_ALL_GISTS }],
   });
@@ -48,16 +61,7 @@ const Edit: React.FC<EditProps> = ({ edits, versionData, newVersionData }) => {
     refetchQueries: [{ query: GET_ALL_GISTS }],
   });
 
-  const {
-    editCurrentIndex,
-    setEditCurrentIndex,
-    versionCurrentIndex,
-    setVersionCurrentIndex,
-    user,
-    textareaEdit,
-    setTextareaEdit,
-    gistCurrentIndex,
-  } = useGlobalContext();
+  const { textareaEdit, setTextareaEdit, user } = useGlobalContext();
 
   const [commentsArray, setCommentsArray] = useState<[]>();
 
@@ -68,7 +72,9 @@ const Edit: React.FC<EditProps> = ({ edits, versionData, newVersionData }) => {
     // refetch: refetchComments,
   } = useQuery(GET_COMMENT, {
     skip: true, // Skip query execution if fetchComments is false
-    variables: { editId: edits[editCurrentIndex].id },
+    variables: {
+      editId: edits[editCurrentIndex]?.id || edits[0]?.id,
+    },
   });
 
   const refetchComments = async () => {
@@ -76,10 +82,7 @@ const Edit: React.FC<EditProps> = ({ edits, versionData, newVersionData }) => {
     try {
       const result = await refetch({ editId: edits[editCurrentIndex].id });
       setCommentsArray(result.data.comments);
-      console.log("Fetched Comments:", result.data);
-    } catch (error) {
-      console.error("Error fetching comments:", error);
-    }
+    } catch (error) {}
   };
 
   const [content, setContent] = useState<string>("");
@@ -87,7 +90,6 @@ const Edit: React.FC<EditProps> = ({ edits, versionData, newVersionData }) => {
   const [richtextEdit, setRichtextEdit] = useState<boolean>(false);
 
   const handleNext = () => {
-    //setFetchComments(false);
     setEditCurrentIndex((prevIndex) => (prevIndex + 1) % edits?.length);
   };
 
@@ -268,35 +270,33 @@ const Edit: React.FC<EditProps> = ({ edits, versionData, newVersionData }) => {
 
   return (
     <div>
-      <button
-        onClick={() => {
-          setEditCurrentIndex(editCurrentIndex + 1);
-          console.log(editCurrentIndex);
-        }}
-      >
-        show
-      </button>
       <div className="w-full flex flex-col justify-between px-10 py-4 rounded-lg">
         <div className="user-arrow-btn  flex flex-row w-full  justify-between">
           <div className="flex flex-row space-x-4 items-center justify-center">
             <img
-              src={edits[editCurrentIndex].user.image}
+              src={
+                edits?.[editCurrentIndex]?.user?.image || "default-image.jpg"
+              }
               className="h-10 w-10 rounded-full"
               alt="imgae"
             />
             <div className="flex flex-col">
               <h1 className="text-[16px] text-slate-500 uppercase">
                 {" "}
-                {edits[editCurrentIndex].user.name}
+                {edits[editCurrentIndex]?.user?.name}
               </h1>
+
               <h2 className="text-[12px] text-slate-600">
-                {dateFormatter.format(
-                  Date.parse(edits[editCurrentIndex].createdAt)
-                )}
+                {edits[editCurrentIndex]?.createdAt &&
+                  dateFormatter.format(
+                    Date.parse(edits[editCurrentIndex].createdAt)
+                  )}
               </h2>
             </div>
           </div>
-
+          <div>
+            {gistCurrentIndex} and edit {editCurrentIndex}
+          </div>
           <div className="flex flex-row text-[14px] justify-center items-center  space-x-6">
             <div className="flex flex-row text-sky-900 justify-center align-middle items-center space-x-5 text-[20px]">
               {(richtextEdit || textareaEdit) && user && (
@@ -319,25 +319,25 @@ const Edit: React.FC<EditProps> = ({ edits, versionData, newVersionData }) => {
               )}
 
               <FlagComponent
-                flag={edits[editCurrentIndex].flag}
-                editId={edits[editCurrentIndex].id}
+                flag={edits[editCurrentIndex]?.flag}
+                editId={edits[editCurrentIndex]?.id}
               />
-              <FavComponent editId={edits[editCurrentIndex].id} />
+              <FavComponent editId={edits[editCurrentIndex]?.id} />
 
               <CountComponent
                 label="N"
-                count={edits[editCurrentIndex].newnessCount}
-                editId={edits[editCurrentIndex].id}
+                count={edits[editCurrentIndex]?.newnessCount}
+                editId={edits[editCurrentIndex]?.id}
               />
               <CountComponent
                 label="I"
-                count={edits[editCurrentIndex].importantCount}
-                editId={edits[editCurrentIndex].id}
+                count={edits[editCurrentIndex]?.importantCount}
+                editId={edits[editCurrentIndex]?.id}
               />
               <CountComponent
                 label="Q"
-                count={edits[editCurrentIndex].qualityCount}
-                editId={edits[editCurrentIndex].id}
+                count={edits[editCurrentIndex]?.qualityCount}
+                editId={edits[editCurrentIndex]?.id}
               />
             </div>
 
@@ -385,8 +385,8 @@ const Edit: React.FC<EditProps> = ({ edits, versionData, newVersionData }) => {
       <div className="comments and reply px-10 py-4">
         <SendComment
           setShowModal={setShowModal} // show button for reply modal
-          editId={edits[editCurrentIndex].id}
-          userId={edits[editCurrentIndex].user.id}
+          editId={edits[editCurrentIndex]?.id}
+          userId={edits[editCurrentIndex]?.user?.id}
           handleRefetchComments={refetchComments}
         />
       </div>
@@ -395,8 +395,8 @@ const Edit: React.FC<EditProps> = ({ edits, versionData, newVersionData }) => {
         {commentsArray && (
           <CommentWrapper
             comments={commentsArray}
-            userId={edits[editCurrentIndex].user.id}
-            editId={edits[editCurrentIndex].id}
+            userId={edits[editCurrentIndex]?.user?.id}
+            editId={edits[editCurrentIndex]?.id}
             handleRefetchComments={refetchComments}
           />
         )}

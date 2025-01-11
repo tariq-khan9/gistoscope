@@ -58,7 +58,7 @@ const DraggableTreeNode: React.FC<{
     clickedRef.current = false;
 
     // Navigate to the desired route
-    navigate(`/subjects/${node.id}`);
+    navigate(`/${node.title}/${node.id}`);
   };
 
   return (

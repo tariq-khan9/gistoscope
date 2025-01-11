@@ -41,7 +41,6 @@ export const Query = {
     async gistsBySubject(_, args) {
         return await prisma.gist.findMany({
             where: {
-                parentId: null, // Condition for parentId being null
                 subjectId: args.subjectId, // Condition for subjectId matching the argument
             },
         });

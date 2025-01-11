@@ -11,7 +11,7 @@ const Navbar: React.FC = () => {
       <div className="flex flex-row space-x-4">
         <a href="#">Node</a>
         <a href="/">Home</a>
-        <a href="/subjects">Tree Page</a>
+        <a href="/">Tree Page</a>
       </div>
       <div className="text-[14px] text-gray-300 flex flex-row justify-center items-center">
         {user ? (
