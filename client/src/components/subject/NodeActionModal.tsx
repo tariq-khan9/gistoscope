@@ -5,6 +5,7 @@ import { BiEdit } from "react-icons/bi";
 import { CgDisplayGrid } from "react-icons/cg";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css";
+import { useGlobalContext } from "../context/AuthContext";
 import {
   CREATE_SUBJECT,
   UPDATE_SUBJECT,
@@ -47,6 +48,8 @@ const NodeActionModal: React.FC<NodeActionModalProps> = ({
   const [deleteSubject] = useMutation(DELETE_SUBJECT, {
     refetchQueries: [{ query: GET_ALL_SUBJECTS }],
   });
+
+  const { user } = useGlobalContext();
 
   const [subjectTitle, setSubjectTitle] = useState(node?.title);
   const [createGistModalVisible, setCreateGistModalVisible] = useState(false);
@@ -128,31 +131,39 @@ const NodeActionModal: React.FC<NodeActionModalProps> = ({
       icon: <RiFunctionAddLine size={25} />,
       tooltip: "Add sub-subject",
       handler: handleAddSubject,
+      roles: ["admin"],
     },
     {
       action: "update",
       icon: <BiEdit size={25} />,
       tooltip: "Update subject",
       handler: handleUpdateSubject,
+      roles: ["admin"],
     },
     {
       action: "delete",
       icon: <RiDeleteBin6Line size={25} />,
       tooltip: "Delete subject",
       handler: handleDeleteSubject,
+      roles: ["admin"],
     },
     {
       action: "show",
       icon: <CgDisplayGrid size={25} />,
       tooltip: "Show details",
       handler: handleShowDetails,
+      roles: ["admin", "member"],
     },
   ];
 
   useEffect(() => {
     setSubjectTitle(node?.title || "");
   }, [node]);
+  if (!user) return <div>please login first</div>;
 
+  const filteredActions = actionsArray.filter((action) =>
+    action.roles.includes(user.userType)
+  );
   return (
     <Modal
       visible={visible}
@@ -193,7 +204,7 @@ const NodeActionModal: React.FC<NodeActionModalProps> = ({
 
       {/*-------------------- action buttons and tooltips ------------------------------*/}
       <div className="flex flex-row w-40 text-[15px] space-x-6 pt-6">
-        {actionsArray.map(({ action, icon, tooltip, handler }) => {
+        {filteredActions.map(({ action, icon, tooltip, handler }) => {
           const isDisabled = modalAction !== "none" && modalAction !== action;
 
           return (

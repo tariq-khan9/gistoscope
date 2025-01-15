@@ -9,6 +9,7 @@ import {
   GET_ALL_GISTS,
   GET_COMMENT,
 } from "../../services/graphql/queriesMutations";
+
 import { EditType, VersionType } from "../../services/types";
 import { IoIosArrowDropleft, IoIosArrowDropright } from "react-icons/io";
 import { CgCloseR } from "react-icons/cg";
@@ -33,6 +34,7 @@ type EditProps = {
   setEditCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
   gistCurrentIndex: number;
   versionsLength: number;
+  gistLength: number;
 };
 
 const dateFormatter = new Intl.DateTimeFormat(undefined, {
@@ -48,6 +50,7 @@ const Edit: React.FC<EditProps> = ({
   editCurrentIndex,
   setEditCurrentIndex,
   gistCurrentIndex,
+  gistLength,
 }) => {
   const [createNewVersion] = useMutation(CREATE_VERSION, {
     refetchQueries: [{ query: GET_ALL_GISTS }],
@@ -89,6 +92,11 @@ const Edit: React.FC<EditProps> = ({
   const [showModal, setShowModal] = useState<boolean>(false);
   const [richtextEdit, setRichtextEdit] = useState<boolean>(false);
 
+  const stringSizeInBytes = (str: string) => {
+    const encoder = new TextEncoder();
+    return encoder.encode(str).length; // Size in bytes
+  };
+
   const handleNext = () => {
     setEditCurrentIndex((prevIndex) => (prevIndex + 1) % edits?.length);
   };
@@ -98,6 +106,18 @@ const Edit: React.FC<EditProps> = ({
   };
 
   const handleCreateVersion = async () => {
+    // allow content size less then 5 mb.
+    const contentSize = parseFloat(
+      (stringSizeInBytes(content) / (1024 * 1024)).toFixed(2)
+    );
+    if (contentSize > 5) {
+      Modal.error({
+        title: "Data too large",
+        content: `Your content is ${contentSize} MBs, which must be less then 5 MBs`,
+      });
+      return;
+    }
+
     if (!newVersionData) {
       Modal.error({
         title: "Validation Error",
@@ -105,6 +125,7 @@ const Edit: React.FC<EditProps> = ({
       });
       return;
     }
+
     //---------if  nothing has changed ---------------------
     if (
       newVersionData === versionData.point &&
@@ -126,7 +147,7 @@ const Edit: React.FC<EditProps> = ({
             version: {
               gistId: versionData.gistId,
               point: newVersionData,
-              userId: 1,
+              userId: user?.id,
               createdAt: new Date().toISOString(),
             },
           },
@@ -140,7 +161,7 @@ const Edit: React.FC<EditProps> = ({
               edit: {
                 versionId: new_version_id,
                 body: content,
-                userId: 1,
+                userId: user?.id,
                 createdAt: new Date().toISOString(),
               },
             },
@@ -178,7 +199,7 @@ const Edit: React.FC<EditProps> = ({
             version: {
               gistId: versionData.gistId,
               point: newVersionData,
-              userId: 1,
+              userId: user?.id,
               createdAt: new Date().toISOString(),
             },
           },
@@ -230,7 +251,7 @@ const Edit: React.FC<EditProps> = ({
             edit: {
               versionId: versionData.id,
               body: content,
-              userId: 1,
+              userId: user?.id,
               createdAt: new Date().toISOString(),
             },
           },
@@ -264,7 +285,7 @@ const Edit: React.FC<EditProps> = ({
   useEffect(() => {
     setEditCurrentIndex(0);
     refetchComments();
-  }, [versionCurrentIndex, gistCurrentIndex]);
+  }, [versionCurrentIndex, gistCurrentIndex, gistLength]);
 
   if (loading) return <h1>loading...</h1>;
 
@@ -274,9 +295,7 @@ const Edit: React.FC<EditProps> = ({
         <div className="user-arrow-btn  flex flex-row w-full  justify-between">
           <div className="flex flex-row space-x-4 items-center justify-center">
             <img
-              src={
-                edits?.[editCurrentIndex]?.user?.image || "default-image.jpg"
-              }
+              src={edits[editCurrentIndex]?.user?.image || "/profile.png"}
               className="h-10 w-10 rounded-full"
               alt="imgae"
             />
@@ -294,9 +313,7 @@ const Edit: React.FC<EditProps> = ({
               </h2>
             </div>
           </div>
-          <div>
-            {gistCurrentIndex} and edit {editCurrentIndex}
-          </div>
+
           <div className="flex flex-row text-[14px] justify-center items-center  space-x-6">
             <div className="flex flex-row text-sky-900 justify-center align-middle items-center space-x-5 text-[20px]">
               {(richtextEdit || textareaEdit) && user && (
@@ -377,7 +394,6 @@ const Edit: React.FC<EditProps> = ({
               content={content}
               setContent={setContent}
             />
-            ;
           </div>
         )}
       </div>

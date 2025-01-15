@@ -4,6 +4,7 @@ export interface UserType {
   password: string;
   name: string;
   image: string;
+  userType: string;
   gists: GistType[];
   versions: VersionType[];
   edits: EditType[];

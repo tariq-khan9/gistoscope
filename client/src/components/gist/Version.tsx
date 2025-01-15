@@ -9,6 +9,7 @@ import Navigation from "../others/Navigation";
 
 type VerionProps = {
   versions: VersionType[];
+  gistLength: number;
   gistCurrentIndex: number;
   editCurrentIndex: number;
   setEditCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
@@ -23,6 +24,7 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
 const Version: React.FC<VerionProps> = ({
   versions,
   editCurrentIndex,
+  gistLength,
   setEditCurrentIndex,
   versionCurrentIndex,
   setVersionCurrentIndex,
@@ -89,7 +91,11 @@ const Version: React.FC<VerionProps> = ({
 
         <div className="user-arrow-btn w-[25%]  flex flex-col justify-start space-y-8 border-l border-amber-400 pl-4">
           <div className="flex flex-row space-x-4 items-center">
-            <div className="w-10 h-10 bg-gray-100 rounded-full"></div>
+            <img
+              src={versions[versionCurrentIndex]?.user?.image || "/profile.png"}
+              className="h-10 w-10 rounded-full"
+              alt="imgae"
+            />
             <div className="flex flex-col">
               <h1 className="text-[16px] text-slate-700 uppercase">
                 {versions[versionCurrentIndex]?.user?.name}
@@ -131,6 +137,7 @@ const Version: React.FC<VerionProps> = ({
             editCurrentIndex={editCurrentIndex}
             setEditCurrentIndex={setEditCurrentIndex}
             gistCurrentIndex={gistCurrentIndex}
+            gistLength={gistLength}
           />
         )}
       </BoxWithShadows>

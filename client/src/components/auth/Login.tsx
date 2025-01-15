@@ -21,7 +21,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="w-full flex flex-row justify-center items-center">
+    <div className="w-full flex flex-row justify-center items-center mt-24">
       <div className="bg-gray-100 rounded-xl w-[700px] h-[400px] p-4 flex flex-row justify-between">
         <div className="w-1/2">
           <div className="flex flex-row justify-center mt-6">
