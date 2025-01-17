@@ -1,6 +1,7 @@
 import { useDrag, useDrop } from "react-dnd";
 import { useNavigate } from "react-router-dom";
 import { useState, useRef } from "react";
+import { useGlobalContext } from "../context/AuthContext";
 
 interface Subject {
   id: number;
@@ -16,13 +17,14 @@ const DraggableTreeNode: React.FC<{
   const navigate = useNavigate();
   const [clickTimeout, setClickTimeout] = useState<NodeJS.Timeout | null>(null);
   const clickedRef = useRef(false);
-
+  const { user } = useGlobalContext();
   const [{ isDragging }, dragRef] = useDrag(() => ({
     type: "NODE",
     item: { id: node.id },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
+    canDrag: user?.userType === "admin", // Only allow dragging for admins
   }));
 
   const [, dropRef] = useDrop(() => ({

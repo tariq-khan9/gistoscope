@@ -11,9 +11,8 @@ import {
   UPDATE_SUBJECT,
   DELETE_SUBJECT,
   GET_ALL_SUBJECTS,
-  GET_GISTS_BY_SUBJECT,
 } from "../../services/graphql/queriesMutations";
-import { useQuery, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import CreateGistModal from "./CreateGistModal";
 
 interface Subject {
@@ -61,7 +60,7 @@ const NodeActionModal: React.FC<NodeActionModalProps> = ({
     }
     if (!subjectTitle) return;
     try {
-      const response = await createNewSubject({
+      await createNewSubject({
         variables: {
           subject: {
             title: subjectTitle,
@@ -72,7 +71,6 @@ const NodeActionModal: React.FC<NodeActionModalProps> = ({
         },
       });
       onClose();
-      //alert(response);
     } catch (e) {}
   };
 
@@ -80,7 +78,7 @@ const NodeActionModal: React.FC<NodeActionModalProps> = ({
     if (subjectTitle === node?.title) return;
     if (!subjectTitle) return;
     try {
-      const response = await updateSubject({
+      await updateSubject({
         variables: {
           id: node?.id,
           subject: {
@@ -89,7 +87,6 @@ const NodeActionModal: React.FC<NodeActionModalProps> = ({
         },
       });
       onClose();
-      //alert(response);
     } catch (e) {
       console.log("error in ", e);
     }
@@ -104,12 +101,12 @@ const NodeActionModal: React.FC<NodeActionModalProps> = ({
       cancelText: "Cancel",
       onOk: async () => {
         try {
-          const response = await deleteSubject({
+          await deleteSubject({
             variables: {
               id: node?.id,
             },
           });
-          onClose(); // Close modal after deletion
+          onClose();
         } catch (e) {
           console.error("Error deleting subject:", e);
         }
@@ -121,7 +118,6 @@ const NodeActionModal: React.FC<NodeActionModalProps> = ({
   };
 
   const handleShowDetails = () => {
-    console.log("Show details triggered");
     setCreateGistModalVisible(true);
   };
 
@@ -150,7 +146,7 @@ const NodeActionModal: React.FC<NodeActionModalProps> = ({
     {
       action: "show",
       icon: <CgDisplayGrid size={25} />,
-      tooltip: "Show details",
+      tooltip: "Create Gist",
       handler: handleShowDetails,
       roles: ["admin", "member"],
     },
@@ -159,11 +155,24 @@ const NodeActionModal: React.FC<NodeActionModalProps> = ({
   useEffect(() => {
     setSubjectTitle(node?.title || "");
   }, [node]);
-  if (!user) return <div>please login first</div>;
+
+  if (!user) return <div></div>;
+
+  // If user is a member, directly open the CreateGistModal
+  if (user.userType === "member") {
+    return (
+      <CreateGistModal
+        visible={visible} // Use the `visible` prop to control visibility
+        onClose={onClose} // Use the `onClose` prop to close the modal
+        subjectId={node?.id}
+      />
+    );
+  }
 
   const filteredActions = actionsArray.filter((action) =>
     action.roles.includes(user.userType)
   );
+
   return (
     <Modal
       visible={visible}
@@ -190,9 +199,9 @@ const NodeActionModal: React.FC<NodeActionModalProps> = ({
           modalAction === "none" ||
           modalAction === "delete" ||
           modalAction === "show"
-        } // Disable based on modalAction
+        }
         value={subjectTitle}
-        onChange={(e) => setSubjectTitle(e.target.value)} // Update subjectTitle when editable
+        onChange={(e) => setSubjectTitle(e.target.value)}
         className={` ${
           modalAction === "none" ||
           modalAction === "delete" ||
@@ -202,7 +211,6 @@ const NodeActionModal: React.FC<NodeActionModalProps> = ({
         }`}
       />
 
-      {/*-------------------- action buttons and tooltips ------------------------------*/}
       <div className="flex flex-row w-40 text-[15px] space-x-6 pt-6">
         {filteredActions.map(({ action, icon, tooltip, handler }) => {
           const isDisabled = modalAction !== "none" && modalAction !== action;
@@ -223,7 +231,7 @@ const NodeActionModal: React.FC<NodeActionModalProps> = ({
               <button
                 onClick={() => {
                   setModalAction(action as any);
-                  if (!isDisabled) handler(); // Call the corresponding handler
+                  if (!isDisabled) handler();
                 }}
                 disabled={isDisabled}
                 className="focus:outline-none"
@@ -234,7 +242,6 @@ const NodeActionModal: React.FC<NodeActionModalProps> = ({
           );
         })}
 
-        {/* Tooltip Component */}
         <ReactTooltip id="tooltip" />
       </div>
     </Modal>

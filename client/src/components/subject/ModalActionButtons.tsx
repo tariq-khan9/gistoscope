@@ -13,8 +13,6 @@ const ModalActionButtons = () => {
 
   const { user } = useGlobalContext();
 
-  console.log("ation modal");
-
   const actions = [
     {
       action: "add",
@@ -37,12 +35,10 @@ const ModalActionButtons = () => {
     {
       action: "show",
       icon: <CgDisplayGrid size={25} />,
-      tooltip: "Show details",
+      tooltip: "Create Gist",
       roles: ["admin", "member"],
     },
   ];
-
-  if (!user) return <div>please login first</div>;
 
   return (
     <div className="flex flex-row w-40 text-[15px] space-x-6 pt-6">
