@@ -1,12 +1,17 @@
 // src/context/AuthContext.tsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import { GET_GISTS_BY_SUBJECT } from "../../services/graphql/queriesMutations";
+import { useParams } from "react-router-dom";
+import { useLazyQuery, useQuery } from "@apollo/client";
 
 interface User {
   id: number;
   name: string;
   email: string;
   image?: string;
+  userType: string;
+  authType: string;
 }
 
 interface AuthContextType {
@@ -20,12 +25,6 @@ interface AuthContextType {
   setEditIndex: React.Dispatch<React.SetStateAction<number>>;
   textareaEdit: boolean;
   setTextareaEdit: React.Dispatch<React.SetStateAction<boolean>>;
-  editCurrentIndex: number;
-  setEditCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
-  versionCurrentIndex: number;
-  setVersionCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
-  gistCurrentIndex: number;
-  setGistCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -38,9 +37,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const [editIndex, setEditIndex] = useState<number>(0);
   const [textareaEdit, setTextareaEdit] = useState<boolean>(false);
-  const [editCurrentIndex, setEditCurrentIndex] = useState<number>(0);
-  const [versionCurrentIndex, setVersionCurrentIndex] = useState<number>(0);
-  const [gistCurrentIndex, setGistCurrentIndex] = useState<number>(0);
 
   // Check session on initial load
   useEffect(() => {
@@ -113,12 +109,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setEditIndex,
         textareaEdit,
         setTextareaEdit,
-        editCurrentIndex,
-        setEditCurrentIndex,
-        versionCurrentIndex,
-        setVersionCurrentIndex,
-        gistCurrentIndex,
-        setGistCurrentIndex,
       }}
     >
       {children}

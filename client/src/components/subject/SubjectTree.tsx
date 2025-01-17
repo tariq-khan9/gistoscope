@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "react-tooltip/dist/react-tooltip.css";
+import { useGlobalContext } from "../context/AuthContext";
 import { Tree, TreeNode } from "react-organizational-chart";
 import {
   GET_ALL_SUBJECTS,
@@ -19,6 +20,7 @@ interface Subject {
 }
 
 const SubjectTree: React.FC = () => {
+  const { user } = useGlobalContext();
   const { data, loading } = useQuery(GET_ALL_SUBJECTS);
   const [updateSubjectParent] = useMutation(UPDATE_SUBJECT, {
     refetchQueries: [{ query: GET_ALL_SUBJECTS }],
@@ -35,6 +37,7 @@ const SubjectTree: React.FC = () => {
 
   const handleNodeClick = (event: React.MouseEvent, node: Subject): void => {
     event.stopPropagation(); // Prevent event bubbling
+
     setModalAction("none");
     const modalWidth = 300; // Modal width (same as defined in the modal `width` prop)
     const modalHeight = 200; // Approximate modal height

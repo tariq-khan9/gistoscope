@@ -9,6 +9,7 @@ import {
   GET_ALL_GISTS,
   GET_COMMENT,
 } from "../../services/graphql/queriesMutations";
+
 import { EditType, VersionType } from "../../services/types";
 import { IoIosArrowDropleft, IoIosArrowDropright } from "react-icons/io";
 import { CgCloseR } from "react-icons/cg";
@@ -20,6 +21,7 @@ import FavComponent from "../others/FavComponent";
 import SendComment from "../comments/SendComment";
 import CommentWrapper from "../comments/CommentWrapper";
 import { Modal } from "antd";
+import { useSwipeable } from "react-swipeable";
 
 type EditProps = {
   edits: EditType[];
@@ -33,6 +35,7 @@ type EditProps = {
   setEditCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
   gistCurrentIndex: number;
   versionsLength: number;
+  gistLength: number;
 };
 
 const dateFormatter = new Intl.DateTimeFormat(undefined, {
@@ -48,6 +51,7 @@ const Edit: React.FC<EditProps> = ({
   editCurrentIndex,
   setEditCurrentIndex,
   gistCurrentIndex,
+  gistLength,
 }) => {
   const [createNewVersion] = useMutation(CREATE_VERSION, {
     refetchQueries: [{ query: GET_ALL_GISTS }],
@@ -89,15 +93,34 @@ const Edit: React.FC<EditProps> = ({
   const [showModal, setShowModal] = useState<boolean>(false);
   const [richtextEdit, setRichtextEdit] = useState<boolean>(false);
 
+  const stringSizeInBytes = (str: string) => {
+    const encoder = new TextEncoder();
+    return encoder.encode(str).length; // Size in bytes
+  };
+
   const handleNext = () => {
     setEditCurrentIndex((prevIndex) => (prevIndex + 1) % edits?.length);
   };
 
   const handlePrev = () => {
-    setEditCurrentIndex((prevIndex) => (prevIndex - 1) % edits?.length);
+    setEditCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? edits.length - 1 : prevIndex - 1
+    );
   };
 
   const handleCreateVersion = async () => {
+    // allow content size less then 5 mb.
+    const contentSize = parseFloat(
+      (stringSizeInBytes(content) / (1024 * 1024)).toFixed(2)
+    );
+    if (contentSize > 5) {
+      Modal.error({
+        title: "Data too large",
+        content: `Your content is ${contentSize} MBs, which must be less then 5 MBs`,
+      });
+      return;
+    }
+
     if (!newVersionData) {
       Modal.error({
         title: "Validation Error",
@@ -105,6 +128,7 @@ const Edit: React.FC<EditProps> = ({
       });
       return;
     }
+
     //---------if  nothing has changed ---------------------
     if (
       newVersionData === versionData.point &&
@@ -126,7 +150,7 @@ const Edit: React.FC<EditProps> = ({
             version: {
               gistId: versionData.gistId,
               point: newVersionData,
-              userId: 1,
+              userId: user?.id,
               createdAt: new Date().toISOString(),
             },
           },
@@ -140,7 +164,7 @@ const Edit: React.FC<EditProps> = ({
               edit: {
                 versionId: new_version_id,
                 body: content,
-                userId: 1,
+                userId: user?.id,
                 createdAt: new Date().toISOString(),
               },
             },
@@ -178,7 +202,7 @@ const Edit: React.FC<EditProps> = ({
             version: {
               gistId: versionData.gistId,
               point: newVersionData,
-              userId: 1,
+              userId: user?.id,
               createdAt: new Date().toISOString(),
             },
           },
@@ -230,7 +254,7 @@ const Edit: React.FC<EditProps> = ({
             edit: {
               versionId: versionData.id,
               body: content,
-              userId: 1,
+              userId: user?.id,
               createdAt: new Date().toISOString(),
             },
           },
@@ -252,6 +276,12 @@ const Edit: React.FC<EditProps> = ({
     setTextareaEdit(false);
   };
 
+  const handleSwipe = useSwipeable({
+    onSwipedLeft: () => handleNext(),
+    onSwipedRight: () => handlePrev(),
+    trackMouse: true, // Enable mouse dragging
+  });
+
   useEffect(() => {
     setContent(edits[editCurrentIndex]?.body);
   }, [edits]);
@@ -264,29 +294,30 @@ const Edit: React.FC<EditProps> = ({
   useEffect(() => {
     setEditCurrentIndex(0);
     refetchComments();
-  }, [versionCurrentIndex, gistCurrentIndex]);
+  }, [versionCurrentIndex, gistCurrentIndex, gistLength]);
 
   if (loading) return <h1>loading...</h1>;
 
   return (
     <div>
-      <div className="w-full flex flex-col justify-between px-10 py-4 rounded-lg">
-        <div className="user-arrow-btn  flex flex-row w-full  justify-between">
+      <div
+        className="w-full flex flex-col justify-between mt-10 sm:mt-0 px-10 py-4 rounded-lg"
+        {...handleSwipe}
+      >
+        <div className="user-arrow-btn  flex flex-col sm:flex-row w-full  justify-between">
           <div className="flex flex-row space-x-4 items-center justify-center">
             <img
-              src={
-                edits?.[editCurrentIndex]?.user?.image || "default-image.jpg"
-              }
-              className="h-10 w-10 rounded-full"
+              src={edits[editCurrentIndex]?.user?.image || "/profile.png"}
+              className="h-8 w-8 sm:h-10 sm:w-10 rounded-full"
               alt="imgae"
             />
             <div className="flex flex-col">
-              <h1 className="text-[16px] text-slate-500 uppercase">
+              <h1 className="text-[13px] sm:text-[14px] lg:text-[16px] text-slate-500 uppercase">
                 {" "}
                 {edits[editCurrentIndex]?.user?.name}
               </h1>
 
-              <h2 className="text-[12px] text-slate-600">
+              <h2 className="text-[10px] sm:text-[12px] text-slate-600">
                 {edits[editCurrentIndex]?.createdAt &&
                   dateFormatter.format(
                     Date.parse(edits[editCurrentIndex].createdAt)
@@ -294,9 +325,7 @@ const Edit: React.FC<EditProps> = ({
               </h2>
             </div>
           </div>
-          <div>
-            {gistCurrentIndex} and edit {editCurrentIndex}
-          </div>
+
           <div className="flex flex-row text-[14px] justify-center items-center  space-x-6">
             <div className="flex flex-row text-sky-900 justify-center align-middle items-center space-x-5 text-[20px]">
               {(richtextEdit || textareaEdit) && user && (
@@ -324,21 +353,23 @@ const Edit: React.FC<EditProps> = ({
               />
               <FavComponent editId={edits[editCurrentIndex]?.id} />
 
-              <CountComponent
-                label="N"
-                count={edits[editCurrentIndex]?.newnessCount}
-                editId={edits[editCurrentIndex]?.id}
-              />
-              <CountComponent
-                label="I"
-                count={edits[editCurrentIndex]?.importantCount}
-                editId={edits[editCurrentIndex]?.id}
-              />
-              <CountComponent
-                label="Q"
-                count={edits[editCurrentIndex]?.qualityCount}
-                editId={edits[editCurrentIndex]?.id}
-              />
+              <div className="flex flex-row space-x-2 sm:space-x-3">
+                <CountComponent
+                  label="N"
+                  count={edits[editCurrentIndex]?.newnessCount}
+                  editId={edits[editCurrentIndex]?.id}
+                />
+                <CountComponent
+                  label="I"
+                  count={edits[editCurrentIndex]?.importantCount}
+                  editId={edits[editCurrentIndex]?.id}
+                />
+                <CountComponent
+                  label="Q"
+                  count={edits[editCurrentIndex]?.qualityCount}
+                  editId={edits[editCurrentIndex]?.id}
+                />
+              </div>
             </div>
 
             <div className="nav-buttons flex flex-row text-[14px] justify-center items-center  space-x-[4px]">
@@ -377,7 +408,6 @@ const Edit: React.FC<EditProps> = ({
               content={content}
               setContent={setContent}
             />
-            ;
           </div>
         )}
       </div>

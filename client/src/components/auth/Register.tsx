@@ -55,7 +55,7 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="  flex justify-center">
+    <div className="mt-24  flex justify-center">
       <form className="bg-slate-200 px-10" onSubmit={handleSubmit(onSubmit)}>
         <div className="flex justify-center">
           <label className="form-heading ">Register here.</label>

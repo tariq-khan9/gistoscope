@@ -46,6 +46,11 @@ export default function RichEditor({
     <div className="flex bg-white mt-1 w-full rounded-md">
       <div className="w-full min-h-48 h-full">
         <ReactQuill
+          style={{
+            border: "1px solid white", // Set border color to white
+            padding: 0, // Remove padding if necessary
+            backgroundColor: "transparent", // Optional: Ensure the background matches your design
+          }}
           readOnly={editable}
           theme="snow"
           value={content}

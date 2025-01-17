@@ -22,11 +22,11 @@ const TextareaWithLimit: React.FC<TextareaWithLimitProps> = ({
       <textarea
         value={text}
         rows={4}
-        className="bg-transparent text-[16px] text-slate-800 resize-none w-full h-[90%] outline-none border-none focus:ring-0 focus:outline-none"
+        className="bg-transparent text-[12px] sm:text-[14px] lg:text-[16px] text-slate-800 resize-none w-full h-[90%] outline-none border-none focus:ring-0 focus:outline-none"
         onChange={handleChange}
         placeholder={`Describe your point in ${maxChars} characters...`}
       />
-      <div className="flex justify-end text-slate-600">
+      <div className="flex justify-end text-[12px] sm:text-[14px] lg:text-[16px] text-slate-600">
         {text?.length}/{maxChars} characters
       </div>
     </div>

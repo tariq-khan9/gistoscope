@@ -7,7 +7,7 @@ import {
   CREATE_GIST,
   CREATE_VERSION,
   CREATE_EDIT,
-  GET_ALL_GISTS,
+  GET_GISTS_BY_SUBJECT,
 } from "../../services/graphql/queriesMutations";
 import RichEditor from "../dashboard/RichEditor";
 
@@ -32,8 +32,8 @@ const ReplyModal: React.FC<Props> = ({ setShowModal, gist_id }) => {
   } = useForm<FormValues>();
 
   const { id: current_subject_id } = useParams<{ id?: string }>();
-  const numm = current_subject_id ? parseInt(current_subject_id) : 0;
-  console.log(numm, typeof numm);
+  const subject_id = current_subject_id ? parseInt(current_subject_id) : 0;
+
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [editValidationError, setEditValidationError] = useState(false);
   const [content, setContent] = useState<string>("");
@@ -42,11 +42,9 @@ const ReplyModal: React.FC<Props> = ({ setShowModal, gist_id }) => {
   const [createVersion] = useMutation(CREATE_VERSION);
   const [createEdit] = useMutation(CREATE_EDIT);
 
-  const { refetch } = useQuery(GET_ALL_GISTS, {
-    fetchPolicy: "network-only", // Ensure fresh data
-    notifyOnNetworkStatusChange: true,
+  const { refetch } = useQuery(GET_GISTS_BY_SUBJECT, {
+    variables: { subjectId: subject_id },
   });
-
   const { user } = useGlobalContext();
 
   const onSubmit: SubmitHandler<FormValues> = async (formData) => {
@@ -64,7 +62,7 @@ const ReplyModal: React.FC<Props> = ({ setShowModal, gist_id }) => {
         variables: {
           gist: {
             title: formData.title,
-            subjectId: numm,
+            subjectId: subject_id,
             userId: user?.id,
             createdAt: new Date().toISOString(),
             parentId: gist_id,

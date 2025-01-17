@@ -58,7 +58,9 @@ export const GET_GISTS_BY_SUBJECT = gql`
         point
         gistId
         user {
+          id
           name
+          image
         }
         createdAt
         edits {
