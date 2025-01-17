@@ -21,6 +21,7 @@ import FavComponent from "../others/FavComponent";
 import SendComment from "../comments/SendComment";
 import CommentWrapper from "../comments/CommentWrapper";
 import { Modal } from "antd";
+import { useSwipeable } from "react-swipeable";
 
 type EditProps = {
   edits: EditType[];
@@ -102,7 +103,9 @@ const Edit: React.FC<EditProps> = ({
   };
 
   const handlePrev = () => {
-    setEditCurrentIndex((prevIndex) => (prevIndex - 1) % edits?.length);
+    setEditCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? edits.length - 1 : prevIndex - 1
+    );
   };
 
   const handleCreateVersion = async () => {
@@ -273,6 +276,12 @@ const Edit: React.FC<EditProps> = ({
     setTextareaEdit(false);
   };
 
+  const handleSwipe = useSwipeable({
+    onSwipedLeft: () => handleNext(),
+    onSwipedRight: () => handlePrev(),
+    trackMouse: true, // Enable mouse dragging
+  });
+
   useEffect(() => {
     setContent(edits[editCurrentIndex]?.body);
   }, [edits]);
@@ -291,21 +300,24 @@ const Edit: React.FC<EditProps> = ({
 
   return (
     <div>
-      <div className="w-full flex flex-col justify-between px-10 py-4 rounded-lg">
-        <div className="user-arrow-btn  flex flex-row w-full  justify-between">
+      <div
+        className="w-full flex flex-col justify-between mt-10 sm:mt-0 px-10 py-4 rounded-lg"
+        {...handleSwipe}
+      >
+        <div className="user-arrow-btn  flex flex-col sm:flex-row w-full  justify-between">
           <div className="flex flex-row space-x-4 items-center justify-center">
             <img
               src={edits[editCurrentIndex]?.user?.image || "/profile.png"}
-              className="h-10 w-10 rounded-full"
+              className="h-8 w-8 sm:h-10 sm:w-10 rounded-full"
               alt="imgae"
             />
             <div className="flex flex-col">
-              <h1 className="text-[16px] text-slate-500 uppercase">
+              <h1 className="text-[13px] sm:text-[14px] lg:text-[16px] text-slate-500 uppercase">
                 {" "}
                 {edits[editCurrentIndex]?.user?.name}
               </h1>
 
-              <h2 className="text-[12px] text-slate-600">
+              <h2 className="text-[10px] sm:text-[12px] text-slate-600">
                 {edits[editCurrentIndex]?.createdAt &&
                   dateFormatter.format(
                     Date.parse(edits[editCurrentIndex].createdAt)
@@ -341,21 +353,23 @@ const Edit: React.FC<EditProps> = ({
               />
               <FavComponent editId={edits[editCurrentIndex]?.id} />
 
-              <CountComponent
-                label="N"
-                count={edits[editCurrentIndex]?.newnessCount}
-                editId={edits[editCurrentIndex]?.id}
-              />
-              <CountComponent
-                label="I"
-                count={edits[editCurrentIndex]?.importantCount}
-                editId={edits[editCurrentIndex]?.id}
-              />
-              <CountComponent
-                label="Q"
-                count={edits[editCurrentIndex]?.qualityCount}
-                editId={edits[editCurrentIndex]?.id}
-              />
+              <div className="flex flex-row space-x-2 sm:space-x-3">
+                <CountComponent
+                  label="N"
+                  count={edits[editCurrentIndex]?.newnessCount}
+                  editId={edits[editCurrentIndex]?.id}
+                />
+                <CountComponent
+                  label="I"
+                  count={edits[editCurrentIndex]?.importantCount}
+                  editId={edits[editCurrentIndex]?.id}
+                />
+                <CountComponent
+                  label="Q"
+                  count={edits[editCurrentIndex]?.qualityCount}
+                  editId={edits[editCurrentIndex]?.id}
+                />
+              </div>
             </div>
 
             <div className="nav-buttons flex flex-row text-[14px] justify-center items-center  space-x-[4px]">

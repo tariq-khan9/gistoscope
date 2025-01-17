@@ -9,7 +9,7 @@ const Home = () => {
       {/* <div className="w-[20%] h-full ">
         <Sidebar />
       </div> */}
-      <div className="w-full mt-10  flex justify-center  overflow-auto">
+      <div className="w-full  mt-10  flex justify-center  overflow-auto">
         <IndexGist />
       </div>
     </div>

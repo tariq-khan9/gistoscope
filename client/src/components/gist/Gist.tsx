@@ -4,6 +4,7 @@ import Version from "./Version";
 import BoxWithShadows from "../others/BoxWithShadow";
 import { sortGistsByTime } from "../../services/utils/sortGistsByTime";
 import Navigation from "../others/Navigation";
+import { useSwipeable } from "react-swipeable"; // Add this line at the top
 
 type GistProps = {
   gists: GistType[]; // Define the expected type for the gists prop
@@ -25,7 +26,9 @@ const Gist: React.FC<GistProps> = ({ gists }) => {
   };
 
   const handlePrev = () => {
-    setGistCurrentIndex((prevIndex) => (prevIndex - 1) % gists?.length);
+    setGistCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? sortedGists.length - 1 : prevIndex - 1
+    );
     setVersionCurrentIndex(0);
     setEditCurrentIndex(0);
   };
@@ -33,6 +36,13 @@ const Gist: React.FC<GistProps> = ({ gists }) => {
   const handleIndexChange = (newIndex: number) => {
     setGistCurrentIndex(newIndex);
   };
+
+  // Add this block after the state declarations
+  const handleSwipe = useSwipeable({
+    onSwipedLeft: () => handleNext(),
+    onSwipedRight: () => handlePrev(),
+    trackMouse: true, // Enable mouse dragging
+  });
 
   if (!gists || gists.length === 0) {
     return <div>No Gists available.</div>;
@@ -45,10 +55,13 @@ const Gist: React.FC<GistProps> = ({ gists }) => {
         boxBorder="border-amber-500"
         colorShades={["bg-amber-300", "bg-amber-200", "bg-amber-100"]}
       >
-        <div className="w-full p-3 flex flex-row justify-between px-8 rounded-lg">
+        <div
+          className="w-full p-3 flex flex-row justify-between px-8 rounded-lg"
+          {...handleSwipe}
+        >
           {sortedGists?.length > 0 && (
             <div className="">
-              <h1 className="text-[16px] uppercase">
+              <h1 className="text-[14px] sm:text-[16px] lg:text-[18px] uppercase">
                 {sortedGists[gistCurrentIndex]?.title}{" "}
                 {sortedGists[gistCurrentIndex]?.id}
               </h1>

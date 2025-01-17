@@ -51,10 +51,10 @@ const Navigation: React.FC<NavigationProps> = ({
   };
 
   return (
-    <div className="flex flex-row text-[14px] justify-center space-x-[6px]">
+    <div className="flex flex-row text-[10px] sm:text-[14px]  justify-center space-x-[6px]">
       {/* Previous Button */}
       <button
-        className="arrow"
+        className="arrow hidden sm:block"
         disabled={currentIndex === 0}
         onClick={handlePrev}
       >
@@ -89,7 +89,7 @@ const Navigation: React.FC<NavigationProps> = ({
 
       {/* Next Button */}
       <button
-        className="arrow"
+        className="arrow hidden sm:block"
         disabled={currentIndex + 1 === totalItems}
         onClick={handleNext}
       >
