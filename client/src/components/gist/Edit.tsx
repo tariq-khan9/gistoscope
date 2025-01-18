@@ -22,6 +22,7 @@ import SendComment from "../comments/SendComment";
 import CommentWrapper from "../comments/CommentWrapper";
 import { Modal } from "antd";
 import { useSwipeable } from "react-swipeable";
+import Navigation from "../others/Navigation";
 
 type EditProps = {
   edits: EditType[];
@@ -106,6 +107,10 @@ const Edit: React.FC<EditProps> = ({
     setEditCurrentIndex((prevIndex) =>
       prevIndex === 0 ? edits.length - 1 : prevIndex - 1
     );
+  };
+
+  const handleIndexChange = (newIndex: number) => {
+    setEditCurrentIndex(newIndex);
   };
 
   const handleCreateVersion = async () => {
@@ -301,33 +306,39 @@ const Edit: React.FC<EditProps> = ({
   return (
     <div>
       <div
-        className="w-full flex flex-col justify-between mt-10 sm:mt-0 px-10 py-4 rounded-lg"
+        className="w-full flex flex-col justify-between mt-10 sm:mt-0 px-2 sm:px-6 lg:px-10 py-4 rounded-lg"
         {...handleSwipe}
       >
-        <div className="user-arrow-btn  flex flex-col sm:flex-row w-full  justify-between">
-          <div className="flex flex-row space-x-4 items-center justify-center">
-            <img
-              src={edits[editCurrentIndex]?.user?.image || "/profile.png"}
-              className="h-8 w-8 sm:h-10 sm:w-10 rounded-full"
-              alt="imgae"
-            />
-            <div className="flex flex-col">
-              <h1 className="text-[13px] sm:text-[14px] lg:text-[16px] text-slate-500 uppercase">
-                {" "}
-                {edits[editCurrentIndex]?.user?.name}
-              </h1>
+        <div className="user-arrow-btn flex flex-col md:flex-row w-full  justify-between">
+          <div className="first-row  w-full flex flex-row justify-between">
+            <div className="flex flex-row space-x-1 sm:space-x-2 lg:space-x-4 items-center justify-center">
+              <img
+                src={edits[editCurrentIndex]?.user?.image || "/profile.png"}
+                className="h-8 w-8 sm:h-10 sm:w-10 rounded-full"
+                alt="imgae"
+              />
+              <div className="flex flex-col">
+                <h1 className="text-[13px] sm:text-[14px] lg:text-[16px] text-slate-500 uppercase">
+                  {" "}
+                  {edits[editCurrentIndex]?.user?.name}
+                </h1>
 
-              <h2 className="text-[10px] sm:text-[12px] text-slate-600">
-                {edits[editCurrentIndex]?.createdAt &&
-                  dateFormatter.format(
-                    Date.parse(edits[editCurrentIndex].createdAt)
-                  )}
-              </h2>
+                <h2 className="text-[10px] sm:text-[12px] text-slate-600">
+                  {edits[editCurrentIndex]?.createdAt &&
+                    dateFormatter.format(
+                      Date.parse(edits[editCurrentIndex].createdAt)
+                    )}
+                </h2>
+              </div>
             </div>
-          </div>
-
-          <div className="flex flex-row text-[14px] justify-center items-center  space-x-6">
-            <div className="flex flex-row text-sky-900 justify-center align-middle items-center space-x-5 text-[20px]">
+            <div className="sm:mr-2 lg:mr-4 xl:mr-8 ">
+              <div className="flex flex-row justify-between space-x-2 md:space-x-4 md:mt-1 mb-1 sm:mb-2">
+                <FlagComponent
+                  flag={edits[editCurrentIndex]?.flag}
+                  editId={edits[editCurrentIndex]?.id}
+                />
+                <FavComponent editId={edits[editCurrentIndex]?.id} />
+              </div>
               {(richtextEdit || textareaEdit) && user && (
                 <div className="flex justify-center">
                   <button
@@ -346,33 +357,36 @@ const Edit: React.FC<EditProps> = ({
                   </button>
                 </div>
               )}
+            </div>
+          </div>
 
-              <FlagComponent
-                flag={edits[editCurrentIndex]?.flag}
+          <div className="flex   flex-row text-[14px] mt-3 md:mt-0 justify-between md:justify-center items-center  md:space-x-6">
+            <div className="flex flex-row space-x-2 sm:space-x-3">
+              <CountComponent
+                label="N"
+                count={edits[editCurrentIndex]?.newnessCount}
                 editId={edits[editCurrentIndex]?.id}
               />
-              <FavComponent editId={edits[editCurrentIndex]?.id} />
-
-              <div className="flex flex-row space-x-2 sm:space-x-3">
-                <CountComponent
-                  label="N"
-                  count={edits[editCurrentIndex]?.newnessCount}
-                  editId={edits[editCurrentIndex]?.id}
-                />
-                <CountComponent
-                  label="I"
-                  count={edits[editCurrentIndex]?.importantCount}
-                  editId={edits[editCurrentIndex]?.id}
-                />
-                <CountComponent
-                  label="Q"
-                  count={edits[editCurrentIndex]?.qualityCount}
-                  editId={edits[editCurrentIndex]?.id}
-                />
-              </div>
+              <CountComponent
+                label="I"
+                count={edits[editCurrentIndex]?.importantCount}
+                editId={edits[editCurrentIndex]?.id}
+              />
+              <CountComponent
+                label="Q"
+                count={edits[editCurrentIndex]?.qualityCount}
+                editId={edits[editCurrentIndex]?.id}
+              />
             </div>
+            <Navigation
+              currentIndex={editCurrentIndex}
+              totalItems={edits.length}
+              onChangeIndex={handleIndexChange}
+              handlePrev={handlePrev}
+              handleNext={handleNext}
+            />
 
-            <div className="nav-buttons flex flex-row text-[14px] justify-center items-center  space-x-[4px]">
+            {/* <div className="nav-buttons flex flex-row text-[14px] justify-center items-center  space-x-[4px]">
               <button
                 className="arrow"
                 disabled={editCurrentIndex === 0}
@@ -394,7 +408,7 @@ const Edit: React.FC<EditProps> = ({
               >
                 <IoIosArrowDropright className="arrow" />
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
 

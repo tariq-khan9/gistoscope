@@ -47,9 +47,9 @@ const FavComponent = ({ editId }: Props) => {
   }
 
   return favoriteId ? (
-    <MdFavorite color="red" onClick={handleClick} />
+    <MdFavorite size={18} color="red" onClick={handleClick} />
   ) : (
-    <MdFavoriteBorder onClick={handleClick} />
+    <MdFavoriteBorder size={18} onClick={handleClick} />
   );
 };
 
