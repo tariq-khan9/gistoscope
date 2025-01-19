@@ -32,6 +32,8 @@ const Version: React.FC<VerionProps> = ({
   gistCurrentIndex,
 }) => {
   const [createVersion, setCreateVersion] = useState(false);
+  const [dragOffset, setDragOffset] = useState<number>(0); // Track drag offset for the current card
+  const [isDragging, setIsDragging] = useState<boolean>(false);
   const [newVersionData, setNewVersionData] = useState<string>(
     versions[versionCurrentIndex]?.point
   );
@@ -52,11 +54,29 @@ const Version: React.FC<VerionProps> = ({
     setVersionCurrentIndex(newIndex);
   };
 
+  // const handleSwipe = useSwipeable({
+  //   onSwipedLeft: () => handleNext(),
+  //   onSwipedRight: () => handlePrev(),
+  //   trackMouse: true, // Enable mouse dragging
+  // });
+
   const handleSwipe = useSwipeable({
-    onSwipedLeft: () => handleNext(),
-    onSwipedRight: () => handlePrev(),
+    onSwiping: (event) => {
+      setIsDragging(true); // Set dragging state to true
+      setDragOffset(event.deltaX); // Update drag offset in real-time
+    },
+    onSwiped: (event) => {
+      setIsDragging(false); // Reset dragging state
+      if (event.deltaX > 100) {
+        handlePrev(); // Swipe right
+      } else if (event.deltaX < -100) {
+        handleNext(); // Swipe left
+      }
+      setDragOffset(0); // Reset drag offset
+    },
     trackMouse: true, // Enable mouse dragging
   });
+
   useEffect(() => {
     setVersionCurrentIndex(0);
   }, [gistCurrentIndex]);
@@ -73,8 +93,17 @@ const Version: React.FC<VerionProps> = ({
 
   return (
     <div className="flex flex-col space-y-4 p-4 rounded-lg">
-      <div className="w-full  h-32 p-2 flex flex-col sm:flex-row justify-start sm:px-4 sm:space-x-4">
-        <div className="w-full sm:w-[75%] " {...handleSwipe}>
+      <div
+        className="w-full  h-32 p-2 flex flex-col sm:flex-row justify-start sm:px-4 sm:space-x-4 bg-amber-200"
+        style={{
+          transform: `translateX(${dragOffset}px)`,
+          transition: isDragging ? "none" : "transform 0.3s ease-in-out",
+          opacity: isDragging ? 0.8 : 1,
+          boxShadow: isDragging ? "0 4px 6px rgba(0, 0, 0, 0.1)" : "none",
+        }}
+        {...handleSwipe}
+      >
+        <div className="w-full p-3 flex flex-row justify-between px-8 rounded-lg ">
           {versions?.length > 0 && (
             <div className=" w-full ">
               {textareaEdit ? (
@@ -87,7 +116,7 @@ const Version: React.FC<VerionProps> = ({
               ) : (
                 <h1
                   onDoubleClick={() => user && setTextareaEdit(true)}
-                  className="text-slate-800 text-[12px] sm:text-[14px] lg:text-[16px]"
+                  className="text-slate-800 text-[12px] sm:text-[16px] font-barlow lg:text-[18px]"
                 >
                   {newVersionData}
                 </h1>

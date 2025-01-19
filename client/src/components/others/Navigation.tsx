@@ -51,7 +51,7 @@ const Navigation: React.FC<NavigationProps> = ({
   };
 
   return (
-    <div className="flex flex-row text-[10px] sm:text-[14px]  justify-center space-x-[6px]">
+    <div className="flex flex-row text-[10px] sm:text-[14px] font-barlow  justify-center space-x-[6px]">
       {/* Previous Button */}
       <button
         className="arrow hidden sm:block"

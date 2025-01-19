@@ -14,7 +14,8 @@ const Gist: React.FC<GistProps> = ({ gists }) => {
   const sortedGists = sortGistsByTime(gists, "desc");
   console.log("sorted Gists in gist ", sortedGists);
   const [showChild, setShowChild] = useState(false);
-
+  const [dragOffset, setDragOffset] = useState<number>(0); // Track drag offset for the current card
+  const [isDragging, setIsDragging] = useState<boolean>(false); // Track if a card is being dragged
   const [gistCurrentIndex, setGistCurrentIndex] = useState<number>(0);
   const [versionCurrentIndex, setVersionCurrentIndex] = useState<number>(0);
   const [editCurrentIndex, setEditCurrentIndex] = useState<number>(0);
@@ -38,9 +39,26 @@ const Gist: React.FC<GistProps> = ({ gists }) => {
   };
 
   // Add this block after the state declarations
+  // const handleSwipe = useSwipeable({
+  //   onSwipedLeft: () => handleNext(),
+  //   onSwipedRight: () => handlePrev(),
+  //   trackMouse: true, // Enable mouse dragging
+  // });
+
   const handleSwipe = useSwipeable({
-    onSwipedLeft: () => handleNext(),
-    onSwipedRight: () => handlePrev(),
+    onSwiping: (event) => {
+      setIsDragging(true); // Set dragging state to true
+      setDragOffset(event.deltaX); // Update drag offset in real-time
+    },
+    onSwiped: (event) => {
+      setIsDragging(false); // Reset dragging state
+      if (event.deltaX > 100) {
+        handlePrev(); // Swipe right
+      } else if (event.deltaX < -100) {
+        handleNext(); // Swipe left
+      }
+      setDragOffset(0); // Reset drag offset
+    },
     trackMouse: true, // Enable mouse dragging
   });
 
@@ -49,24 +67,27 @@ const Gist: React.FC<GistProps> = ({ gists }) => {
   }
 
   return (
-    <div className="flex w-full flex-col mt-10 ">
+    <div className="flex w-full flex-col ">
       <BoxWithShadows
         visible={gists.length > 1}
         boxBorder="border-amber-500"
         colorShades={["bg-amber-300", "bg-amber-200", "bg-amber-100"]}
       >
         <div
-          className="w-full p-3 flex flex-row justify-between px-8 rounded-lg"
+          className="w-full p-3 flex flex-row justify-between px-8 rounded-lg bg-amber-300" // Add background color here
+          style={{
+            transform: `translateX(${dragOffset}px)`,
+            transition: isDragging ? "none" : "transform 0.3s ease-in-out",
+            opacity: isDragging ? 0.8 : 1,
+            boxShadow: isDragging ? "0 4px 6px rgba(0, 0, 0, 0.1)" : "none",
+          }}
           {...handleSwipe}
         >
-          {sortedGists?.length > 0 && (
-            <div className="">
-              <h1 className="text-[14px] sm:text-[16px] lg:text-[18px] uppercase">
-                {sortedGists[gistCurrentIndex]?.title}{" "}
-                {sortedGists[gistCurrentIndex]?.id}
-              </h1>
-            </div>
-          )}
+          <div className="">
+            <h1 className="text-[14px] sm:text-[16px] lg:text-[18px] font-roboto uppercase">
+              {sortedGists[gistCurrentIndex]?.title}
+            </h1>
+          </div>
 
           <div className="post-arrow-buttons flex flex-row items-center justify-center space-x-2">
             {sortedGists && sortedGists[gistCurrentIndex].gists.length > 0 && (

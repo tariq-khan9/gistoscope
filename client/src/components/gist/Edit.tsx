@@ -93,6 +93,8 @@ const Edit: React.FC<EditProps> = ({
   const [content, setContent] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
   const [richtextEdit, setRichtextEdit] = useState<boolean>(false);
+  const [dragOffset, setDragOffset] = useState<number>(0);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
 
   const stringSizeInBytes = (str: string) => {
     const encoder = new TextEncoder();
@@ -281,9 +283,26 @@ const Edit: React.FC<EditProps> = ({
     setTextareaEdit(false);
   };
 
+  // const handleSwipe = useSwipeable({
+  //   onSwipedLeft: () => handleNext(),
+  //   onSwipedRight: () => handlePrev(),
+  //   trackMouse: true, // Enable mouse dragging
+  // });
+
   const handleSwipe = useSwipeable({
-    onSwipedLeft: () => handleNext(),
-    onSwipedRight: () => handlePrev(),
+    onSwiping: (event) => {
+      setIsDragging(true); // Set dragging state to true
+      setDragOffset(event.deltaX); // Update drag offset in real-time
+    },
+    onSwiped: (event) => {
+      setIsDragging(false); // Reset dragging state
+      if (event.deltaX > 100) {
+        handlePrev(); // Swipe right
+      } else if (event.deltaX < -100) {
+        handleNext(); // Swipe left
+      }
+      setDragOffset(0); // Reset drag offset
+    },
     trackMouse: true, // Enable mouse dragging
   });
 
@@ -307,6 +326,12 @@ const Edit: React.FC<EditProps> = ({
     <div>
       <div
         className="w-full flex flex-col justify-between mt-10 sm:mt-0 px-2 sm:px-6 lg:px-10 py-4 rounded-lg"
+        style={{
+          transform: `translateX(${dragOffset}px)`,
+          transition: isDragging ? "none" : "transform 0.3s ease-in-out",
+          opacity: isDragging ? 0.8 : 1,
+          boxShadow: isDragging ? "0 4px 6px rgba(0, 0, 0, 0.1)" : "none",
+        }}
         {...handleSwipe}
       >
         <div className="user-arrow-btn flex flex-col md:flex-row w-full  justify-between">
@@ -426,7 +451,7 @@ const Edit: React.FC<EditProps> = ({
         )}
       </div>
 
-      <div className="comments and reply px-10 py-4">
+      <div className="comments and reply px-2 sm:px-6 md:px-10 py-4">
         <SendComment
           setShowModal={setShowModal} // show button for reply modal
           editId={edits[editCurrentIndex]?.id}
@@ -435,7 +460,7 @@ const Edit: React.FC<EditProps> = ({
         />
       </div>
 
-      <div className="show all comments  px-10 py-4 max-h-[500px] overflow-y-auto">
+      <div className="show all comments px-2 sm:px-6 md:px-10 py-4 max-h-[500px] overflow-y-auto">
         {commentsArray && (
           <CommentWrapper
             comments={commentsArray}
