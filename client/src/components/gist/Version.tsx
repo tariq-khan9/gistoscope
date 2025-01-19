@@ -103,7 +103,7 @@ const Version: React.FC<VerionProps> = ({
         }}
         {...handleSwipe}
       >
-        <div className="w-full p-3 flex flex-row justify-between px-8 rounded-lg ">
+        <div className="w-full sm:p-3 flex flex-row justify-between sm:px-8 rounded-lg ">
           {versions?.length > 0 && (
             <div className=" w-full ">
               {textareaEdit ? (
@@ -127,7 +127,7 @@ const Version: React.FC<VerionProps> = ({
 
         {/*--------------------- textarea end here ----------------------------------*/}
 
-        <div className="user-arrow-btn mt-8  sm:mt-0 w-full sm:w-[25%]  flex flex-row sm:flex-col justify-between sm:justify-start sm:space-y-8 sm:border-l border-amber-400 sm:pl-4">
+        <div className="user-arrow-btn mt-4  sm:mt-0 w-full sm:w-[25%]  flex flex-row sm:flex-col justify-between sm:justify-start sm:space-y-6 sm:border-l border-amber-400 sm:pl-4">
           <div className="flex justify-start flex-row space-x-2 sm:space-x-4 items-center ">
             <img
               src={versions[versionCurrentIndex]?.user?.image || "/profile.png"}

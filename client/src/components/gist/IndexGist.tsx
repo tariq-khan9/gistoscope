@@ -39,9 +39,9 @@ const IndexGist = () => {
   console.log("gistt in index ", groupedGistData);
 
   return (
-    <div className="flex w-[90%] sm:w-[85%] lg:w-[70%]  flex-col space-y-6 mx-4  xs:mx-8  ">
+    <div className="flex w-[90%] sm:w-[85%] lg:w-[70%]  flex-col space-y-4 sm:space-y-6 mx-4  xs:mx-8  ">
       <div className="flex w-full justify-center">
-        <h1 className="pt-12 font-montserrat font-semibold text-gray-600 text-[28px]">
+        <h1 className="pt-12 font-montserrat font-semibold text-gray-600 text-[18px] sm:text-[28px]">
           {subjectTitle}
         </h1>
       </div>

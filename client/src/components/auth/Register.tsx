@@ -56,12 +56,15 @@ const Register: React.FC = () => {
 
   return (
     <div className="mt-24  flex justify-center">
-      <form className="bg-slate-200 px-10" onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="bg-slate-200 px-4 sm:px-10"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <div className="flex justify-center">
           <label className="form-heading ">Register here.</label>
         </div>
 
-        <div className="flex flex-row space-x-10 w-full">
+        <div className="flex flex-col sm:flex-row sm:space-x-10 w-full">
           <div>
             <div>
               <label className="form-label">Name</label>

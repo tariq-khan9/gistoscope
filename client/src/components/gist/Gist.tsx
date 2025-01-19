@@ -74,7 +74,7 @@ const Gist: React.FC<GistProps> = ({ gists }) => {
         colorShades={["bg-amber-300", "bg-amber-200", "bg-amber-100"]}
       >
         <div
-          className="w-full p-3 flex flex-row justify-between px-8 rounded-lg bg-amber-300" // Add background color here
+          className="w-full p-2 sm:p-3 flex flex-row justify-between sm:px-8 rounded-lg bg-amber-300" // Add background color here
           style={{
             transform: `translateX(${dragOffset}px)`,
             transition: isDragging ? "none" : "transform 0.3s ease-in-out",
@@ -84,7 +84,7 @@ const Gist: React.FC<GistProps> = ({ gists }) => {
           {...handleSwipe}
         >
           <div className="">
-            <h1 className="text-[14px] sm:text-[16px] lg:text-[18px] font-roboto uppercase">
+            <h1 className="text-[12px] sm:text-[14px] lg:text-[18px] font-roboto uppercase">
               {sortedGists[gistCurrentIndex]?.title}
             </h1>
           </div>

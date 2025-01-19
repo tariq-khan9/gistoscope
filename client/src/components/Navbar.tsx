@@ -7,8 +7,8 @@ const Navbar: React.FC = () => {
   const { user, logout, googleLogin } = useGlobalContext();
 
   return (
-    <nav className="navbar px-4 sm:px-6 md:px-12 pt-2 bg-fuchsia-950 text-white h-12 flex flex-row items-center justify-between space-x-2 sm:space-x-4">
-      <h1 className="hidden md:block">Gistoscop</h1>
+    <nav className="navbar font-barlow px-4 sm:px-6 md:px-12 pt-2 bg-fuchsia-950 text-white h-12 flex flex-row items-center justify-between space-x-2 sm:space-x-4">
+      <h1 className="hidden md:block  ">Gistoscop</h1>
       <div className="flex flex-row space-x-2 sm:space-x-4 text-[12px] sm:text-[14px] lg:text-[16px]">
         <a href="/#">Home</a>
         <a href="/">Subjects</a>
@@ -22,7 +22,7 @@ const Navbar: React.FC = () => {
             <Profile />
           </div>
         ) : (
-          <div className="flex flex-row  space-x-2">
+          <div className="flex flex-row text-[12px] sm:text-[14px] space-x-2">
             <a href="/login" className="text-gray-100">
               Login
             </a>
