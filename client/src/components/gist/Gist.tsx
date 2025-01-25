@@ -12,7 +12,7 @@ type GistProps = {
 
 const Gist: React.FC<GistProps> = ({ gists }) => {
   const sortedGists = sortGistsByTime(gists, "desc");
-  console.log("sorted Gists in gist ", sortedGists);
+  console.log("sorted Gists in by user gist ", sortedGists);
   const [showChild, setShowChild] = useState(false);
   const [dragOffset, setDragOffset] = useState<number>(0); // Track drag offset for the current card
   const [isDragging, setIsDragging] = useState<boolean>(false); // Track if a card is being dragged
@@ -74,7 +74,7 @@ const Gist: React.FC<GistProps> = ({ gists }) => {
         colorShades={["bg-amber-300", "bg-amber-200", "bg-amber-100"]}
       >
         <div
-          className="w-full p-2 sm:p-3 flex flex-row justify-between sm:px-8 rounded-lg bg-amber-300" // Add background color here
+          className="w-full p-2 sm:p-3 flex flex-row justify-between sm:px-8 rounded-lg bg-amber-300"
           style={{
             transform: `translateX(${dragOffset}px)`,
             transition: isDragging ? "none" : "transform 0.3s ease-in-out",

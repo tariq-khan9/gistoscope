@@ -40,7 +40,9 @@ export default function CommentWrapper({
           />
         ))
       ) : (
-        <div>No comments exist</div>
+        <div className="flex justify-center font-barlow text-gray-500">
+          No comments exist
+        </div>
       )}
     </>
   );

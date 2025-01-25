@@ -1,7 +1,7 @@
-import { BorderHorizontalOutlined, BorderOutlined } from "@ant-design/icons";
-import React, { useState } from "react";
+import React from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import "./RichEditor.css"; // Import custom CSS file
 
 type RichEditorProps = {
   content: string;
@@ -14,6 +14,7 @@ export default function RichEditor({
   setContent,
   editable,
 }: RichEditorProps) {
+  // Toolbar configuration (only used when `editable` is true)
   const modules = {
     toolbar: [
       [{ header: [1, 2, false] }],
@@ -25,6 +26,7 @@ export default function RichEditor({
       ["clean"],
     ],
   };
+
   const formats = [
     "header",
     "bold",
@@ -45,19 +47,33 @@ export default function RichEditor({
   return (
     <div className="flex bg-white mt-1 w-full rounded-md">
       <div className="w-full min-h-48 h-full">
-        <ReactQuill
-          style={{
-            border: "1px solid white", // Set border color to white
-            padding: 0, // Remove padding if necessary
-            backgroundColor: "transparent", // Optional: Ensure the background matches your design
-          }}
-          readOnly={editable}
-          theme="snow"
-          value={content}
-          onChange={setContent}
-          modules={modules}
-          formats={formats}
-        />
+        {editable ? (
+          // Render a plain div with the content when `editable` is false
+          <div
+            className="ql-editor" // Use the same class as ReactQuill's editor for consistent styling
+            style={{
+              border: "none",
+              padding: 0,
+              backgroundColor: "transparent",
+            }}
+            dangerouslySetInnerHTML={{ __html: content }} // Render HTML content
+          />
+        ) : (
+          // Render ReactQuill with toolbar when `editable` is true
+          <ReactQuill
+            style={{
+              border: "none", // Remove border from the container
+              padding: 0, // Remove padding if necessary
+              backgroundColor: "transparent", // Optional: Ensure the background matches your design
+            }}
+            readOnly={false} // Editor is editable
+            theme="snow"
+            value={content}
+            onChange={setContent}
+            modules={modules} // Include toolbar
+            formats={formats}
+          />
+        )}
       </div>
     </div>
   );

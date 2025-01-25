@@ -439,7 +439,7 @@ const Edit: React.FC<EditProps> = ({
 
         {edits?.length > 0 && (
           <div
-            className="mt-4"
+            className="mt-4 md:mt-8 xl:mt-12"
             onDoubleClick={() => user && setRichtextEdit(true)}
           >
             <RichEditor

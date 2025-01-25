@@ -79,6 +79,7 @@ const SubjectTree: React.FC = () => {
   const renderTreeNodes = (parentId: number | null): JSX.Element[] => {
     return data.subjects
       .filter((node: Subject) => node.parentId === parentId)
+      .reverse()
       .map((node: Subject) => (
         <TreeNode
           key={node.id}

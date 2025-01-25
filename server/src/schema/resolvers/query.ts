@@ -59,6 +59,14 @@ export const Query = {
     });
   },
 
+  async gistsByUser(_: any, args: any) {
+    return await prisma.gist.findMany({
+      where: {
+        userId: args.userId, // Condition for subjectId matching the argument
+      },
+    });
+  },
+
   async version(_: any, args: any) {
     return await prisma.version.findUnique({
       where: { id: args.id },

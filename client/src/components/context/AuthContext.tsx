@@ -90,7 +90,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         console.log(response.data.message); // Optional: Log the response message
 
         // Redirect to the home page
-        window.location.href = "/";
+        // window.location.href = "/login";
       }
     } catch (error) {
       console.error("Logout failed:", error);

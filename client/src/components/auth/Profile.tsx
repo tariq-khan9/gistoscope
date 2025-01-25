@@ -27,7 +27,7 @@ const Profile = () => {
           <div className="absolute right-0 mt-2 text-[12px] md:text-[14px] w-36 md:w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
             <div className="py-1 px-4 space-y-2 md:space-y-4">
               <a
-                href="/my-gists"
+                href={`/user/${user?.name}/${user?.id}`}
                 className="block  text-gray-700 hover:bg-gray-100"
               >
                 My Gists
