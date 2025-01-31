@@ -26,6 +26,7 @@ CREATE TABLE "Subject" (
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
     "email" TEXT NOT NULL,
+    "isEmailVerified" BOOLEAN NOT NULL,
     "password" TEXT,
     "name" TEXT NOT NULL,
     "authType" "AuthType" NOT NULL,

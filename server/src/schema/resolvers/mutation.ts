@@ -7,6 +7,7 @@ export const Mutation = {
     const user = await prisma.user.create({
       data: {
         email: args.user.email,
+        isEmailVerified: args.user.isEmailVerified,
         userType: args.user.userType,
         authType: args.user.authType,
         password: args.user.password,
@@ -22,6 +23,7 @@ export const Mutation = {
       where: { id: args.id },
       data: {
         email: args.user.email,
+        isEmailVerified: args.user.isEmailVerified,
         password: args.user.password,
         name: args.user.name,
         image: args.user.image,

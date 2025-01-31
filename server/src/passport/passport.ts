@@ -32,6 +32,7 @@ passport.use(
           user = await prisma.user.create({
             data: {
               email: email,
+              isEmailVerified: false,
               authType: "google",
               userType: "member",
               name: name,
