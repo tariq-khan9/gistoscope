@@ -23,7 +23,6 @@ export const verifyEmail = async (req, res) => {
         res.status(200).json({ message: "Email verified successfully!" });
     }
     catch (error) {
-        console.error("Email verification error:", error);
         res.status(400).json({ message: "Invalid or expired verification link" });
     }
 };

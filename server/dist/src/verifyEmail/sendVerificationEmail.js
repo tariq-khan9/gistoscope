@@ -6,7 +6,6 @@ import nodemailer from "nodemailer";
 import prisma from "../../prisma/prismaClient.js";
 export const sendVerificationEmail = async (req, res) => {
     const { email } = req.body;
-    console.log("email user ", req.body);
     // Check if the user exists
     if (!email)
         return;
@@ -42,7 +41,6 @@ export const sendVerificationEmail = async (req, res) => {
             .json({ message: "Verification email sent. Please check your inbox." });
     }
     catch (error) {
-        console.error("Error sending verification email:", error);
         res.status(500).json({ message: "Failed to send verification email." });
     }
 };
