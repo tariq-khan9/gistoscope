@@ -1,14 +1,16 @@
-// src/components/Login.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import { Modal } from "antd";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const { login, googleLogin } = useGlobalContext();
+  const { token } = useParams<{ token: string }>(); // ✅ Get token from URL param
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
 
   const handleLocalLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,7 +18,46 @@ const Login: React.FC = () => {
       await login(email, password);
       navigate("/");
     } catch (err) {
-      setError("Invalid username or password");
+      Modal.error({
+        title: "Authentication failed!",
+        content:
+          "Invalid email or password, please provide a verified email address and correct password.",
+        onOk() {},
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      try {
+        verifyEmail(token);
+      } catch (error) {
+        console.error("Invalid token", error);
+      }
+    }
+  }, [token]);
+
+  const verifyEmail = async (authToken: string) => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/verify/verify-email`,
+        { authToken },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      if (response.status !== 200) {
+        Modal.error({
+          title: "Email Validation Failed",
+          content: "Failed to validate your email. Please try again!",
+          onOk() {
+            console.log("User acknowledged the error message");
+            navigate("/login");
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error verifying email:", error);
     }
   };
 
@@ -38,11 +79,8 @@ const Login: React.FC = () => {
           </div>
         </div>
 
-        <div className="relative flex items-center  ">
-          {/* Divider Line */}
+        <div className="relative flex items-center">
           <span className="border-t sm:border-l border-gray-700 w-full sm:h-full"></span>
-
-          {/* Orange Circle Positioned Absolutely in Center */}
           <div className="absolute text-[12px] sm:text-[18px] font-roboto top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 h-10 w-10 sm:h-16 sm:w-16 rounded-full bg-gray-100 border border-gray-800 flex justify-center items-center text-gray-600 font-semibold">
             OR
           </div>
@@ -51,12 +89,12 @@ const Login: React.FC = () => {
         <div className="sm:w-1/2 p-2 w-full">
           <form className="flex flex-col p-4" onSubmit={handleLocalLogin}>
             <label className="mb-2 text-[12px] text-gray-500">
-              dont have accout?{" "}
+              Don't have an account?{" "}
               <a
                 className="text-gray-700 font-semibold italic hover:text-gray-500"
                 href="/register"
               >
-                register here!
+                Register here!
               </a>
             </label>
             <label>Username</label>
@@ -71,7 +109,16 @@ const Login: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <div className="w-full flex justify-center mt-8">
+            <div className="flex justify-end mt-1 font-montserrat text-[10px] sm:text-[12px] xl:text-[13px]">
+              <button
+                className="hover:text-gray-500 text-gray-600 "
+                onClick={() => navigate("/forgot-password")}
+              >
+                forgot password?
+              </button>
+            </div>
+
+            <div className="w-full flex justify-center mt-6">
               <button
                 className="bg-green-200 hover:bg-green-300 h-24 sm:h-40 w-24 sm:w-40 text-[14px] sm:text-[20px] rounded-full"
                 type="submit"
@@ -80,7 +127,6 @@ const Login: React.FC = () => {
               </button>
             </div>
           </form>
-          {error && <p>{error}</p>}
         </div>
       </div>
     </div>

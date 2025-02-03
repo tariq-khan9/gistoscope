@@ -9,6 +9,7 @@ import { resolvers } from "./schema/resolvers/index.js";
 import { router } from "./passport/routes.js";
 import resetRouter from "./forgetPass/routes.js";
 import registerRouter from "./passport/registerRouter.js";
+import verifyRouter from "./verifyEmail/routes.js";
 const app = express();
 const corsOptions = {
     origin: process.env.CLIENT_URL,
@@ -38,6 +39,7 @@ app.use(passport.session());
 app.use("/uploads", express.static("uploads"));
 app.use("/auth", router);
 app.use("/reset", resetRouter);
+app.use("/verify", verifyRouter);
 app.use("/register", registerRouter);
 app.listen(5000, () => {
     console.log("Express server running on port 5000");

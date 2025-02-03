@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { Modal } from "antd";
 
 interface ResetPasswordFormInputs {
   newPassword: string;
@@ -11,7 +12,6 @@ interface ResetPasswordFormInputs {
 const ResetPassword: React.FC = () => {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
-  const [message, setMessage] = useState("");
 
   const {
     register,
@@ -31,18 +31,26 @@ const ResetPassword: React.FC = () => {
           newPassword: data.newPassword,
         }
       );
-      setMessage(response.data.message);
+      Modal.success({
+        title: "Password changed!",
+        content: "Your password is changed successfully.",
+        onOk() {
+          navigate("/login");
+        },
+      });
+
       navigate("/login"); // Redirect to login after successful reset
     } catch (error) {
-      setMessage("An error occurred. Please try again.");
-      setTimeout(() => {
-        setMessage("");
-      }, 7000);
+      Modal.error({
+        title: "Something wrong!",
+        content: "An error occurred, please try again later.",
+        onOk() {},
+      });
     }
   };
 
   return (
-    <div className="w-full flex flex-row justify-center items-center">
+    <div className="w-full flex flex-row justify-center items-center pt-20 xl:pt-28">
       <div className="bg-gray-100 rounded-xl w-[700px] h-[400px] p-4 flex flex-col items-center">
         <h2 className="form-heading">Reset Password</h2>
         <form
@@ -83,7 +91,6 @@ const ResetPassword: React.FC = () => {
             Reset Password
           </button>
         </form>
-        {message && <p>{message}</p>}
       </div>
     </div>
   );

@@ -51,7 +51,10 @@ passport.use(new Strategy({ usernameField: "email" }, async function (email, pas
     try {
         // Find the user in the PostgreSQL database using Prisma
         const user = await prisma.user.findUnique({
-            where: { email },
+            where: {
+                email: email,
+                isEmailVerified: true,
+            },
         });
         // If no user is found, return an error
         if (!user) {

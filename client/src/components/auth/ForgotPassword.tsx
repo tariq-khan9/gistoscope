@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
+import { Modal } from "antd";
+import { useNavigate } from "react-router-dom";
 
 interface ForgotPasswordFormInputs {
   email: string;
 }
 
 const ForgotPassword: React.FC = () => {
-  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -21,23 +24,26 @@ const ForgotPassword: React.FC = () => {
         `${process.env.REACT_APP_SERVER_URL}/reset/forgot-password`,
         { email: data.email }
       );
-      setMessage(response.data.message);
-      reset();
 
-      // Clear message after 7 seconds
-      setTimeout(() => {
-        setMessage("");
-      }, 7000);
+      reset();
+      Modal.success({
+        title: "Email sent!",
+        content: "A password changing link has been sent to your email.",
+        onOk() {
+          navigate("/login");
+        },
+      });
     } catch (error) {
-      setMessage("An error occurred. Please try again.");
-      setTimeout(() => {
-        setMessage("");
-      }, 7000);
+      Modal.error({
+        title: "Something worng!",
+        content: "An error occurred, please try again later.",
+        onOk() {},
+      });
     }
   };
 
   return (
-    <div className="w-full flex flex-row justify-center">
+    <div className="w-full flex flex-row justify-center pt-20 xl:pt-28">
       <div className="bg-gray-100 rounded-xl w-[700px] h-[400px] p-4 flex flex-col items-center">
         <h2 className="form-heading">Forgot Password</h2>
         <form className="w-full px-40" onSubmit={handleSubmit(onSubmit)}>
@@ -63,15 +69,6 @@ const ForgotPassword: React.FC = () => {
             Submit
           </button>
         </form>
-        {message && (
-          <p
-            className={`text-[14px] ${
-              message.includes("error") ? "text-red-500" : "text-green-600"
-            } mt-20`}
-          >
-            {message}
-          </p>
-        )}
       </div>
     </div>
   );
