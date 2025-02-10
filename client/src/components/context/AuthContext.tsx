@@ -1,9 +1,6 @@
 // src/context/AuthContext.tsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
-import { GET_GISTS_BY_SUBJECT } from "../../services/graphql/queriesMutations";
-import { useParams } from "react-router-dom";
-import { useLazyQuery, useQuery } from "@apollo/client";
 
 interface User {
   id: number;
@@ -40,22 +37,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Check session on initial load
   useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const res = await axios.get(
-          `${process.env.REACT_APP_SERVER_URL}/auth/session`,
-          {
-            withCredentials: true,
-          }
-        );
-        setUser(res.data.user);
-      } catch (error) {
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    checkSession();
+    // fetch request to get user from google auth.
+    fetch(`${process.env.REACT_APP_SERVER_URL}/auth/login/success`, {
+      credentials: "include", // Important to include cookies
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setUser(data.user);
+          console.log("google auth ", data.user);
+          localStorage.setItem("user", JSON.stringify(data.user));
+        } else {
+          setUser(null);
+          localStorage.removeItem("user");
+        }
+      })
+      .catch((err) => console.error("Error fetching user:", err));
+
+    // check local storage in both google and local auth
+    const storedUser = localStorage.getItem("user");
+
+    if (storedUser) {
+      setUser(JSON.parse(storedUser) as User);
+    } else {
+      setUser(null);
+    }
   }, []);
 
   // Local login
@@ -67,6 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         { withCredentials: true }
       );
       setUser(res.data.user);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
     } catch (error) {
       throw new Error("Invalid username or password");
     }
@@ -87,10 +94,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       );
       if (response.status === 200) {
         setUser(null); // Clear user data after successful logout
-        console.log(response.data.message); // Optional: Log the response message
+        localStorage.removeItem("user");
 
         // Redirect to the home page
-        window.location.href = "/";
+        // window.location.href = "/login";
       }
     } catch (error) {
       console.error("Logout failed:", error);

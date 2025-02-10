@@ -218,8 +218,8 @@ const CountComponent = ({ label, count, editId }: CountProps) => {
   //   }
   // };
   return (
-    <div className="flex flex-row border border-amber-600 rounded-md items-center px-2">
-      <div className="h-6 w-6 mr-2 rounded-full  bg-sky-700 flex justify-center items-center text-white">
+    <div className="flex flex-row border border-amber-600 rounded-md items-center px-1 sm:px-2">
+      <div className="h-4 sm:h-6 w-4 sm:w-6 mr-1 sm:mr-2 text-[10px] sm:text-[14px] font-bold rounded-full  bg-sky-700 flex justify-center items-center text-white">
         {label}
       </div>
       <div className="flex flex-col items-center text-[14px] leading-none gap-0">

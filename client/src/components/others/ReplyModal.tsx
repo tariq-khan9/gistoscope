@@ -10,6 +10,7 @@ import {
   GET_GISTS_BY_SUBJECT,
 } from "../../services/graphql/queriesMutations";
 import RichEditor from "../dashboard/RichEditor";
+import { Modal } from "antd";
 
 type FormValues = {
   title: string;
@@ -100,7 +101,15 @@ const ReplyModal: React.FC<Props> = ({ setShowModal, gist_id }) => {
           });
 
           if (editResponse.data) {
-            setSuccessMessage("Gist created successfully!");
+            setSuccessMessage("");
+            Modal.success({
+              title: "Success",
+              content: "Gist created successfully!",
+              onOk() {
+                console.log("User acknowledged the success message");
+                setShowModal(false);
+              },
+            });
           }
         }
       } else {

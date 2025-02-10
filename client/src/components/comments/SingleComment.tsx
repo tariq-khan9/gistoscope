@@ -12,7 +12,10 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
 
 interface Props {
   setChildrenShow: React.Dispatch<React.SetStateAction<boolean>>;
+
   childrenShow: boolean;
+  childrenLoaded: boolean;
+  setChildrenLoaded: React.Dispatch<React.SetStateAction<boolean>>;
   comment: CommentType;
   userId: number;
   editId: number;
@@ -21,7 +24,10 @@ interface Props {
 
 export default function SingleComment({
   setChildrenShow,
+
   childrenShow,
+  childrenLoaded,
+  setChildrenLoaded,
   comment,
   userId,
   editId,
@@ -55,6 +61,15 @@ export default function SingleComment({
     } catch (error) {}
   };
 
+  const handleToggleChildren = async () => {
+    setChildrenShow((prev) => !prev);
+    if (!childrenLoaded) {
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulates a delay.
+
+      setChildrenLoaded(true);
+    }
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -64,25 +79,29 @@ export default function SingleComment({
 
   return (
     <>
-      <div className="border border-gray-400 p-4 flex flex-col mt-4 rounded-md bg-slate-100">
-        <div className="top-row  flex flex-row justify-between text-[12px] border-b border-gray-300">
-          <h1 className="text-[13px] font-bold text-blue-600">
+      <div className="border border-gray-400 p-2 sm:p-4 flex flex-col mt-2 sm:mt-4 rounded-md bg-slate-100">
+        <div className="top-row  flex flex-row justify-between text-[9px] sm:text-[12px] border-b border-gray-300">
+          <h1 className="text-[10px] sm:text-[13px] font-bold text-blue-600">
             {comment.user.name}
           </h1>
           <h1>{dateFormatter.format(Date.parse(comment.createdAt))}</h1>
         </div>
 
-        <div className="text-[16px] mt-6">{comment.comment}</div>
+        <div className="text-[11px] sm:text-[14px] lg:text-[16px] mt-3 sm:mt-6">
+          {comment.comment}
+        </div>
 
-        <div className="flex flex-row justify-between items-center mt-4">
+        <div className="flex flex-row justify-between items-center mt-2 sm:mt-4">
           <div className="flex flex-row">
             <div className="text-[10px] text-gray-500">
               {/* <span>Likes: </span><span>{comment.sentiments.length}</span> */}
-              <span className="ml-4">Dislike: </span>
+              <span className="ml-2 sm:ml-4 text-[10px] sm:text-[12px]">
+                Likes:{" "}
+              </span>
               <span>0</span>
             </div>
           </div>
-          <div className="text-[11px] flex flex-row items-center space-x-2">
+          <div className="text-[9px] sm:text-[11px] flex flex-row items-center space-x-1 sm:space-x-2">
             <button
               className=" flex flex-row items-center"
               onClick={() => setShowReply(!showReply)}
@@ -92,7 +111,9 @@ export default function SingleComment({
             </button>
             <button
               className="hover:text-blue-700"
-              onClick={() => setChildrenShow(!childrenShow)}
+              onClick={() => {
+                handleToggleChildren();
+              }}
             >
               Comments:{" "}
             </button>

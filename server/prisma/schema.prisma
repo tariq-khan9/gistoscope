@@ -31,6 +31,7 @@ model Subject {
 model User {
   id         Int      @id @default(autoincrement())
   email   String   @unique
+  isEmailVerified Boolean
   password   String?
   name       String
   authType   AuthType

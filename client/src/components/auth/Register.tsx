@@ -1,7 +1,9 @@
 // Register.tsx
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Modal } from "antd";
 
 interface RegisterFormData {
   name: string;
@@ -12,6 +14,7 @@ interface RegisterFormData {
 }
 
 const Register: React.FC = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -27,20 +30,44 @@ const Register: React.FC = () => {
     formData.append("email", data.email);
     formData.append("password", data.password);
     if (imageFile) formData.append("image", imageFile);
-
+    console.log("form data at top ", formData);
     try {
-      const response = await axios.post(
+      const register = await axios.post(
         `${process.env.REACT_APP_SERVER_URL}/register`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      alert("User registered successfully!");
-      console.log(response.data);
+
+      const verify = await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/verify/send-verification-email`,
+        { email: data.email },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      Modal.success({
+        title: "Email sent!",
+        content:
+          "A verification email has been sent. Please click the verification link within 24 hours to complete registration",
+        onOk() {
+          navigate("/login");
+        },
+      });
+      // console.log(response.data);
     } catch (error) {
       console.error("Error registering user:", error);
-      alert("Error registering user");
+      const deleteUser = await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/verify/delete-user`,
+        { email: data.email },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      console.log("user deleted ", deleteUser);
     }
   };
 
@@ -56,12 +83,15 @@ const Register: React.FC = () => {
 
   return (
     <div className="mt-24  flex justify-center">
-      <form className="bg-slate-200 px-10" onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="bg-slate-200 px-4 sm:px-10"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <div className="flex justify-center">
           <label className="form-heading ">Register here.</label>
         </div>
 
-        <div className="flex flex-row space-x-10 w-full">
+        <div className="flex flex-col sm:flex-row sm:space-x-10 w-full">
           <div>
             <div>
               <label className="form-label">Name</label>

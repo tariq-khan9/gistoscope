@@ -1,0 +1,183 @@
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Subject {
+  id         Int      @id @default(autoincrement())
+  title      String
+  parentId   Int?     // Allows for nesting (self-referencing relation)
+  userId     Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent     Subject? @relation("SubjectToSubject", fields: [parentId], references: [id], onDelete: SetNull)
+  children   Subject[] @relation("SubjectToSubject") // Allows a subject to have multiple child subjects
+  gists      Gist[]   // Relation to gists in the subject
+
+
+}
+
+
+
+// User model
+model User {
+  id         Int      @id @default(autoincrement())
+  email   String   @unique
+  password   String?
+  name       String
+  authType   AuthType
+  userType  UserType
+  resetPasswordToken    String?   // Optional field for reset token
+  resetPasswordExpires  DateTime?
+  image      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  gists      Gist[]
+  versions   Version[]
+  edits      Edit[]
+  actions    UserEditAction[]
+  comments   Comment[]
+  favorites  Favorite[] 
+
+  subjects Subject[]
+
+  commentLikes CommentLike[]
+}
+
+model Gist {
+  id    Int   @id @default(autoincrement())  
+  title    String
+  parentId Int?
+  userId   Int
+  views    Int?
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade) 
+  versions Version[] 
+  subjectId  Int      // Required relation to a subject
+  subject    Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+
+model Version {
+  id    Int   @id @default(autoincrement())  
+  point    String
+  userId   Int
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade) 
+  gistId   Int
+  gist     Gist     @relation(fields: [gistId], references: [id], onDelete: Cascade) 
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  edits    Edit[]   
+}
+
+
+model Edit {
+  id             Int              @id @default(autoincrement())
+  body           String
+  userId         Int
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  versionId      Int
+  version        Version          @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  flag           Boolean          @default(false)
+  newnessCount   Int              @default(0)
+  importantCount Int              @default(0)
+  qualityCount   Int              @default(0)
+  
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  actions        UserEditAction[]
+  comments       Comment[]      
+  favoritedBy    Favorite[]      
+}
+
+model UserEditAction {
+  id           Int     @id @default(autoincrement())
+  userId       Int
+  editId       Int
+  field        ActionField  
+  actionType   ActionType 
+  createdAt    DateTime @default(now())
+
+  user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  edit         Edit    @relation(fields: [editId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, editId, field, actionType]) // Ensures a user can only perform one action per field in each Edit record
+}
+
+
+model Favorite {
+  id     Int   @id @default(autoincrement())
+  userId Int
+  editId Int
+
+  user   User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  edit   Edit  @relation(fields: [editId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, editId]) // Ensures a user can only favorite an edit once
+}
+
+model Comment {
+  id           Int              @id @default(autoincrement())
+  comment      String
+  parentId     Int?
+  userId       Int
+  editId       Int
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  edit         Edit             @relation(fields: [editId], references: [id], onDelete: Cascade)
+ 
+
+  likes CommentLike[]
+}
+
+model CommentLike {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  commentId  Int
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment    Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, commentId]) // Ensures a user can only like a comment once
+}
+
+
+enum ActionField {
+  importantCount
+  qualityCount
+  newnessCount
+}
+
+enum ActionType {
+  increment
+  decrement
+}
+
+enum AuthType {
+  google
+  github
+  local
+}
+
+enum UserType {
+  admin
+  moderator
+  member
+}
+
+
+

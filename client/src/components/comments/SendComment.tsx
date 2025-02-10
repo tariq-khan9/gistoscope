@@ -55,8 +55,8 @@ const SendComment = ({
   };
 
   return (
-    <div className="flex flex-row justify-end space-x-4">
-      <div className="relative w-full">
+    <div className="flex flex-col-reverse sm:flex-row justify-end sm:space-x-4">
+      <div className="relative w-full mt-2 sm:mt-0">
         <textarea
           value={content}
           disabled={!user}
@@ -70,11 +70,11 @@ const SendComment = ({
           className="absolute right-4 top-[25px] transform -translate-y-1/2 text-slate-700 hover:text-amber-600 text-[20px] cursor-pointer"
         />
       </div>
-      <div>
+      <div className="">
         <button
           disabled={!user}
           onClick={() => setShowModal(true)}
-          className="  text-slate-600 h-12  px-6 text-[13px] rounded-md border border-slate-600 hover:border-amber-600  hover:bg-white hover:text-amber-600"
+          className="  text-slate-600 h-12 w-full  px-6 text-[13px] rounded-md border border-slate-600 hover:border-amber-600  hover:bg-white hover:text-amber-600"
         >
           Reply
         </button>

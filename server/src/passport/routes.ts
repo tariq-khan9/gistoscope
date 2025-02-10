@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import passport from "passport";
 import bcrypt from "bcrypt";
 
@@ -42,17 +42,6 @@ router.get("/login/success", (req, res) => {
     });
   }
 });
-
-// router.post("/login-local", (req, res) => {
-//   if (req.user) {
-//     res.status(200).json({
-//       success: true,
-//       message: "user logged in successfully",
-//       user: req.user,
-//       // cookies: req.cookies,
-//     });
-//   }
-// });
 
 router.post("/logout", (req, res, next) => {
   (req.logout as unknown as (callback: (err?: any) => void) => void)((err) => {

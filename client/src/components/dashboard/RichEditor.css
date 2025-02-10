@@ -1,0 +1,13 @@
+/* Remove border from the toolbar */
+.ql-toolbar.ql-snow {
+  border: none !important;
+}
+
+/* Remove border from the text area */
+.ql-container.ql-snow {
+  border: none !important;
+}
+
+.ql-container.ql-snow .ql-toolbar.ql-snow {
+  display: none;
+}

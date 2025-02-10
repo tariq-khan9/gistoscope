@@ -19,19 +19,6 @@ export default function Comment({
   const [childrenLoaded, setChildrenLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleToggleChildren = async () => {
-    setChildrenShow((prev) => !prev);
-    if (!childrenLoaded) {
-      setLoading(true);
-
-      // Simulate an async fetch for replies (if needed).
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulates a delay.
-
-      setChildrenLoaded(true);
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="flex flex-col">
       <SingleComment
@@ -40,24 +27,15 @@ export default function Comment({
         editId={editId}
         setChildrenShow={setChildrenShow}
         childrenShow={childrenShow}
+        childrenLoaded={childrenLoaded}
+        setChildrenLoaded={setChildrenLoaded}
         handleRefetchComments={handleRefetchComments}
       />
 
       {comment.replies && comment.replies.length > 0 && (
-        <div className="flex flex-col mt-4">
-          <button
-            onClick={handleToggleChildren}
-            className="text-blue-500 hover:underline"
-          >
-            {childrenShow
-              ? "Hide Replies"
-              : loading
-              ? "Loading..."
-              : `Show Replies (${comment.replies.length})`}
-          </button>
-
+        <div className="flex flex-col mt-2 mb-2 sm:mt-4 sm:mb-4">
           {childrenShow && childrenLoaded && (
-            <div className="ml-4 border-l pl-4">
+            <div className=" border-l pl-1 sm:pl-2 md:pl-4">
               {comment.replies.map((childComment) => (
                 <Comment
                   key={childComment.id}

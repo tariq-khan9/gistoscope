@@ -6,7 +6,7 @@
 @tailwind utilities;
 
 .form-heading {
-  @apply text-[30px] font-semibold text-gray-600 my-4;
+  @apply text-[20px] sm:text-[30px] font-semibold text-gray-600 my-4;
 }
 
 .form-label {

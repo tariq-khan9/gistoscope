@@ -39,6 +39,7 @@ type Query{
     gists: [Gist]
     rootGists: [Gist]
     gistsBySubject(subjectId: Int!): [Gist]
+    gistsByUser(userId: Int!): [Gist]
     gist(id: Int!): Gist
 
     versions: [Version]

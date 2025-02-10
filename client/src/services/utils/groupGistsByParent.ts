@@ -7,8 +7,6 @@ export function groupGistsByParent(gists: GistType[]) {
     return map;
   }, {});
 
-  console.log("grouped by gists", gistsById);
-
   // Initialize an array to hold the top-level (root) gists
   const rootGists: GistType[] = [];
 

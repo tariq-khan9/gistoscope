@@ -37,6 +37,7 @@ async function resetDatabase() {
     const admin = await prisma.user.create({
       data: {
         email: "admin@example.com",
+        isEmailVerified: false,
         authType: "local",
         password: "adminpassword",
         name: "Admin User",
@@ -48,6 +49,7 @@ async function resetDatabase() {
     const member1 = await prisma.user.create({
       data: {
         email: "member1@example.com",
+        isEmailVerified: false,
         authType: "local",
         password: "memberpassword1",
         name: "Member One",
@@ -59,6 +61,7 @@ async function resetDatabase() {
     const member2 = await prisma.user.create({
       data: {
         email: "member2@example.com",
+        isEmailVerified: false,
         authType: "local",
         password: "memberpassword2",
         name: "Member Two",
