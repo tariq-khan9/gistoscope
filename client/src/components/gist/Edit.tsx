@@ -460,7 +460,7 @@ const Edit: React.FC<EditProps> = ({
         />
       </div>
 
-      <div className="show all comments px-2 sm:px-6 md:px-10 py-4 max-h-[500px] overflow-y-auto">
+      <div className="show all  comments px-2 sm:px-6 md:px-10 py-4 max-h-[500px] overflow-y-auto">
         {commentsArray && (
           <CommentWrapper
             comments={commentsArray}

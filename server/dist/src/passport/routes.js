@@ -29,16 +29,6 @@ router.get("/login/success", (req, res) => {
         });
     }
 });
-// router.post("/login-local", (req, res) => {
-//   if (req.user) {
-//     res.status(200).json({
-//       success: true,
-//       message: "user logged in successfully",
-//       user: req.user,
-//       // cookies: req.cookies,
-//     });
-//   }
-// });
 router.post("/logout", (req, res, next) => {
     req.logout((err) => {
         if (err)

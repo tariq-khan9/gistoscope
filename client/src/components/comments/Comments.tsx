@@ -35,7 +35,7 @@ export default function Comment({
       {comment.replies && comment.replies.length > 0 && (
         <div className="flex flex-col mt-2 mb-2 sm:mt-4 sm:mb-4">
           {childrenShow && childrenLoaded && (
-            <div className=" border-l pl-1 sm:pl-2 md:pl-4">
+            <div className="flex flex-row gap-4 border-l pl-1 sm:pl-2 md:pl-4 overflow-x-auto">
               {comment.replies.map((childComment) => (
                 <Comment
                   key={childComment.id}
