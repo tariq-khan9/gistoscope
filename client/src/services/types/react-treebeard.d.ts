@@ -18,5 +18,15 @@ declare module "react-treebeard" {
     };
   }
 
+  export interface IntrinsicElements {
+    style: React.DetailedHTMLProps<
+      React.StyleHTMLAttributes<HTMLStyleElement>,
+      HTMLStyleElement
+    > & {
+      jsx?: boolean;
+      global?: boolean;
+    };
+  }
+
   export class Treebeard extends Component<TreebeardProps> {}
 }

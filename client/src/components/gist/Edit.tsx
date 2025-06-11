@@ -23,6 +23,7 @@ import CommentWrapper from "../comments/CommentWrapper";
 import { Modal } from "antd";
 import { useSwipeable } from "react-swipeable";
 import Navigation from "../others/Navigation";
+import CommentTree from "../newComments/CommentTree";
 
 type EditProps = {
   edits: EditType[];
@@ -462,7 +463,13 @@ const Edit: React.FC<EditProps> = ({
 
       <div className="show all  comments px-2 sm:px-6 md:px-10 py-4 max-h-[500px] overflow-y-auto">
         {commentsArray && (
-          <CommentWrapper
+          // <CommentWrapper
+          //   comments={commentsArray}
+          //   userId={edits[editCurrentIndex]?.user?.id}
+          //   editId={edits[editCurrentIndex]?.id}
+          //   handleRefetchComments={refetchComments}
+          // />
+          <CommentTree
             comments={commentsArray}
             userId={edits[editCurrentIndex]?.user?.id}
             editId={edits[editCurrentIndex]?.id}

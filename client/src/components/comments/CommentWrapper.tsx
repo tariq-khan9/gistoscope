@@ -27,6 +27,7 @@ export default function CommentWrapper({
     [groupedComments]
   );
 
+  console.log("new comments data ", sortedComments);
   return (
     <>
       {sortedComments && sortedComments.length > 0 ? (
