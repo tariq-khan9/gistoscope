@@ -7,6 +7,7 @@ module.exports = {
       fontFamily: {
         barlow: ["Barlow", "sans-serif"],
         montserrat: ["Montserrat", "sans-serif"],
+        poppins: ["Poppins", "sans-serif"],
         quicksand: ["Quicksand", "sans-serif"],
         roboto: ["Roboto", "sans-serif"],
       },

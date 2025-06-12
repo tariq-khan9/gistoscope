@@ -45,7 +45,7 @@ export default function RichEditor({
   ];
 
   return (
-    <div className="flex bg-white mt-1 w-full rounded-md">
+    <div className="flex font-poppins font-light bg-white mt-1 w-full rounded-md">
       <div className="w-full min-h-48 h-full">
         {editable ? (
           // Render a plain div with the content when `editable` is false

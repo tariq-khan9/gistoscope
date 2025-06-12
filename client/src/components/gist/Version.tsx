@@ -94,7 +94,7 @@ const Version: React.FC<VerionProps> = ({
   return (
     <div className="flex flex-col space-y-4 p-4 rounded-lg">
       <div
-        className="w-full  h-32 p-2 flex flex-col sm:flex-row justify-start sm:px-4 sm:space-x-4 bg-amber-200"
+        className="w-full  h-32 p-2 flex flex-col sm:flex-row justify-start sm:px-4 sm:space-x-4 bg-blue-100"
         style={{
           transform: `translateX(${dragOffset}px)`,
           transition: isDragging ? "none" : "transform 0.3s ease-in-out",
@@ -116,7 +116,7 @@ const Version: React.FC<VerionProps> = ({
               ) : (
                 <h1
                   onDoubleClick={() => user && setTextareaEdit(true)}
-                  className="text-slate-800 text-[12px] sm:text-[16px] font-barlow lg:text-[18px]"
+                  className="text-slate-800 text-[13px] sm:text-[18px] font-poppins font-light lg:text-[18px]"
                 >
                   {newVersionData}
                 </h1>
@@ -127,7 +127,7 @@ const Version: React.FC<VerionProps> = ({
 
         {/*--------------------- textarea end here ----------------------------------*/}
 
-        <div className="user-arrow-btn mt-4  sm:mt-0 w-full sm:w-[25%]  flex flex-row sm:flex-col justify-between sm:justify-start sm:space-y-6 sm:border-l border-amber-400 sm:pl-4">
+        <div className="user-arrow-btn mt-4 font-barlow  sm:mt-0 w-full sm:w-[25%]  flex flex-row sm:flex-col justify-between sm:justify-start sm:space-y-6 sm:border-l border-blue-400 sm:pl-4">
           <div className="flex justify-start flex-row space-x-2 sm:space-x-4 items-center ">
             <img
               src={versions[versionCurrentIndex]?.user?.image || "/profile.png"}

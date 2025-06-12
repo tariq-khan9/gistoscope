@@ -35,33 +35,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [editIndex, setEditIndex] = useState<number>(0);
   const [textareaEdit, setTextareaEdit] = useState<boolean>(false);
 
-  // Check session on initial load
   useEffect(() => {
-    // fetch request to get user from google auth.
-    fetch(`${process.env.REACT_APP_SERVER_URL}/auth/login/success`, {
-      credentials: "include", // Important to include cookies
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
+    const fetchUserFromSession = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.REACT_APP_SERVER_URL}/auth/session`,
+          {
+            credentials: "include",
+          }
+        );
+
+        if (res.ok) {
+          const data = await res.json();
           setUser(data.user);
-          console.log("google auth ", data.user);
-          localStorage.setItem("user", JSON.stringify(data.user));
         } else {
           setUser(null);
-          localStorage.removeItem("user");
         }
-      })
-      .catch((err) => console.error("Error fetching user:", err));
+      } catch (err) {
+        console.error("Failed to fetch user from session", err);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    // check local storage in both google and local auth
-    const storedUser = localStorage.getItem("user");
-
-    if (storedUser) {
-      setUser(JSON.parse(storedUser) as User);
-    } else {
-      setUser(null);
-    }
+    fetchUserFromSession();
   }, []);
 
   // Local login
@@ -73,7 +71,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         { withCredentials: true }
       );
       setUser(res.data.user);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      // localStorage.setItem("user", JSON.stringify(res.data.user));
     } catch (error) {
       throw new Error("Invalid username or password");
     }

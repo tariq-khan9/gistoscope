@@ -10,7 +10,6 @@ const client = new ApolloClient({
   uri: `${process.env.REACT_APP_SERVER_URL}/graphql`,
   cache: new InMemoryCache(),
 });
-console.log("server url ", process.env.REACT_APP_SERVER_URL);
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

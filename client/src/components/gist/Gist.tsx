@@ -70,11 +70,11 @@ const Gist: React.FC<GistProps> = ({ gists }) => {
     <div className="flex w-full flex-col ">
       <BoxWithShadows
         visible={gists.length > 1}
-        boxBorder="border-amber-500"
-        colorShades={["bg-amber-300", "bg-amber-200", "bg-amber-100"]}
+        boxBorder="border-blue-500"
+        colorShades={["bg-blue-200", "bg-blue-100", "bg-blue-50"]}
       >
         <div
-          className="w-full p-2 sm:p-3 flex flex-row justify-between sm:px-8 rounded-lg bg-amber-300"
+          className="w-full p-2 sm:p-3 flex flex-row justify-between sm:px-8 rounded-lg bg-voilet-300"
           style={{
             transform: `translateX(${dragOffset}px)`,
             transition: isDragging ? "none" : "transform 0.3s ease-in-out",
@@ -112,8 +112,8 @@ const Gist: React.FC<GistProps> = ({ gists }) => {
 
       <BoxWithShadows
         visible={sortedGists[gistCurrentIndex].versions.length > 1}
-        boxBorder="border-amber-300"
-        colorShades={["bg-amber-200", "bg-amber-100", "bg-amber-50"]}
+        boxBorder="border-blue-300"
+        colorShades={["bg-blue-100", "bg-blue-50", "bg-blue-50"]}
       >
         {sortedGists[gistCurrentIndex].versions && (
           <Version

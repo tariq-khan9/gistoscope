@@ -1,4 +1,5 @@
 import { User } from "passport"; // Adjust if your User type is different
+import session from "express-session";
 
 declare global {
   namespace Express {
@@ -26,6 +27,10 @@ declare global {
       };
       logout(): void;
       isAuthenticated: () => boolean;
+    }
+
+    interface Request {
+      session: session.Session & Partial<session.SessionData>;
     }
   }
 }

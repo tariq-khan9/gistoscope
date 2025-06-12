@@ -29,14 +29,33 @@ router.get("/login/success", (req, res) => {
         });
     }
 });
+// router.post("/logout", (req, res, next) => {
+//   (req.logout as unknown as (callback: (err?: any) => void) => void)((err) => {
+//     if (err) return next(err);
+//     // Clear any session cookies here if needed
+//     res.clearCookie("connect.sid"); // Clear the session cookie if you're using "connect.sid"
+//     // Respond with JSON instead of redirecting
+//     res.status(200).json({ message: "Logout successful" });
+//   });
+// });
 router.post("/logout", (req, res, next) => {
+    // Logout the user (passport)
     req.logout((err) => {
         if (err)
             return next(err);
-        // Clear any session cookies here if needed
-        res.clearCookie("connect.sid"); // Clear the session cookie if you're using "connect.sid"
-        // Respond with JSON instead of redirecting
-        res.status(200).json({ message: "Logout successful" });
+        // Destroy the session
+        req.session.destroy((err) => {
+            if (err)
+                return next(err);
+            // Clear the session cookie (default is 'connect.sid')
+            res.clearCookie("connect.sid", {
+                path: "/", // same as session path
+                httpOnly: true,
+                sameSite: "lax",
+                secure: process.env.NODE_ENV === "production", // only in production over HTTPS
+            });
+            return res.status(200).json({ message: "Logout successful" });
+        });
     });
 });
 router.get("/session", (req, res) => {

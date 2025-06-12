@@ -337,7 +337,7 @@ const Edit: React.FC<EditProps> = ({
       >
         <div className="user-arrow-btn flex flex-col md:flex-row w-full  justify-between">
           <div className="first-row  w-full flex flex-row justify-between">
-            <div className="flex flex-row space-x-1 sm:space-x-2 lg:space-x-4 items-center justify-center">
+            <div className="flex flex-row font-barlow space-x-1 sm:space-x-2 lg:space-x-4 items-center justify-center">
               <img
                 src={edits[editCurrentIndex]?.user?.image || "/profile.png"}
                 className="h-8 w-8 sm:h-10 sm:w-10 rounded-full"

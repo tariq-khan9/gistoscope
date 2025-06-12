@@ -111,13 +111,15 @@ const CommentCard = ({
     >
       <div className="flex flex-col h-full">
         <div className="top-row  flex flex-row justify-between text-[9px] sm:text-[12px] border-b border-gray-300">
-          <h1 className="text-[10px] sm:text-[13px] font-bold text-blue-600">
+          <h1 className="text-[10px] sm:text-[13px]  text-blue-600">
             {comment.user.name}
           </h1>
-          <h1>{dateFormatter.format(Date.parse(comment.createdAt))}</h1>
+          <h1 className="font-light">
+            {dateFormatter.format(Date.parse(comment.createdAt))}
+          </h1>
         </div>
 
-        <div className="flex-1 text-[11px] sm:text-[14px] lg:text-[16px] mt-3 sm:mt-6">
+        <div className="flex-1 text-left font-quicksand mt-1 sm:mt-2 text-[11px] sm:text-[14px] lg:text-[16px]">
           {comment.comment}
         </div>
 
@@ -125,9 +127,7 @@ const CommentCard = ({
           <div className="flex flex-row">
             <div className="text-[10px] text-gray-500">
               {/* <span>Likes: </span><span>{comment.sentiments.length}</span> */}
-              <span className="ml-2 sm:ml-4 text-[10px] sm:text-[12px]">
-                Likes:{" "}
-              </span>
+              <span className=" text-[10px] sm:text-[12px]">Likes: </span>
               <span>0</span>
             </div>
           </div>
@@ -143,7 +143,7 @@ const CommentCard = ({
             )}
 
             <button
-              className="hover:text-blue-700"
+              className="font-normal text-gray-500"
               // onClick={() => {
               //   handleToggleChildren();
               // }}
