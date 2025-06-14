@@ -456,12 +456,12 @@ const Edit: React.FC<EditProps> = ({
         <SendComment
           setShowModal={setShowModal} // show button for reply modal
           editId={edits[editCurrentIndex]?.id}
-          userId={edits[editCurrentIndex]?.user?.id}
+          userId={user ? user.id : 1}
           handleRefetchComments={refetchComments}
         />
       </div>
 
-      <div className="show all  comments px-2 sm:px-6 md:px-10 py-4 max-h-[500px] overflow-y-auto">
+      <div className="show all  comments px-2 sm:px-6 md:px-10 py-4 max-h-[700px] overflow-y-auto">
         {commentsArray && (
           // <CommentWrapper
           //   comments={commentsArray}
@@ -471,7 +471,6 @@ const Edit: React.FC<EditProps> = ({
           // />
           <CommentTree
             comments={commentsArray}
-            userId={edits[editCurrentIndex]?.user?.id}
             editId={edits[editCurrentIndex]?.id}
             handleRefetchComments={refetchComments}
           />

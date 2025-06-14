@@ -30,7 +30,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        maxAge: 1 * 60 * 1000, // Set cookie to expire after 60 seconds
+        maxAge: 12 * 60 * 60 * 1000, // Set cookie to expire after 12 hrs
         secure: process.env.NODE_ENV === "production", // Only use secure cookies in production
         httpOnly: true, //  recommended
         sameSite: "lax", // optional

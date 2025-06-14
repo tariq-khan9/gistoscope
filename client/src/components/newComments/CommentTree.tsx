@@ -6,7 +6,6 @@ import { groupCommentsByParent } from "../../services/utils/groupCommentsByParen
 import { sortCommentsByCreatedAt } from "../../services/utils/sortCommentsByTime";
 
 interface Props {
-  userId: number;
   editId: number;
   comments: CommentType[];
   handleRefetchComments: () => void;
@@ -14,7 +13,6 @@ interface Props {
 
 export default function CommentTree({
   comments,
-  userId,
   editId,
   handleRefetchComments,
 }: Props) {
@@ -25,10 +23,11 @@ export default function CommentTree({
     new Set()
   );
   const [focusedComment, setFocusedComment] = useState<number | null>(null);
+  const [scrollTrigger, setScrollTrigger] = useState(0);
 
   const toggleComment = (commentId: number, parentId: number | null) => {
     setFocusedComment(commentId);
-
+    setScrollTrigger((prev) => prev + 1);
     setExpandedComments((prev) => {
       const newExpanded = new Set(prev);
 
@@ -84,15 +83,15 @@ export default function CommentTree({
           <div className="flex justify-center">
             <CommentCard
               comment={comment}
-              userId={userId}
               editId={editId}
               replies={children.length}
               handleRefetchComments={handleRefetchComments}
-              onClick={() => toggleComment(comment.id, comment.parentId)}
-              onDoubleClick={() => toggleFullSize(comment.id)}
+              toggleComment={() => toggleComment(comment.id, comment.parentId)}
+              toggleFullSize={() => toggleFullSize(comment.id)}
               isExpanded={isExpanded}
               isFullSize={isFullSize}
               isFocused={isFocused}
+              scrollTrigger={scrollTrigger}
             />
           </div>
         }
@@ -114,7 +113,7 @@ export default function CommentTree({
       <div className="overflow-x-auto w-full pb-10">
         <Tree
           lineWidth="2px"
-          lineColor="#6c6b6b"
+          lineColor="#bec0ef"
           lineBorderRadius="10px"
           label={null}
         >
