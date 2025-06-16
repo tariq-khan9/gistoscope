@@ -94,7 +94,7 @@ const Version: React.FC<VerionProps> = ({
   return (
     <div className="flex flex-col space-y-4 p-4 rounded-lg">
       <div
-        className="w-full  h-32 p-2 flex flex-col sm:flex-row justify-start sm:px-4 sm:space-x-4 bg-blue-100"
+        className="w-full  h-32 p-2 flex flex-col sm:flex-row justify-start sm:px-4 sm:space-x-4 bg-sky-100"
         style={{
           transform: `translateX(${dragOffset}px)`,
           transition: isDragging ? "none" : "transform 0.3s ease-in-out",
@@ -127,7 +127,7 @@ const Version: React.FC<VerionProps> = ({
 
         {/*--------------------- textarea end here ----------------------------------*/}
 
-        <div className="user-arrow-btn mt-4 font-barlow  sm:mt-0 w-full sm:w-[25%]  flex flex-row sm:flex-col justify-between sm:justify-start sm:space-y-6 sm:border-l border-blue-400 sm:pl-4">
+        <div className="user-arrow-btn mt-4 font-barlow  sm:mt-0 w-full sm:w-[25%]  flex flex-row sm:flex-col justify-between sm:justify-start sm:space-y-6 sm:border-l border-sky-400 sm:pl-4">
           <div className="flex justify-start flex-row space-x-2 sm:space-x-4 items-center ">
             <img
               src={versions[versionCurrentIndex]?.user?.image || "/profile.png"}

@@ -115,3 +115,10 @@ input AddFavoriteInput{
     editId: Int!,
 }
 `;
+export const AddCommentLikeInput = `#graphql
+input AddCommentLikeInput{
+    userId: Int!,
+    commentId: Int!,
+    like: Boolean!
+}
+`;

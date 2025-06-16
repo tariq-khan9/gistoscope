@@ -28,6 +28,7 @@ export default function CommentTree({
   const toggleComment = (commentId: number, parentId: number | null) => {
     setFocusedComment(commentId);
     setScrollTrigger((prev) => prev + 1);
+
     setExpandedComments((prev) => {
       const newExpanded = new Set(prev);
 
@@ -92,6 +93,10 @@ export default function CommentTree({
               isFullSize={isFullSize}
               isFocused={isFocused}
               scrollTrigger={scrollTrigger}
+              onFocusClick={() => {
+                setFocusedComment(comment.id);
+                setScrollTrigger((prev) => prev + 1);
+              }}
             />
           </div>
         }

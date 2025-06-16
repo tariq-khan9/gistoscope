@@ -286,3 +286,21 @@ export const GET_COMMENT = gql`
     }
   }
 `;
+
+export const CREATE_COMMENT_LIKE = gql`
+  mutation addCommentLike($like: AddCommentLikeInput) {
+    addCommentLike(like: $like) {
+      commentId
+      userId
+      like
+    }
+  }
+`;
+
+export const GET_COMMENT_LIKE = gql`
+  query LikesByComment($commentId: Int!) {
+    likesByComment(commentId: $commentId) {
+      like
+    }
+  }
+`;

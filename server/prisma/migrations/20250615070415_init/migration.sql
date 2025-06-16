@@ -121,6 +121,7 @@ CREATE TABLE "CommentLike" (
     "id" SERIAL NOT NULL,
     "userId" INTEGER NOT NULL,
     "commentId" INTEGER NOT NULL,
+    "like" BOOLEAN NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "CommentLike_pkey" PRIMARY KEY ("id")

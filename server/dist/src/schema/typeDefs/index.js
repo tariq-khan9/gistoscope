@@ -1,5 +1,5 @@
-import { User, Subject, Gist, Version, Edit, UserEditAction, Favorite, Comment, } from "./types.js";
-import { AddEditInput, UpdateEditInput, AddUserEditActionInput, UpdateUserInput, AddUserInput, AddSubjectInput, UpdateSubjectInput, AddGistInput, AddVersionInput, AddFavoriteInput, AddCommentInput, } from "./input.js";
+import { User, Subject, Gist, Version, Edit, UserEditAction, Favorite, Comment, CommentLike, } from "./types.js";
+import { AddEditInput, UpdateEditInput, AddUserEditActionInput, UpdateUserInput, AddUserInput, AddSubjectInput, UpdateSubjectInput, AddGistInput, AddVersionInput, AddFavoriteInput, AddCommentInput, AddCommentLikeInput, } from "./input.js";
 export const typeDefs = `#graphql
 ${User}
 ${Subject}
@@ -9,6 +9,7 @@ ${Edit}
 ${Favorite}
 ${Comment}
 ${UserEditAction}
+${CommentLike}
 
 ${AddEditInput}
 ${UpdateEditInput}
@@ -26,6 +27,7 @@ ${AddVersionInput}
 ${AddFavoriteInput}
 
 ${AddCommentInput}
+${AddCommentLikeInput}
 
 
 
@@ -50,6 +52,7 @@ type Query{
 
     favorite(userId: Int!, editId: Int!): Favorite
     comments(editId: Int!): [Comment]
+    likesByComment(commentId: Int!): [CommentLike]
 }
 
 type Mutation{
@@ -76,6 +79,8 @@ type Mutation{
     addFavorite(fav: AddFavoriteInput): Favorite
 
     addComment(comment: AddCommentInput): Comment
+
+    addCommentLike(like: AddCommentLikeInput): CommentLike
 
 }
 `;

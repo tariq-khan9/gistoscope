@@ -461,7 +461,7 @@ const Edit: React.FC<EditProps> = ({
         />
       </div>
 
-      <div className="show all  comments px-2 sm:px-6 md:px-10 py-4 max-h-[700px] overflow-y-auto">
+      <div className="show all custom-scroll  comments px-2 sm:px-6 md:px-10 py-4 max-h-[700px] overflow-y-auto">
         {commentsArray && (
           // <CommentWrapper
           //   comments={commentsArray}
@@ -475,6 +475,22 @@ const Edit: React.FC<EditProps> = ({
             handleRefetchComments={refetchComments}
           />
         )}
+        <style>{`
+          
+
+         
+
+          .custom-scroll::-webkit-scrollbar-track {
+            background-color: #f1f5f9; /* slate-100 */
+          }
+
+          /* Firefox */
+          .custom-scroll {
+            scrollbar-width: 6px;
+           
+            scrollbar-color: #c4d2e4 #f1f5f9;
+          }
+        `}</style>
       </div>
 
       {showModal && (

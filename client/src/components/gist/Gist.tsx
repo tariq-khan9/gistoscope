@@ -70,8 +70,8 @@ const Gist: React.FC<GistProps> = ({ gists }) => {
     <div className="flex w-full flex-col ">
       <BoxWithShadows
         visible={gists.length > 1}
-        boxBorder="border-blue-500"
-        colorShades={["bg-blue-200", "bg-blue-100", "bg-blue-50"]}
+        boxBorder="border-sky-500"
+        colorShades={["bg-sky-200", "bg-sky-100", "bg-sky-50"]}
       >
         <div
           className="w-full p-2 sm:p-3 flex flex-row justify-between sm:px-8 rounded-lg bg-voilet-300"
@@ -112,8 +112,8 @@ const Gist: React.FC<GistProps> = ({ gists }) => {
 
       <BoxWithShadows
         visible={sortedGists[gistCurrentIndex].versions.length > 1}
-        boxBorder="border-blue-300"
-        colorShades={["bg-blue-100", "bg-blue-50", "bg-blue-50"]}
+        boxBorder="border-sky-300"
+        colorShades={["bg-sky-100", "bg-sky-50", "bg-sky-50"]}
       >
         {sortedGists[gistCurrentIndex].versions && (
           <Version

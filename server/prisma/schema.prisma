@@ -148,6 +148,7 @@ model CommentLike {
   id         Int      @id @default(autoincrement())
   userId     Int
   commentId  Int
+  like       Boolean
   createdAt  DateTime @default(now())
 
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)

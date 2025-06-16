@@ -126,6 +126,17 @@ export const Mutation = {
         });
         return { message: "The edit has been deleted", edits };
     },
+    //////////------------- Likes mutations ----------------------////////////////
+    async addCommentLike(_, args) {
+        const like = await prisma.commentLike.create({
+            data: {
+                userId: args.like.userId,
+                commentId: args.like.commentId,
+                like: args.like.like,
+            },
+        });
+        return like;
+    },
     //////////------------- other mutations ----------------------////////////////
     async addUserEditAction(_, args) {
         const action = await prisma.userEditAction.create({

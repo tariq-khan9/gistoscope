@@ -1,10 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
+
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import { CommentType } from "../../services/types";
-
+import { AiOutlineLike, AiOutlineDislike } from "react-icons/ai";
+import { LiaComments } from "react-icons/lia";
 import { IoSend } from "react-icons/io5";
-import { CREATE_COMMENT } from "../../services/graphql/queriesMutations";
-import { useMutation } from "@apollo/client";
+import {
+  CREATE_COMMENT,
+  CREATE_COMMENT_LIKE,
+  GET_COMMENT_LIKE,
+} from "../../services/graphql/queriesMutations";
+import { useMutation, useQuery } from "@apollo/client";
 import { CgMailReply } from "react-icons/cg";
 import { useGlobalContext } from "../context/AuthContext";
 
@@ -13,9 +19,12 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
   timeStyle: "short",
 });
 
+type CommentLike = {
+  like: boolean;
+};
+
 const CommentCard = ({
   comment,
-
   editId,
   replies,
   handleRefetchComments,
@@ -25,6 +34,7 @@ const CommentCard = ({
   isFullSize,
   isFocused,
   scrollTrigger,
+  onFocusClick,
 }: {
   comment: CommentType;
   editId: number;
@@ -36,11 +46,27 @@ const CommentCard = ({
   isFullSize: boolean;
   isFocused: boolean;
   scrollTrigger: number;
+  onFocusClick?: () => void;
 }) => {
   const { user } = useGlobalContext();
   const cardRef = useRef<HTMLDivElement>(null);
   const [createComment] = useMutation(CREATE_COMMENT);
-  console.log("comment in card ", comment);
+  const [createCommentLike] = useMutation(CREATE_COMMENT_LIKE);
+  const { data: commentLikesData, refetch: refetchLikes } = useQuery(
+    GET_COMMENT_LIKE,
+    {
+      variables: {
+        commentId: comment.id,
+      },
+    }
+  );
+  const totalLikes = commentLikesData?.likesByComment?.filter(
+    (item: CommentLike) => item.like
+  ).length;
+
+  const totalDislikes =
+    (commentLikesData?.likesByComment?.length ?? 0) - totalLikes;
+
   const [content, setContent] = useState("");
   const [showReply, setShowReply] = useState(false); // Dummy state to force rerenders
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -67,6 +93,28 @@ const CommentCard = ({
     } catch (error) {}
   };
 
+  const handleCreateCommentLike = async (like: {
+    userId: number;
+    commentId: number;
+    like: Boolean;
+  }) => {
+    if (user?.id == null || comment.id == null) return;
+
+    try {
+      const { data } = await createCommentLike({
+        variables: {
+          like: {
+            commentId: like.commentId,
+            userId: like.userId,
+            like: like.like,
+          },
+        },
+      });
+
+      refetchLikes();
+    } catch (error) {}
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -79,14 +127,18 @@ const CommentCard = ({
   };
 
   useEffect(() => {
-    if (isFocused && cardRef.current) {
-      cardRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-        inline: "center",
-      });
+    if (isFocused) {
+      setTimeout(() => {
+        if (cardRef.current) {
+          cardRef.current.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+            inline: "center",
+          });
+        }
+      }, 0);
     }
-  }, [scrollTrigger]);
+  }, [scrollTrigger, isFocused]);
 
   return (
     <div
@@ -108,13 +160,24 @@ const CommentCard = ({
         }
         ${isFocused ? "ring-2 ring-blue-500" : ""}
       `}
-      onClick={toggleFullSize}
+      // onClick={toggleFullSize}
+      onClick={(e) => {
+        toggleFullSize();
+        if (e.target === e.currentTarget && onFocusClick) {
+          onFocusClick();
+        }
+      }}
       //onDoubleClick={onDoubleClick}
     >
       <div className="flex flex-col h-full">
-        <div className="top-row  flex flex-row justify-between text-[9px] sm:text-[12px] border-b border-gray-300">
-          <h1 className="text-[10px] sm:text-[13px]  text-blue-600">
-            {comment.user.name}
+        <div className="top-row  flex flex-row justify-between text-[9px] sm:text-[10px] md:text-[12px] border-b border-gray-300">
+          <h1 className="text-[10px] sm:text-[11px] md:text-[13px]  text-blue-600">
+            <span className="block md:hidden">
+              {comment.user.name.length > 10
+                ? comment.user.name.slice(0, 10) + ".."
+                : comment.user.name}
+            </span>
+            <span className="hidden md:block">{comment.user.name}</span>
           </h1>
           <h1 className="font-light">
             {dateFormatter.format(Date.parse(comment.createdAt))}
@@ -133,18 +196,49 @@ const CommentCard = ({
         </div>
 
         <div className="flex flex-row justify-between items-center mt-auto sm:mt-4">
-          <div className="flex flex-row gap-2 justify-center items-center">
-            <div className="text-[10px] text-gray-500">
-              {/* <span>Likes: </span><span>{comment.sentiments.length}</span> */}
-              <span className=" text-[10px] sm:text-[12px]">Likes: </span>
-              <span>0</span>
+          <div className="flex flex-row gap-3 justify-center items-center text-gray-500 text-[12px]">
+            {/* Like Button */}
+            <div className="flex flex-row items-center gap-1">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCreateCommentLike({
+                    userId: user?.id || 1,
+                    commentId: comment.id,
+                    like: true,
+                  });
+                }}
+                className="p-0 m-0 text-blue-800 hover:text-blue-600"
+              >
+                <AiOutlineLike size={16} />
+              </button>
+              <span>{totalLikes}</span>
+            </div>
+
+            {/* Dislike Button */}
+            <div className="flex flex-row items-center gap-1">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCreateCommentLike({
+                    userId: user?.id || 1,
+                    commentId: comment.id,
+                    like: false,
+                  });
+                }}
+                className="p-0 m-0 text-blue-800 hover:text-blue-600"
+              >
+                <AiOutlineDislike size={16} />
+              </button>
+              <span>{totalDislikes}</span>
             </div>
           </div>
+
           <div className="text-[9px] sm:text-[11px] flex flex-row items-center space-x-1 sm:space-x-2">
             {isFullSize && (
               <button
                 disabled={!user ? true : false}
-                className=" flex flex-row items-center"
+                className=" text-blue-800 md:pr-3 hover:text-blue-600 flex flex-row items-center"
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowReply(!showReply);
@@ -156,15 +250,15 @@ const CommentCard = ({
             )}
 
             <button
-              className="font-normal text-gray-500"
+              className="font-normal text-blue-800 hover:text-blue-600"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleComment();
               }}
             >
-              Comments:{" "}
+              <LiaComments className=" text-[15px] md:text-[20px]" />
             </button>
-            <span>{replies}</span>
+            <span className="text-gray-500 text-[12px] md:pr-2">{replies}</span>
           </div>
         </div>
       </div>

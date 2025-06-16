@@ -75,4 +75,11 @@ export const Query = {
             where: { editId: args.editId },
         });
     },
+    async likesByComment(_, args) {
+        return await prisma.commentLike.findMany({
+            where: {
+                commentId: args.commentId, // Condition for subjectId matching the argument
+            },
+        });
+    },
 };

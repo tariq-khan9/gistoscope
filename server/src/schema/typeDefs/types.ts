@@ -123,3 +123,14 @@ type Favorite{
   
 }
 `;
+
+export const CommentLike = `#graphql
+type CommentLike{
+    id: Int!,
+    userId: Int!,
+    commentId: Int!,
+    like: Boolean!
+  
+  
+}
+`;
