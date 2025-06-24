@@ -92,7 +92,10 @@ const Version: React.FC<VerionProps> = ({
   }
 
   return (
-    <div className="flex flex-col space-y-4 p-4 rounded-lg">
+    <div
+      onClick={(e) => e.stopPropagation()}
+      className="flex flex-col space-y-4 p-4 rounded-lg"
+    >
       <div
         className="w-full  h-32 p-2 flex flex-col sm:flex-row justify-start sm:px-4 sm:space-x-4 bg-sky-100"
         style={{

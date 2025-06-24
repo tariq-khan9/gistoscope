@@ -9,11 +9,11 @@
 }
 
 .form-label {
-  @apply text-[14px] text-gray-800 mt-4;
+  @apply text-[13px] md:text-[16px] font-quicksand  text-gray-800 mt-4;
 }
 
 .form-input {
-  @apply text-[12px] border-[0.5] border-gray-400 p-2 w-full rounded-md;
+  @apply text-[13px] md:text-[16px] font-quicksand  border-2 border-sky-200 p-2 w-full rounded-md;
 }
 
 .form-button {

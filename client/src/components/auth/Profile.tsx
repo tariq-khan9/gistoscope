@@ -28,19 +28,19 @@ const Profile = () => {
             <div className="py-1 px-4 space-y-2 md:space-y-4">
               <a
                 href={`/user/${user?.name}/${user?.id}`}
-                className="block  text-gray-700 hover:bg-gray-100"
+                className="block  text-gray-700 hover:bg-sky-50"
               >
                 My Gists
               </a>
               <a
                 href="/my-favorites"
-                className="block   text-gray-700 hover:bg-gray-100"
+                className="block   text-gray-700 hover:bg-sky-50"
               >
                 My Favorites
               </a>
               <button
                 onClick={logout}
-                className="block w-full text-left   text-gray-700 hover:bg-gray-100"
+                className="block w-full text-left   text-gray-700 hover:bg-sky-50"
               >
                 Logout
               </button>

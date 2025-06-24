@@ -90,7 +90,7 @@ const Edit: React.FC<EditProps> = ({
       setCommentsArray(result.data.comments);
     } catch (error) {}
   };
-
+  console.log("user in edit ", user);
   const [content, setContent] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
   const [richtextEdit, setRichtextEdit] = useState<boolean>(false);
@@ -224,7 +224,7 @@ const Edit: React.FC<EditProps> = ({
               edit: {
                 versionId: new_version_id,
                 body: content,
-                userId: 1,
+                userId: user?.id,
                 createdAt: new Date().toISOString(),
               },
             },

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import CreateUser from "./user/CreateUser";
-import CreateGist from "./gist/CreateGist";
+
 import SingleGist from "./gist/SingleGist";
 import IndexGist from "../gist/IndexGist";
 
@@ -23,12 +22,7 @@ const Index = () => {
           </button>
         ))}
       </div>
-      <div className="w-[80%]">
-        {showComponent == 2 && <CreateUser />}
-        {showComponent == 4 && <CreateGist />}
-
-        {showComponent == 5 && <SingleGist />}
-      </div>
+      <div className="w-[80%]">{showComponent == 5 && <SingleGist />}</div>
     </div>
   );
 };

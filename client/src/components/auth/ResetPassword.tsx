@@ -51,7 +51,7 @@ const ResetPassword: React.FC = () => {
 
   return (
     <div className="w-full flex flex-row justify-center items-center pt-20 xl:pt-28">
-      <div className="bg-gray-100 rounded-xl w-[700px] h-[400px] p-4 flex flex-col items-center">
+      <div className="bg-sky-50 rounded-xl w-[700px] h-[400px] p-4 flex flex-col items-center">
         <h2 className="form-heading">Reset Password</h2>
         <form
           className="flex flex-col w-full px-40"

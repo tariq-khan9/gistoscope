@@ -60,6 +60,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     };
 
     fetchUserFromSession();
+    console.log("user in context ", user);
   }, []);
 
   // Local login

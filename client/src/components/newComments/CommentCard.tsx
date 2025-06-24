@@ -34,6 +34,7 @@ const CommentCard = ({
   isFullSize,
   isFocused,
   scrollTrigger,
+
   onFocusClick,
 }: {
   comment: CommentType;
@@ -46,6 +47,7 @@ const CommentCard = ({
   isFullSize: boolean;
   isFocused: boolean;
   scrollTrigger: number;
+
   onFocusClick?: () => void;
 }) => {
   const { user } = useGlobalContext();
@@ -70,6 +72,12 @@ const CommentCard = ({
   const [content, setContent] = useState("");
   const [showReply, setShowReply] = useState(false); // Dummy state to force rerenders
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [shouldRenderPicker, setShouldRenderPicker] = useState(false);
+  const emojiBtnRef = useRef<HTMLButtonElement>(null);
+  const emojiPickerRef = useRef<HTMLDivElement>(null);
+  const [emojiPosition, setEmojiPosition] = useState<"top" | "bottom">(
+    "bottom"
+  );
 
   const handleClick = async () => {
     if (content === "") return;
@@ -86,10 +94,11 @@ const CommentCard = ({
       });
 
       handleRefetchComments();
-
+      if (!isExpanded) {
+        toggleComment(); // show comment childs if its hidden
+      }
       setContent("");
       setShowReply(false);
-      // setChildrenShow(true);
     } catch (error) {}
   };
 
@@ -99,7 +108,6 @@ const CommentCard = ({
     like: Boolean;
   }) => {
     if (user?.id == null || comment.id == null) return;
-
     try {
       const { data } = await createCommentLike({
         variables: {
@@ -139,6 +147,49 @@ const CommentCard = ({
       }, 0);
     }
   }, [scrollTrigger, isFocused]);
+
+  useEffect(() => {
+    if (!showEmojiPicker) {
+      setShouldRenderPicker(false);
+      return;
+    }
+
+    // Step 1: Measure and set position
+    const buttonRect = emojiBtnRef.current?.getBoundingClientRect();
+    if (buttonRect) {
+      const spaceAbove = buttonRect.top;
+      const spaceBelow = window.innerHeight - buttonRect.bottom;
+
+      if (spaceBelow < 350 && spaceAbove > spaceBelow) {
+        setEmojiPosition("top");
+      } else {
+        setEmojiPosition("bottom");
+      }
+    }
+
+    // Step 2: Small timeout to let state update before showing
+    const timer = setTimeout(() => {
+      setShouldRenderPicker(true);
+    }, 10); // small delay ensures smoother render
+
+    // Step 3: Handle outside click
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (
+        emojiPickerRef.current &&
+        !emojiPickerRef.current.contains(e.target as Node) &&
+        !emojiBtnRef.current?.contains(e.target as Node)
+      ) {
+        setShowEmojiPicker(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [showEmojiPicker]);
 
   return (
     <div
@@ -270,7 +321,7 @@ const CommentCard = ({
               value={content}
               onClick={(e) => e.stopPropagation()}
               onChange={(e) => {
-                // e.stopPropagation();
+                e.stopPropagation();
                 setContent(e.target.value);
               }}
               onKeyDown={handleKeyDown}
@@ -279,17 +330,34 @@ const CommentCard = ({
             />
             {/* Send Button */}
             <IoSend
-              onClick={handleClick}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClick();
+              }}
               className="absolute right-4 top-[25px] transform -translate-y-1/2 text-slate-700 hover:text-amber-600 text-[20px] cursor-pointer"
             />
             <button
-              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              ref={emojiBtnRef}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowEmojiPicker(!showEmojiPicker);
+              }}
               className="absolute right-10 top-[25px] transform -translate-y-1/2 text-[20px] text-slate-600"
             >
               😊
             </button>
-            {showEmojiPicker && (
-              <div className="absolute bottom-[50px] left-0 z-50">
+            {showEmojiPicker && shouldRenderPicker && (
+              <div
+                onClick={(e) => e.stopPropagation()}
+                ref={emojiPickerRef}
+                style={{
+                  position: "absolute",
+                  left: 0,
+                  transform: "scale(0.8)", // scale down everything
+                  [emojiPosition]: "10px", // use actual pixels
+                  zIndex: 50,
+                }}
+              >
                 <EmojiPicker onEmojiClick={handleEmojiClick} />
               </div>
             )}

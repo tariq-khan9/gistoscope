@@ -4,7 +4,6 @@ import "./App.css";
 import Index from "./components/dashboard/Index";
 import Home from "./components/Home";
 import Navbar from "./components/Navbar";
-import CreateGist from "./components/dashboard/gist/CreateGist";
 
 import Profile from "./components/auth/Profile";
 import ProtectedRoute from "./components/auth/ProtectedRoutes";

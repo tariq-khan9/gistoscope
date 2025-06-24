@@ -12,7 +12,7 @@ type GistProps = {
 
 const Gist: React.FC<GistProps> = ({ gists }) => {
   const sortedGists = sortGistsByTime(gists, "desc");
-  console.log("sorted Gists in by user gist ", sortedGists);
+
   const [showChild, setShowChild] = useState(false);
   const [dragOffset, setDragOffset] = useState<number>(0); // Track drag offset for the current card
   const [isDragging, setIsDragging] = useState<boolean>(false); // Track if a card is being dragged

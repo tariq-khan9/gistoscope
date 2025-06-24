@@ -10,6 +10,7 @@ import {
   CREATE_EDIT,
 } from "../../services/graphql/queriesMutations";
 import RichEditor from "../dashboard/RichEditor";
+import { useGlobalContext } from "../context/AuthContext";
 
 type FormValues = {
   title: string;
@@ -22,6 +23,7 @@ const CreateGistModal: React.FC<{
   onClose: () => void;
   subjectId: number | undefined;
 }> = ({ visible, onClose, subjectId }) => {
+  const { user } = useGlobalContext();
   const [form] = Form.useForm();
   const [content, setContent] = useState<string>("");
   const [createGist] = useMutation(CREATE_GIST);
@@ -35,7 +37,7 @@ const CreateGistModal: React.FC<{
         variables: {
           gist: {
             title: values.title,
-            userId: 1,
+            userId: user?.id,
             createdAt: new Date().toISOString(),
             subjectId: subjectId,
           },
@@ -51,7 +53,7 @@ const CreateGistModal: React.FC<{
             version: {
               gistId: gistId,
               point: values.point,
-              userId: 1,
+              userId: user?.id,
               createdAt: new Date().toISOString(),
             },
           },
@@ -64,7 +66,7 @@ const CreateGistModal: React.FC<{
               edit: {
                 versionId: versionId,
                 body: content,
-                userId: 1,
+                userId: user?.id,
                 createdAt: new Date().toISOString(),
               },
             },
@@ -137,7 +139,12 @@ const CreateGistModal: React.FC<{
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" block>
+          <Button
+            className="bg-sky-700 text-white"
+            //type="primary"
+            htmlType="submit"
+            block
+          >
             Create Gist
           </Button>
         </Form.Item>

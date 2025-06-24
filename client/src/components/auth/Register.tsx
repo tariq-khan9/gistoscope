@@ -23,8 +23,10 @@ const Register: React.FC = () => {
   } = useForm<RegisterFormData>();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const onSubmit: SubmitHandler<RegisterFormData> = async (data) => {
+    setLoading(true);
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("email", data.email);
@@ -47,6 +49,8 @@ const Register: React.FC = () => {
           headers: { "Content-Type": "application/json" },
         }
       );
+
+      setLoading(false);
 
       Modal.success({
         title: "Email sent!",
@@ -84,7 +88,7 @@ const Register: React.FC = () => {
   return (
     <div className="mt-24  flex justify-center">
       <form
-        className="bg-slate-200 px-4 sm:px-10"
+        className="bg-sky-50 px-4 sm:px-10"
         onSubmit={handleSubmit(onSubmit)}
       >
         <div className="flex justify-center">
@@ -195,7 +199,7 @@ const Register: React.FC = () => {
         </div>
 
         <button className="form-button" type="submit">
-          Register
+          {loading ? "Registring..." : "Register"}
         </button>
       </form>
     </div>

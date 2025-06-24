@@ -24,9 +24,11 @@ export default function CommentTree({
   );
   const [focusedComment, setFocusedComment] = useState<number | null>(null);
   const [scrollTrigger, setScrollTrigger] = useState(0);
+  const treeRef = useRef<HTMLDivElement>(null); //outside click will set focus false
 
   const toggleComment = (commentId: number, parentId: number | null) => {
     setFocusedComment(commentId);
+
     setScrollTrigger((prev) => prev + 1);
 
     setExpandedComments((prev) => {
@@ -53,6 +55,7 @@ export default function CommentTree({
 
   const toggleFullSize = (commentId: number) => {
     setFocusedComment(commentId);
+
     const newFullSize = new Set(fullSizeComments);
     newFullSize.has(commentId)
       ? newFullSize.delete(commentId)
@@ -113,8 +116,21 @@ export default function CommentTree({
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (treeRef.current && !treeRef.current.contains(event.target as Node)) {
+        setFocusedComment(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="pb-6 w-full">
+    <div ref={treeRef} className="pb-6 w-full">
       <div className="overflow-x-auto w-full pb-10">
         <Tree
           lineWidth="2px"
